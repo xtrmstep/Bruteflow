@@ -2,7 +2,7 @@
 
 namespace NPipeliner
 {
-    public class PipelineMetadata
+    public struct PipelineMetadata
     {
         public object Metadata { get; set; }
         public DateTime InputTimestamp { get; set; }

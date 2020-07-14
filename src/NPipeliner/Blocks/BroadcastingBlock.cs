@@ -2,7 +2,7 @@
 
 namespace NPipeliner.Blocks
 {
-    public class BroadcastingBlock<TOutput>
+    public abstract class BroadcastingBlock<TOutput>
     {
         private readonly IReceiverBlock<TOutput>[] _next;
 
@@ -15,12 +15,10 @@ namespace NPipeliner.Blocks
         {
             if (_next == null) return;
 
-            Parallel.ForEach(_next, next =>
+            foreach (var next in _next)
             {
-                var inp = transformed;
-                var md = metadata;
-                next.Process(inp, md);
-            });
+                next.Process(transformed, metadata);
+            }
         }
     }
 }
