@@ -4,10 +4,10 @@ namespace Flowcharter.Blocks
 {
     public class BatchBlock<TEntity> : IReceiverBlock<TEntity>
     {
+        private readonly List<TEntity> _batch = new List<TEntity>();
         private readonly int _batchSize;
         private readonly IReceiverBlock<TEntity[]> _next;
         private int _delayedCount;
-        private readonly List<TEntity> _batch = new List<TEntity>();
 
         public BatchBlock(int batchSize, IReceiverBlock<TEntity[]> next)
         {

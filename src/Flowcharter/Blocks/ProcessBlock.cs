@@ -4,14 +4,13 @@ namespace Flowcharter.Blocks
 {
     public class ProcessBlock<TInput, TOutput> : IReceiverBlock<TInput>, IProducerBlock<TOutput>
     {
-        private Func<TInput, PipelineMetadata, TOutput> _process;
         private IReceiverBlock<TOutput> _following;
+        private Func<TInput, PipelineMetadata, TOutput> _process;
 
-        public ProcessBlock(): this(null, null)
+        public ProcessBlock() : this(null, null)
         {
-            
         }
-        
+
         public ProcessBlock(Func<TInput, PipelineMetadata, TOutput> process) : this(process, null)
         {
         }
@@ -50,7 +49,7 @@ namespace Flowcharter.Blocks
             precedingBlock.Link(next);
             return next;
         }
-        
+
         public static ProcessBlock<TInput, TOutput> Process<TInput, TOutput>(
             this ProcessBlock<TInput, TOutput> block,
             Func<TInput, PipelineMetadata, TOutput> process)

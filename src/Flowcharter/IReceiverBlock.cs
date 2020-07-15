@@ -1,6 +1,4 @@
-﻿using Flowcharter.Blocks;
-
-namespace Flowcharter
+﻿namespace Flowcharter
 {
     public interface IReceiverBlock<in TInput>
     {

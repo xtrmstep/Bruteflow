@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace Flowcharter.Blocks
 {
     public class DecisionBlock<TInput> : IReceiverBlock<TInput>
     {
         private readonly Func<TInput, PipelineMetadata, bool> _condition;
-        private readonly IReceiverBlock<TInput> _positive;
         private readonly IReceiverBlock<TInput> _negative;
+        private readonly IReceiverBlock<TInput> _positive;
 
         public DecisionBlock(Func<TInput, PipelineMetadata, bool> condition, IReceiverBlock<TInput> positive, IReceiverBlock<TInput> negative)
         {

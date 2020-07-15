@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Flowcharter.Blocks
+﻿namespace Flowcharter.Blocks
 {
     public class DistributeBlock<TEntity> : IReceiverBlock<TEntity>
     {
@@ -16,10 +13,7 @@ namespace Flowcharter.Blocks
         {
             if (_targets == null) return;
 
-            foreach (var target in _targets)
-            {
-                target.Post(input, metadata);
-            }
+            foreach (var target in _targets) target.Post(input, metadata);
         }
     }
 
