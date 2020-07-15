@@ -16,12 +16,12 @@ namespace Flowcharter.Blocks
             _negative = negative;
         }
 
-        public void Process(TInput input, PipelineMetadata metadata)
+        public void Post(TInput input, PipelineMetadata metadata)
         {
             var condition = _condition(input, metadata);
 
-            if (condition) _positive?.Process(input, metadata);
-            else _negative?.Process(input, metadata);
+            if (condition) _positive?.Post(input, metadata);
+            else _negative?.Post(input, metadata);
         }
     }
 }

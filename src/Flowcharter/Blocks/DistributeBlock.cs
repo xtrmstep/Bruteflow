@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Flowcharter.Blocks
 {
@@ -11,14 +12,25 @@ namespace Flowcharter.Blocks
             _targets = targets;
         }
 
-        public void Process(TEntity input, PipelineMetadata metadata)
+        public void Post(TEntity input, PipelineMetadata metadata)
         {
             if (_targets == null) return;
 
             foreach (var target in _targets)
             {
-                target.Process(input, metadata);
+                target.Post(input, metadata);
             }
+        }
+    }
+
+    public static class DistributeBlockExtensions
+    {
+        public static void Distribute<TPrecedingOutput>(
+            this IProducerBlock<TPrecedingOutput> precedingBlock,
+            params IReceiverBlock<TPrecedingOutput>[] followingBlocks)
+        {
+            var next = new DistributeBlock<TPrecedingOutput>(followingBlocks);
+            precedingBlock.Link(next);
         }
     }
 }

@@ -10,12 +10,13 @@ namespace Flowcharter.Tests
         public void Transformation_block_should_be_pipelined()
         {
             var result = string.Empty;
-            var head = new ProcessBlock<string, string>((str, md) => str + "A");
-            head.Process((str, md) => str + "B")
-                .Process((str, md) => str + "C")
+            var head = new ProcessBlock<string, string>();
+            head.Process((str, md) => str + "A")
+                .Next((str, md) => str + "B")
+                .Next((str, md) => str + "C")
                 .Action((str, md) => result = str);
 
-            head.Process(string.Empty, new PipelineMetadata());
+            head.Post(string.Empty, new PipelineMetadata());
             result.Should().Be("ABC");
         }
 
@@ -24,28 +25,23 @@ namespace Flowcharter.Tests
         {
             var result1 = string.Empty;
             var result2 = string.Empty;
-            var head = new ProcessBlock<string, string>((str, md) => str + "A",
-                new ProcessBlock<string, string>((str, md) => str + "-",
-                    new DistributeBlock<string>(
-                        new ProcessBlock<string, string>((str, md) => str + "B",
-                                new ActionBlock<string>((str, md) => result1 = str)),
-                        new ProcessBlock<string, string>((str, md) => str + "C",
-                                new ActionBlock<string>((str, md) => result2 = str))
-                    )
-                )
-            );
-            /*
-             * var head = new ProcessBlock<string, string>(method1)
-             *                     .Transform<string, string>(method2)
-             *                     .Broadcast<string>(
-             *                         new ProcessBlock<string, string>(method3)
-             *                             .Sink<string>(method4),
-             *                         new ProcessBlock<string, string>(method5)
-             *                             .Sink<string>(method6)
-             *                      );
-             */
 
-            head.Process(string.Empty, new PipelineMetadata());
+            var branch1 = new ProcessBlock<string, string>();
+            var branch2 = new ProcessBlock<string, string>();
+            var head = new ProcessBlock<string, string>();
+            head.Process((str, md) => str + "A")
+                .Next((str, md) => str + "-")
+                .Distribute(branch1, branch2);
+            
+            branch1
+                .Process((str, md) => str + "B")
+                .Action((str, md) => result1 = str);
+            
+            branch2
+                .Process((str, md) => str + "C")
+                .Action((str, md) => result2 = str);
+
+            head.Post(string.Empty, new PipelineMetadata());
             result1.Should().Be("A-B");
             result2.Should().Be("A-C");
         }
