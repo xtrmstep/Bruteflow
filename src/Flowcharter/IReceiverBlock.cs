@@ -1,4 +1,4 @@
-﻿namespace NPipeliner
+﻿namespace Flowcharter
 {
     public interface IReceiverBlock<in TInput>
     {

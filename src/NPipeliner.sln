@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPipeliner", "NPipeliner\NPipeliner.csproj", "{95F9FD59-1332-4D0B-ABD6-1040BFC973AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flowcharter", "Flowcharter\Flowcharter.csproj", "{95F9FD59-1332-4D0B-ABD6-1040BFC973AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPipeliner.Tests", "NPipeliner.Tests\NPipeliner.Tests.csproj", "{FDB86D39-193E-4BEA-86EC-06AA968292E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flowcharter.Tests", "Flowcharter.Tests\Flowcharter.Tests.csproj", "{FDB86D39-193E-4BEA-86EC-06AA968292E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

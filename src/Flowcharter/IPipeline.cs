@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace NPipeliner
+namespace Flowcharter
 {
     public interface IPipeline
     {

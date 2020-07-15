@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NPipeliner
+namespace Flowcharter
 {
     public struct PipelineMetadata
     {

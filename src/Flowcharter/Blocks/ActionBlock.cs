@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace NPipeliner.Blocks
+namespace Flowcharter.Blocks
 {
-    public class SinkBlock<TInput> : IReceiverBlock<TInput>
+    public class ActionBlock<TInput> : IReceiverBlock<TInput>
     {
         private readonly Action<TInput, PipelineMetadata> _action;
 
-        public SinkBlock(Action<TInput, PipelineMetadata> action)
+        public ActionBlock(Action<TInput, PipelineMetadata> action)
         {
             _action = action;
         }

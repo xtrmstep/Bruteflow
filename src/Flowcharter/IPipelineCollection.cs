@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NPipeliner
+namespace Flowcharter
 {
     public interface IPipelineCollection : IPipeline
     {
