@@ -10,19 +10,10 @@ namespace Flowcharter.Tests
         public void Transformation_block_should_be_pipelined()
         {
             var result = string.Empty;
-            var head = new ProcessBlock<string, string>((str, md) => str + "A",
-                new ProcessBlock<string, string>((str, md) => str + "B",
-                    new ProcessBlock<string, string>((str, md) => str + "C",
-                        new ActionBlock<string>((str, md) => result = str)
-                    )
-                )
-            );
-            /*
-             * var head = new ProcessBlock<string, string>(method1)
-             *                     .Transform<string, string>(method2)
-             *                     .Transform<string, string>(method3)
-             *                     .Sink<string>(method4);
-             */
+            var head = new ProcessBlock<string, string>((str, md) => str + "A");
+            head.Process((str, md) => str + "B")
+                .Process((str, md) => str + "C")
+                .Action((str, md) => result = str);
 
             head.Process(string.Empty, new PipelineMetadata());
             result.Should().Be("ABC");
