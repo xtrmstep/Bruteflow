@@ -14,11 +14,11 @@ namespace Flowcharter.Blocks
             _batchSize = batchSize;
         }
 
-        public void Post(TEntity input, PipelineMetadata metadata)
+        public void Push(TEntity input, PipelineMetadata metadata)
         {
             if (_delayedCount + 1 > _batchSize)
             {
-                _next?.Post(_batch.ToArray(), metadata);
+                _next?.Push(_batch.ToArray(), metadata);
                 _batch.Clear();
                 _delayedCount = 0;
             }

@@ -7,18 +7,13 @@ namespace Flowcharter.Blocks
         private IReceiverBlock<TOutput> _following;
         private Func<TInput, PipelineMetadata, TOutput> _process;
 
-        public ProcessBlock() : this(null, null)
+        protected internal ProcessBlock() : this(null)
         {
         }
 
-        public ProcessBlock(Func<TInput, PipelineMetadata, TOutput> process) : this(process, null)
-        {
-        }
-
-        public ProcessBlock(Func<TInput, PipelineMetadata, TOutput> process, IReceiverBlock<TOutput> receiverBlock)
+        protected internal ProcessBlock(Func<TInput, PipelineMetadata, TOutput> process)
         {
             _process = process;
-            _following = receiverBlock;
         }
 
         void IProducerBlock<TOutput>.Link(IReceiverBlock<TOutput> receiverBlock)
@@ -26,45 +21,23 @@ namespace Flowcharter.Blocks
             _following = receiverBlock;
         }
 
-        public void Post(TInput input, PipelineMetadata metadata)
+        public void Push(TInput input, PipelineMetadata metadata)
         {
             var output = _process(input, metadata);
 
-            _following?.Post(output, metadata);
-        }
-
-        protected internal void SetProcess(Func<TInput, PipelineMetadata, TOutput> process)
-        {
-            _process = process;
+            _following?.Push(output, metadata);
         }
     }
 
     public static class ProcessBlockExtensions
     {
-        public static IProducerBlock<TCurrentOutput> Next<TPrecedingOutput, TCurrentOutput>(
+        public static IProducerBlock<TCurrentOutput> Process<TPrecedingOutput, TCurrentOutput>(
             this IProducerBlock<TPrecedingOutput> precedingBlock,
             Func<TPrecedingOutput, PipelineMetadata, TCurrentOutput> process)
         {
             var next = new ProcessBlock<TPrecedingOutput, TCurrentOutput>(process);
             precedingBlock.Link(next);
             return next;
-        }
-        
-        // public static IProducerBlock<TCurrentOutput> Next<TPrecedingOutput, TCurrentOutput>(
-        //     this IProducerBlock<TPrecedingOutput[]> precedingBlock,
-        //     Func<TPrecedingOutput[], PipelineMetadata, TCurrentOutput> process)
-        // {
-        //     var next = new ProcessBlock<TPrecedingOutput[], TCurrentOutput>(process);
-        //     precedingBlock.Link(next);
-        //     return next;
-        // }
-
-        public static ProcessBlock<TInput, TOutput> Process<TInput, TOutput>(
-            this ProcessBlock<TInput, TOutput> block,
-            Func<TInput, PipelineMetadata, TOutput> process)
-        {
-            block.SetProcess(process);
-            return block;
         }
     }
 }

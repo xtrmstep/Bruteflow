@@ -13,12 +13,12 @@ namespace Flowcharter.Blocks
             _condition = condition;
         }
 
-        public void Post(TInput input, PipelineMetadata metadata)
+        public void Push(TInput input, PipelineMetadata metadata)
         {
             var condition = _condition(input, metadata);
 
-            if (condition) _positive?.Post(input, metadata);
-            else _negative?.Post(input, metadata);
+            if (condition) _positive?.Push(input, metadata);
+            else _negative?.Push(input, metadata);
         }
 
         void IConditionalProducerBlock<TInput, TInput>.LinkPositive(IReceiverBlock<TInput> receiverBlock)

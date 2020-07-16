@@ -11,7 +11,7 @@ namespace Flowcharter.Blocks
             _action = action;
         }
 
-        public void Post(TInput input, PipelineMetadata metadata)
+        public void Push(TInput input, PipelineMetadata metadata)
         {
             var inp = input;
             var md = metadata;

@@ -49,7 +49,7 @@ namespace Flowcharter.Tests
         //         .Process((str, md) => str + "C")
         //         .Action((str, md) => result2 = str);
         //
-        //     head.Post(string.Empty, new PipelineMetadata());
+        //     head.Push(string.Empty, new PipelineMetadata());
         //     result1.Should().Be("A-B");
         //     result2.Should().Be("A-C");
         // }
@@ -73,10 +73,10 @@ namespace Flowcharter.Tests
         //         .Process((str, md) => str + "C")
         //         .Action((str, md) => result = str);
         //
-        //     head.Post("A", new PipelineMetadata());
+        //     head.Push("A", new PipelineMetadata());
         //     result.Should().Be("AAB");
         //     
-        //     head.Post("B", new PipelineMetadata());
+        //     head.Push("B", new PipelineMetadata());
         //     result.Should().Be("BAC");
         //
         // }
@@ -92,11 +92,11 @@ namespace Flowcharter.Tests
         //         .Next((str, md) => string.Join(',', str))
         //         .Action((str, md) => result = str);
         //
-        //     head.Post("C", new PipelineMetadata());
-        //     head.Post("C", new PipelineMetadata());
-        //     head.Post("C", new PipelineMetadata());
+        //     head.Push("C", new PipelineMetadata());
+        //     head.Push("C", new PipelineMetadata());
+        //     head.Push("C", new PipelineMetadata());
         //     // this one will be lost because of the batching
-        //     head.Post("C", new PipelineMetadata());
+        //     head.Push("C", new PipelineMetadata());
         //     
         //     result.Should().Be("CA,CA,CA");
         // }

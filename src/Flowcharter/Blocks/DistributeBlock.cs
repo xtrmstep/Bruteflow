@@ -10,11 +10,11 @@ namespace Flowcharter.Blocks
         {
         }
 
-        public void Post(TEntity input, PipelineMetadata metadata)
+        public void Push(TEntity input, PipelineMetadata metadata)
         {
             if (_targets == null) return;
 
-            foreach (var target in _targets) target.Post(input, metadata);
+            foreach (var target in _targets) target.Push(input, metadata);
         }
 
         void IProducerBlock<TEntity>.Link(IReceiverBlock<TEntity> receiverBlock)

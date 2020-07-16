@@ -1,8 +1,10 @@
-﻿namespace Flowcharter
+﻿using System.Threading;
+
+namespace Flowcharter
 {
     public interface IReceiverBlock<in TInput>
     {
-        void Post(TInput input, PipelineMetadata metadata);
+        void Push(TInput input, PipelineMetadata metadata);
     }
 
     public interface IProducerBlock<out TOutput>
@@ -14,5 +16,10 @@
     {
         void LinkPositive(IReceiverBlock<TPositive> receiverBlock);
         void LinkNegative(IReceiverBlock<TNegative> receiverBlock);
+    }
+
+    public interface IHeadBlock
+    {
+        void Start();
     }
 }
