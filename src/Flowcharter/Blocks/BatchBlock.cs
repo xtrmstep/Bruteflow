@@ -2,22 +2,21 @@
 
 namespace Flowcharter.Blocks
 {
-    public class BatchBlock<TEntity> : IReceiverBlock<TEntity>
+    public class BatchBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity[]>
     {
         private readonly List<TEntity> _batch = new List<TEntity>();
         private readonly int _batchSize;
-        private readonly IReceiverBlock<TEntity[]> _next;
+        private IReceiverBlock<TEntity[]> _next;
         private int _delayedCount;
 
-        public BatchBlock(int batchSize, IReceiverBlock<TEntity[]> next)
+        protected internal BatchBlock(int batchSize)
         {
             _batchSize = batchSize;
-            _next = next;
         }
 
         public void Post(TEntity input, PipelineMetadata metadata)
         {
-            if (_delayedCount + 1 == _batchSize)
+            if (_delayedCount + 1 > _batchSize)
             {
                 _next?.Post(_batch.ToArray(), metadata);
                 _batch.Clear();
@@ -28,6 +27,23 @@ namespace Flowcharter.Blocks
                 _delayedCount++;
                 _batch.Add(input);
             }
+        }
+
+        void IProducerBlock<TEntity[]>.Link(IReceiverBlock<TEntity[]> receiverBlock)
+        {
+            _next = receiverBlock;
+        }
+    }
+
+    public static class BatchBlockExtensions
+    {
+        public static IProducerBlock<TPrecedingOutput[]> Batch<TPrecedingOutput>(
+            this IProducerBlock<TPrecedingOutput> precedingBlock,
+            int batchSize)
+        {
+            var next = new BatchBlock<TPrecedingOutput>(batchSize);
+            precedingBlock.Link(next);
+            return next;
         }
     }
 }

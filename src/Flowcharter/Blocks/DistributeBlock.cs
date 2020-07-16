@@ -1,12 +1,13 @@
-﻿namespace Flowcharter.Blocks
-{
-    public class DistributeBlock<TEntity> : IReceiverBlock<TEntity>
-    {
-        private readonly IReceiverBlock<TEntity>[] _targets;
+﻿using System.Collections.Generic;
 
-        public DistributeBlock(params IReceiverBlock<TEntity>[] targets)
+namespace Flowcharter.Blocks
+{
+    public class DistributeBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity>
+    {
+        private readonly List<IReceiverBlock<TEntity>> _targets = new List<IReceiverBlock<TEntity>>();
+
+        protected internal DistributeBlock()
         {
-            _targets = targets;
         }
 
         public void Post(TEntity input, PipelineMetadata metadata)
@@ -14,6 +15,11 @@
             if (_targets == null) return;
 
             foreach (var target in _targets) target.Post(input, metadata);
+        }
+
+        void IProducerBlock<TEntity>.Link(IReceiverBlock<TEntity> receiverBlock)
+        {
+            _targets.Add(receiverBlock);
         }
     }
 
@@ -23,7 +29,12 @@
             this IProducerBlock<TPrecedingOutput> precedingBlock,
             params IReceiverBlock<TPrecedingOutput>[] followingBlocks)
         {
-            var next = new DistributeBlock<TPrecedingOutput>(followingBlocks);
+            var next = new DistributeBlock<TPrecedingOutput>();
+            var producer = (IProducerBlock<TPrecedingOutput>) next;
+            foreach (var followingBlock in followingBlocks)
+            {
+                producer.Link(followingBlock);
+            }
             precedingBlock.Link(next);
         }
     }

@@ -72,5 +72,25 @@ namespace Flowcharter.Tests
             result.Should().Be("BAC");
 
         }
+
+        [Fact]
+        public void Batch_pipeline_one_input_accumulate_to_one_output()
+        {
+            var result = string.Empty;
+
+            var head = new ProcessBlock<string, string>();
+            head.Process((str, md) => str + "A")
+                .Batch(3)
+                .Next((str, md) => string.Join(',', str))
+                .Action((str, md) => result = str);
+
+            head.Post("C", new PipelineMetadata());
+            head.Post("C", new PipelineMetadata());
+            head.Post("C", new PipelineMetadata());
+            // this one will be lost because of the batching
+            head.Post("C", new PipelineMetadata());
+            
+            result.Should().Be("CA,CA,CA");
+        }
     }
 }

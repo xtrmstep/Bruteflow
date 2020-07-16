@@ -2,17 +2,15 @@
 
 namespace Flowcharter.Blocks
 {
-    public class DecisionBlock<TInput> : IReceiverBlock<TInput>
+    public class DecisionBlock<TInput> : IReceiverBlock<TInput>, IConditionalProducerBlock<TInput, TInput>
     {
         private readonly Func<TInput, PipelineMetadata, bool> _condition;
-        private readonly IReceiverBlock<TInput> _negative;
-        private readonly IReceiverBlock<TInput> _positive;
+        private IReceiverBlock<TInput> _negative;
+        private IReceiverBlock<TInput> _positive;
 
-        public DecisionBlock(Func<TInput, PipelineMetadata, bool> condition, IReceiverBlock<TInput> positive, IReceiverBlock<TInput> negative)
+        protected internal DecisionBlock(Func<TInput, PipelineMetadata, bool> condition)
         {
             _condition = condition;
-            _positive = positive;
-            _negative = negative;
         }
 
         public void Post(TInput input, PipelineMetadata metadata)
@@ -21,6 +19,16 @@ namespace Flowcharter.Blocks
 
             if (condition) _positive?.Post(input, metadata);
             else _negative?.Post(input, metadata);
+        }
+
+        void IConditionalProducerBlock<TInput, TInput>.LinkPositive(IReceiverBlock<TInput> receiverBlock)
+        {
+            _positive = receiverBlock;
+        }
+
+        void IConditionalProducerBlock<TInput, TInput>.LinkNegative(IReceiverBlock<TInput> receiverBlock)
+        {
+            _negative = receiverBlock;
         }
     }
 
@@ -32,7 +40,10 @@ namespace Flowcharter.Blocks
             IReceiverBlock<TPrecedingOutput> positive,
             IReceiverBlock<TPrecedingOutput> negative)
         {
-            var next = new DecisionBlock<TPrecedingOutput>(condition, positive, negative);
+            var next = new DecisionBlock<TPrecedingOutput>(condition);
+            var conditional = (IConditionalProducerBlock<TPrecedingOutput, TPrecedingOutput>) next;
+            conditional.LinkPositive(positive);
+            conditional.LinkNegative(negative);
             precedingBlock.Link(next);
         }
     }

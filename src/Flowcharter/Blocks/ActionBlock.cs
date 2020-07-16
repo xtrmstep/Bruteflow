@@ -6,7 +6,7 @@ namespace Flowcharter.Blocks
     {
         private readonly Action<TInput, PipelineMetadata> _action;
 
-        public ActionBlock(Action<TInput, PipelineMetadata> action)
+        protected internal ActionBlock(Action<TInput, PipelineMetadata> action)
         {
             _action = action;
         }

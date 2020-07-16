@@ -41,7 +41,7 @@ namespace Flowcharter.Blocks
 
     public static class ProcessBlockExtensions
     {
-        public static ProcessBlock<TPrecedingOutput, TCurrentOutput> Next<TPrecedingOutput, TCurrentOutput>(
+        public static IProducerBlock<TCurrentOutput> Next<TPrecedingOutput, TCurrentOutput>(
             this IProducerBlock<TPrecedingOutput> precedingBlock,
             Func<TPrecedingOutput, PipelineMetadata, TCurrentOutput> process)
         {
@@ -49,6 +49,15 @@ namespace Flowcharter.Blocks
             precedingBlock.Link(next);
             return next;
         }
+        
+        // public static IProducerBlock<TCurrentOutput> Next<TPrecedingOutput, TCurrentOutput>(
+        //     this IProducerBlock<TPrecedingOutput[]> precedingBlock,
+        //     Func<TPrecedingOutput[], PipelineMetadata, TCurrentOutput> process)
+        // {
+        //     var next = new ProcessBlock<TPrecedingOutput[], TCurrentOutput>(process);
+        //     precedingBlock.Link(next);
+        //     return next;
+        // }
 
         public static ProcessBlock<TInput, TOutput> Process<TInput, TOutput>(
             this ProcessBlock<TInput, TOutput> block,
