@@ -23,4 +23,17 @@ namespace Flowcharter.Blocks
             else _negative?.Post(input, metadata);
         }
     }
+
+    public static class DecisionBlockExtensions
+    {
+        public static void Decision<TPrecedingOutput>(
+            this IProducerBlock<TPrecedingOutput> precedingBlock,
+            Func<TPrecedingOutput, PipelineMetadata, bool> condition,
+            IReceiverBlock<TPrecedingOutput> positive,
+            IReceiverBlock<TPrecedingOutput> negative)
+        {
+            var next = new DecisionBlock<TPrecedingOutput>(condition, positive, negative);
+            precedingBlock.Link(next);
+        }
+    }
 }
