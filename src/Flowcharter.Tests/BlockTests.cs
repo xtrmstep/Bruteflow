@@ -17,6 +17,7 @@ namespace Flowcharter.Tests
                 .Action((str, md) => result = str);
 
             head.Post(string.Empty, new PipelineMetadata());
+            
             result.Should().Be("ABC");
         }
 
