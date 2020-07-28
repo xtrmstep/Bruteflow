@@ -6,6 +6,11 @@ namespace Flowcharter
     {
         void Push(TInput input, PipelineMetadata metadata);
     }
+    
+    public interface IHeadBlock<in TInput>
+    {
+        void Push(TInput input, PipelineMetadata metadata);
+    }    
 
     public interface IProducerBlock<out TOutput>
     {

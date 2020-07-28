@@ -3,21 +3,21 @@ using System.Threading;
 
 namespace Flowcharter.Blocks
 {
-    public class HeadBlock<TOutput> : IHeadBlock, IReceiverBlock<TOutput>, IProducerBlock<TOutput>
+    public class HeadBlock<TInput> : IHeadBlock<TInput>, IReceiverBlock<TInput>, IProducerBlock<TInput>
     {
-        private IReceiverBlock<TOutput> _following;
-        private readonly Action<Action<TOutput, PipelineMetadata>> _process;
+        private IReceiverBlock<TInput> _following;
+        private readonly Action<Action<TInput, PipelineMetadata>> _process;
 
         public HeadBlock() : this(null)
         {
         }
         
-        public HeadBlock(Action<Action<TOutput, PipelineMetadata>> process)
+        public HeadBlock(Action<Action<TInput, PipelineMetadata>> process)
         {
             _process = process;
         }
 
-        void IProducerBlock<TOutput>.Link(IReceiverBlock<TOutput> receiverBlock)
+        void IProducerBlock<TInput>.Link(IReceiverBlock<TInput> receiverBlock)
         {
             _following = receiverBlock;
         }
@@ -27,7 +27,7 @@ namespace Flowcharter.Blocks
             _process(_following.Push);
         }
 
-        void IReceiverBlock<TOutput>.Push(TOutput input, PipelineMetadata metadata)
+        public void Push(TInput input, PipelineMetadata metadata)
         {
             _following.Push(input, metadata);
         }

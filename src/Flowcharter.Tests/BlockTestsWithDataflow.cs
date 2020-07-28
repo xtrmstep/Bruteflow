@@ -8,7 +8,7 @@ namespace Flowcharter.Tests
     public class BlockTestsWithDataflow
     {
         [Fact]
-        public void Strait_pipeline_one_input_one_output()
+        public void Process_pipeline_one_input_one_output()
         {
             var result = string.Empty;
             var head = new TransformBlock<string, string>(str => str + "A");
@@ -28,31 +28,36 @@ namespace Flowcharter.Tests
             result.Should().Be("ABC");
         }
 
-        // [Fact]
-        // public void Fork_pipeline_one_input_two_outputs()
-        // {
-        //     var result1 = string.Empty;
-        //     var result2 = string.Empty;
-        //
-        //     var branch1 = new ProcessBlock<string, string>();
-        //     var branch2 = new ProcessBlock<string, string>();
-        //     var head = new ProcessBlock<string, string>();
-        //     head.Process((str, md) => str + "A")
-        //         .Next((str, md) => str + "-")
-        //         .Distribute(branch1, branch2);
-        //     
-        //     branch1
-        //         .Process((str, md) => str + "B")
-        //         .Action((str, md) => result1 = str);
-        //     
-        //     branch2
-        //         .Process((str, md) => str + "C")
-        //         .Action((str, md) => result2 = str);
-        //
-        //     head.Push(string.Empty, new PipelineMetadata());
-        //     result1.Should().Be("A-B");
-        //     result2.Should().Be("A-C");
-        // }
+        [Fact]
+        public void Distribute_pipeline_one_input_two_outputs()
+        {
+            var result1 = string.Empty;
+            var result2 = string.Empty;
+
+            var head = new TransformBlock<string, string>(str => str + "A");
+            var block2 = new TransformBlock<string, string>(str => str + "-");
+            var block3 = new BroadcastBlock<string>(str => str);
+            var block4 = new TransformBlock<string, string>(str => str + "B");
+            var block5 = new TransformBlock<string, string>(str => str + "C");
+            var block6 = new System.Threading.Tasks.Dataflow.ActionBlock<string>(str => result1 = str);
+            var block7 = new System.Threading.Tasks.Dataflow.ActionBlock<string>(str => result2 = str);
+            
+            var linkOptions = new DataflowLinkOptions { PropagateCompletion = true };
+            head.LinkTo(block2, linkOptions);
+            block2.LinkTo(block3, linkOptions);
+            block3.LinkTo(block4, linkOptions);
+            block4.LinkTo(block6, linkOptions);
+            block3.LinkTo(block5, linkOptions);
+            block5.LinkTo(block7, linkOptions);
+
+            head.Post(string.Empty);
+            head.Complete();
+            block6.Completion.Wait();
+            block7.Completion.Wait();
+            
+            result1.Should().Be("A-B");
+            result2.Should().Be("A-C");
+        }
         //
         // [Fact]
         // public void Decision_pipeline_one_input_different_outputs()

@@ -8,7 +8,7 @@ namespace Flowcharter.Tests
     public class BlockTests
     {
         [Fact]
-        public void Strait_pipeline_one_input_one_output()
+        public void Process_pipeline_one_input_one_output()
         {
             var result = string.Empty;
             var head = new HeadBlock<string>(action => action(string.Empty, new PipelineMetadata()));
@@ -23,12 +23,12 @@ namespace Flowcharter.Tests
         }
 
         [Fact]
-        public void Fork_pipeline_one_input_two_outputs()
+        public void Distribute_pipeline_one_input_two_outputs()
         {
             var result1 = string.Empty;
             var result2 = string.Empty;
 
-            var head = new HeadBlock<string>(action => action(string.Empty, new PipelineMetadata()));
+            var head = new HeadBlock<string>();
             var branch1 = new HeadBlock<string>();
             var branch2 = new HeadBlock<string>();
             head.Process((str, md) => str + "A")
@@ -43,7 +43,7 @@ namespace Flowcharter.Tests
                 .Process((str, md) => str + "C")
                 .Action((str, md) => result2 = str);
 
-            head.Start();
+            head.Push(string.Empty, new PipelineMetadata());
             
             result1.Should().Be("A-B");
             result2.Should().Be("A-C");
@@ -81,10 +81,10 @@ namespace Flowcharter.Tests
         {
             var result = string.Empty;
 
-            var head = new ProcessBlock<string, string>();
+            var head = new HeadBlock<string>();
             head.Process((str, md) => str + "A")
                 .Batch(3)
-                .Next((str, md) => string.Join(',', str))
+                .Process((str, md) => string.Join(',', str))
                 .Action((str, md) => result = str);
 
             head.Push("C", new PipelineMetadata());
