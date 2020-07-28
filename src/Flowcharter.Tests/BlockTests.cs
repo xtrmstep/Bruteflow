@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using Flowcharter.Blocks;
 using FluentAssertions;
@@ -11,13 +12,13 @@ namespace Flowcharter.Tests
         public void Process_pipeline_one_input_one_output()
         {
             var result = string.Empty;
-            var head = new HeadBlock<string>(action => action(string.Empty, new PipelineMetadata()));
+            var head = new HeadBlock<string>();
             head.Process((str, md) => str + "A")
                 .Process((str, md) => str + "B")
                 .Process((str, md) => str + "C")
                 .Action((str, md) => result = str);
 
-            head.Start();
+            head.Push(string.Empty, new PipelineMetadata());
             
             result.Should().Be("ABC");
         }
@@ -54,7 +55,7 @@ namespace Flowcharter.Tests
         {
             var result = string.Empty;
 
-            var head = new HeadBlock<string>(action => action(string.Empty, new PipelineMetadata()));
+            var head = new HeadBlock<string>();
             var positive = new HeadBlock<string>();
             var negative = new HeadBlock<string>();
             head.Process((str, md) => str + "A")
@@ -73,27 +74,29 @@ namespace Flowcharter.Tests
             
             head.Push("B", new PipelineMetadata());
             result.Should().Be("BAC");
-
         }
 
         [Fact]
         public void Batch_pipeline_one_input_accumulate_to_one_output()
         {
-            var result = string.Empty;
+            var result = new List<string>();
 
             var head = new HeadBlock<string>();
             head.Process((str, md) => str + "A")
                 .Batch(3)
                 .Process((str, md) => string.Join(',', str))
-                .Action((str, md) => result = str);
+                .Action((str, md) => result.Add(str));
 
             head.Push("C", new PipelineMetadata());
             head.Push("C", new PipelineMetadata());
             head.Push("C", new PipelineMetadata());
             // this one will be lost because of the batching
-            head.Push("C", new PipelineMetadata());
+            head.Push("C", new PipelineMetadata());            
+            head.Flush();
             
-            result.Should().Be("CA,CA,CA");
+            result.Count.Should().Be(2);
+            result[0].Should().Be("CA,CA,CA");
+            result[1].Should().Be("CA");
         }
     }
 }

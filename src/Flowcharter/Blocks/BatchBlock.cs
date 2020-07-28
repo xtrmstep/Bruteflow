@@ -5,6 +5,7 @@ namespace Flowcharter.Blocks
     public class BatchBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity[]>
     {
         private readonly List<TEntity> _batch = new List<TEntity>();
+        private PipelineMetadata _latestMetadata;
         private readonly int _batchSize;
         private IReceiverBlock<TEntity[]> _next;
         private int _delayedCount;
@@ -16,34 +17,31 @@ namespace Flowcharter.Blocks
 
         public void Push(TEntity input, PipelineMetadata metadata)
         {
+            _latestMetadata = metadata;
             if (_delayedCount + 1 > _batchSize)
             {
-                _next?.Push(_batch.ToArray(), metadata);
-                _batch.Clear();
-                _delayedCount = 0;
+                SendBatchedData(metadata);
             }
-            else
-            {
-                _delayedCount++;
-                _batch.Add(input);
-            }
+
+            _delayedCount++;
+            _batch.Add(input);
+        }
+
+        private void SendBatchedData(PipelineMetadata metadata)
+        {
+            _next?.Push(_batch.ToArray(), metadata);
+            _batch.Clear();
+            _delayedCount = 0;
+        }
+
+        public void Flush()
+        {
+            SendBatchedData(_latestMetadata);
         }
 
         void IProducerBlock<TEntity[]>.Link(IReceiverBlock<TEntity[]> receiverBlock)
         {
             _next = receiverBlock;
-        }
-    }
-
-    public static class BatchBlockExtensions
-    {
-        public static IProducerBlock<TPrecedingOutput[]> Batch<TPrecedingOutput>(
-            this IProducerBlock<TPrecedingOutput> precedingBlock,
-            int batchSize)
-        {
-            var next = new BatchBlock<TPrecedingOutput>(batchSize);
-            precedingBlock.Link(next);
-            return next;
         }
     }
 }

@@ -29,7 +29,12 @@ namespace Flowcharter.Blocks
 
         public void Push(TInput input, PipelineMetadata metadata)
         {
-            _following.Push(input, metadata);
+            _following?.Push(input, metadata);
+        }
+
+        public void Flush()
+        {
+            _following?.Flush();
         }
     }
 }

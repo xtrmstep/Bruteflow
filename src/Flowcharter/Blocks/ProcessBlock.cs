@@ -27,17 +27,10 @@ namespace Flowcharter.Blocks
 
             _following?.Push(output, metadata);
         }
-    }
 
-    public static class ProcessBlockExtensions
-    {
-        public static IProducerBlock<TCurrentOutput> Process<TPrecedingOutput, TCurrentOutput>(
-            this IProducerBlock<TPrecedingOutput> precedingBlock,
-            Func<TPrecedingOutput, PipelineMetadata, TCurrentOutput> process)
+        public void Flush()
         {
-            var next = new ProcessBlock<TPrecedingOutput, TCurrentOutput>(process);
-            precedingBlock.Link(next);
-            return next;
+            _following?.Flush();
         }
     }
 }

@@ -21,6 +21,12 @@ namespace Flowcharter.Blocks
             else _negative?.Push(input, metadata);
         }
 
+        public void Flush()
+        {
+            _positive?.Flush();
+            _negative?.Flush();
+        }
+
         void IConditionalProducerBlock<TInput, TInput>.LinkPositive(IReceiverBlock<TInput> receiverBlock)
         {
             _positive = receiverBlock;
@@ -29,22 +35,6 @@ namespace Flowcharter.Blocks
         void IConditionalProducerBlock<TInput, TInput>.LinkNegative(IReceiverBlock<TInput> receiverBlock)
         {
             _negative = receiverBlock;
-        }
-    }
-
-    public static class DecisionBlockExtensions
-    {
-        public static void Decision<TPrecedingOutput>(
-            this IProducerBlock<TPrecedingOutput> precedingBlock,
-            Func<TPrecedingOutput, PipelineMetadata, bool> condition,
-            IReceiverBlock<TPrecedingOutput> positive,
-            IReceiverBlock<TPrecedingOutput> negative)
-        {
-            var next = new DecisionBlock<TPrecedingOutput>(condition);
-            var conditional = (IConditionalProducerBlock<TPrecedingOutput, TPrecedingOutput>) next;
-            conditional.LinkPositive(positive);
-            conditional.LinkNegative(negative);
-            precedingBlock.Link(next);
         }
     }
 }

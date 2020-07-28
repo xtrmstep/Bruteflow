@@ -17,16 +17,10 @@ namespace Flowcharter.Blocks
             var md = metadata;
             _action(inp, md);
         }
-    }
 
-    public static class ActionBlockExtensions
-    {
-        public static void Action<TPrecedingOutput>(
-            this IProducerBlock<TPrecedingOutput> precedingBlock,
-            Action<TPrecedingOutput, PipelineMetadata> action)
+        public void Flush()
         {
-            var next = new ActionBlock<TPrecedingOutput>(action);
-            precedingBlock.Link(next);
+            // do nothing
         }
     }
 }

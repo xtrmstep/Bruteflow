@@ -1,9 +1,8 @@
-﻿using System.Threading;
-
-namespace Flowcharter
+﻿namespace Flowcharter
 {
-    public interface IReceiverBlock<in TInput>
+    public interface IHeadBlock<in TInput>
     {
+        void Start();
         void Push(TInput input, PipelineMetadata metadata);
         void Flush();
     }
