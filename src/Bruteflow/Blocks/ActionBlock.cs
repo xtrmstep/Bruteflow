@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Flowcharter.Blocks
+namespace Bruteflow.Blocks
 {
     public class ActionBlock<TInput> : IReceiverBlock<TInput>
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Flowcharter.Blocks
+namespace Bruteflow.Blocks
 {
     public class DistributeBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity>
     {
@@ -8,6 +8,11 @@ namespace Flowcharter.Blocks
 
         protected internal DistributeBlock()
         {
+        }
+
+        void IProducerBlock<TEntity>.Link(IReceiverBlock<TEntity> receiverBlock)
+        {
+            _targets.Add(receiverBlock);
         }
 
         public void Push(TEntity input, PipelineMetadata metadata)
@@ -20,11 +25,6 @@ namespace Flowcharter.Blocks
         public void Flush()
         {
             foreach (var target in _targets) target.Flush();
-        }
-
-        void IProducerBlock<TEntity>.Link(IReceiverBlock<TEntity> receiverBlock)
-        {
-            _targets.Add(receiverBlock);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Flowcharter
+﻿namespace Bruteflow
 {
     public interface IConditionalProducerBlock<out TPositive, out TNegative>
     {

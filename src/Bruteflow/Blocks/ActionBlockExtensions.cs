@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Flowcharter.Blocks
+namespace Bruteflow.Blocks
 {
     public static class ActionBlockExtensions
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Flowcharter
+namespace Bruteflow
 {
     public struct PipelineMetadata
     {

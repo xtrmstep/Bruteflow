@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Flowcharter
+namespace Bruteflow
 {
     public interface IPipelineCollection : IPipeline
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Flowcharter.Blocks
+namespace Bruteflow.Blocks
 {
     public class DecisionBlock<TInput> : IReceiverBlock<TInput>, IConditionalProducerBlock<TInput, TInput>
     {
@@ -11,6 +11,16 @@ namespace Flowcharter.Blocks
         protected internal DecisionBlock(Func<TInput, PipelineMetadata, bool> condition)
         {
             _condition = condition;
+        }
+
+        void IConditionalProducerBlock<TInput, TInput>.LinkPositive(IReceiverBlock<TInput> receiverBlock)
+        {
+            _positive = receiverBlock;
+        }
+
+        void IConditionalProducerBlock<TInput, TInput>.LinkNegative(IReceiverBlock<TInput> receiverBlock)
+        {
+            _negative = receiverBlock;
         }
 
         public void Push(TInput input, PipelineMetadata metadata)
@@ -25,16 +35,6 @@ namespace Flowcharter.Blocks
         {
             _positive?.Flush();
             _negative?.Flush();
-        }
-
-        void IConditionalProducerBlock<TInput, TInput>.LinkPositive(IReceiverBlock<TInput> receiverBlock)
-        {
-            _positive = receiverBlock;
-        }
-
-        void IConditionalProducerBlock<TInput, TInput>.LinkNegative(IReceiverBlock<TInput> receiverBlock)
-        {
-            _negative = receiverBlock;
         }
     }
 }

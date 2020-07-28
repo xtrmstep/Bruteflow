@@ -1,6 +1,4 @@
-﻿using System.Threading;
-
-namespace Flowcharter
+﻿namespace Bruteflow
 {
     public interface IReceiverBlock<in TInput>
     {

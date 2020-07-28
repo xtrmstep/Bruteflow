@@ -1,4 +1,4 @@
-﻿namespace Flowcharter.Blocks
+﻿namespace Bruteflow.Blocks
 {
     public static class DistributeBlockExtensions
     {
@@ -8,10 +8,7 @@
         {
             var next = new DistributeBlock<TPrecedingOutput>();
             var producer = (IProducerBlock<TPrecedingOutput>) next;
-            foreach (var followingBlock in followingBlocks)
-            {
-                producer.Link(followingBlock);
-            }
+            foreach (var followingBlock in followingBlocks) producer.Link(followingBlock);
             precedingBlock.Link(next);
         }
     }

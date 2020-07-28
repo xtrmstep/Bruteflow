@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Flowcharter.Blocks
+namespace Bruteflow.Blocks
 {
     public class ProcessBlock<TInput, TOutput> : IReceiverBlock<TInput>, IProducerBlock<TOutput>
     {
+        private readonly Func<TInput, PipelineMetadata, TOutput> _process;
         private IReceiverBlock<TOutput> _following;
-        private Func<TInput, PipelineMetadata, TOutput> _process;
 
         protected internal ProcessBlock() : this(null)
         {

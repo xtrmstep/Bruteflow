@@ -1,25 +1,19 @@
 ﻿using System;
-using System.Threading;
 
-namespace Flowcharter.Blocks
+namespace Bruteflow.Blocks
 {
     public class HeadBlock<TInput> : IHeadBlock<TInput>, IReceiverBlock<TInput>, IProducerBlock<TInput>
     {
-        private IReceiverBlock<TInput> _following;
         private readonly Action<Action<TInput, PipelineMetadata>> _process;
+        private IReceiverBlock<TInput> _following;
 
         public HeadBlock() : this(null)
         {
         }
-        
+
         public HeadBlock(Action<Action<TInput, PipelineMetadata>> process)
         {
             _process = process;
-        }
-
-        void IProducerBlock<TInput>.Link(IReceiverBlock<TInput> receiverBlock)
-        {
-            _following = receiverBlock;
         }
 
         public void Start()
@@ -35,6 +29,11 @@ namespace Flowcharter.Blocks
         public void Flush()
         {
             _following?.Flush();
+        }
+
+        void IProducerBlock<TInput>.Link(IReceiverBlock<TInput> receiverBlock)
+        {
+            _following = receiverBlock;
         }
     }
 }

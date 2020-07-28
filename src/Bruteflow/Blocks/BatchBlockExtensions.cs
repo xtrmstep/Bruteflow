@@ -1,4 +1,4 @@
-﻿namespace Flowcharter.Blocks
+﻿namespace Bruteflow.Blocks
 {
     public static class BatchBlockExtensions
     {

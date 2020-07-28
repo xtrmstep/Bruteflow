@@ -1,4 +1,4 @@
-﻿namespace Flowcharter
+﻿namespace Bruteflow
 {
     public interface IProducerBlock<out TOutput>
     {
