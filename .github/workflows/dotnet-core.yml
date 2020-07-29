@@ -20,5 +20,7 @@ jobs:
     - name: info
       run: |
         d=${{secrets.NUGET_SERVER_TOKEN}}
+        f=erty
         echo $d
-        echo "my_string_$d_"
+        echo $f
+        echo "my_string_$d_$f_."
