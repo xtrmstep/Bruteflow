@@ -2,6 +2,14 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Bruteflow</Title>
+        <Authors>Alexander Goida</Authors>
+        <Copyright>Alexander Goida</Copyright>
+        <PackageProjectUrl>https://github.com/xtrmstep/Bruteflow</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/xtrmstep/Bruteflow/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/xtrmstep/Bruteflow</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
 </Project>
