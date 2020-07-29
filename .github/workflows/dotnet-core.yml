@@ -26,4 +26,4 @@ jobs:
     - name: Pack
       run: dotnet pack "src" --configuration Release
     - name: Publish
-      run: dotnet nuget push "src/Bruteflow/bin/Release/Bruteflow.1.0.0.nupkg" --source "https://nuget.pkg.github.com/xtrmstep/index.json" -k ${{secrets.NUGET_SERVER_TOKEN}} --skip-duplicate --no-symbols true
+      run: dotnet nuget push "src/Bruteflow/bin/Release/Bruteflow.1.0.0.nupkg" --source "https://nuget.pkg.github.com/xtrmstep/index.json" -k ${{ secrets.NUGET_SERVER_TOKEN }} --skip-duplicate --no-symbols true
