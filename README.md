@@ -1,3 +1,5 @@
+![Publish NuGet Package](https://github.com/xtrmstep/Bruteflow/workflows/Publish%20NuGet%20Package/badge.svg)
+
 # Bruteflow
 
 Simple synchronous pipeline builder which supports well-known flowchart blocks (start, process, decision) and enhance them with additional blocks: distribute and batch.
