@@ -1,4 +1,4 @@
-name: .NET Core
+name: Publish NuGet Package
 
 on:
   push:
