@@ -21,4 +21,4 @@ jobs:
       run: |
         d=${{secrets.NUGET_SERVER_TOKEN}}
         echo $d
-        echo "my string"
+        echo "my_string_$d_"
