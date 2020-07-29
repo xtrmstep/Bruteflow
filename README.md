@@ -2,7 +2,7 @@
 
 # Bruteflow
 
-Simple synchronous pipeline builder which supports well-known flowchart blocks (start, process, decision) and enhance them with additional blocks: distribute and batch.
+Simple synchronous pipeline builder which supports well-known flowchart blocks (start, process, decision) and enhance them with additional blocks: distribute and batch. This is no way a replcement for Dataflow (Task Parallel Library). It uses another approach for building a pipeline.
 
 ## Blocks
 
@@ -36,3 +36,29 @@ The block has internal state and stores data in bunches. In order to propogate d
 
 The final block of the pipeline. It doesn't propogate and should be used as an ending block of the pipeline.
 
+# Examples
+
+The construction of a pipeline with batch block, pushing values into the pipeline and reading results.
+
+```c#
+var result = new List<string>();
+
+var head = new HeadBlock<string>();
+head.Process((str, md) => str + "A")
+	.Batch(3)
+	.Process((str, md) => string.Join(',', str))
+	.Action((str, md) => result.Add(str));
+
+head.Push("C", new PipelineMetadata());
+head.Push("C", new PipelineMetadata());
+head.Push("C", new PipelineMetadata());
+// this one will be lost because of the batching
+head.Push("C", new PipelineMetadata());
+head.Flush();
+
+result.Count.Should().Be(2);
+result[0].Should().Be("CA,CA,CA");
+result[1].Should().Be("CA");
+```
+
+More examples you can find in tests. Also you will find there similar tests written with [Dataflow (Task Parallel Library)](https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/dataflow-task-parallel-library)
