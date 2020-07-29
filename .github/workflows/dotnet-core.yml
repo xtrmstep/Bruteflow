@@ -23,4 +23,5 @@ jobs:
         f=erty
         echo $d
         echo $f
-        echo "my_string_$d_$f_."
+        echo "my_string_${d}_${f}_."
+        echo "my_other_string_${f}"
