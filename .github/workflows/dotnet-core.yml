@@ -17,8 +17,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.301
-    - name: Add GitHub Packages 
-      run: dotnet nuget sources add -name "github" -Source https://nuget.pkg.github.com/xtrmstep/index.json -Username xtrmstep -Password ${{ secrets.NUGET_SERVER_TOKEN }}
+    - name: Setup GitHub Packages
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: 'latest'
+    - name: Add GHP
+      run: dotnet nuget sources add -name "github" -Source "https://nuget.pkg.github.com/xtrmstep/index.json" -Username "xtrmstep" -Password ${{secrets.NUGET_SERVER_TOKEN}}
     - name: Install dependencies
       run: dotnet restore "src"
     - name: Build
