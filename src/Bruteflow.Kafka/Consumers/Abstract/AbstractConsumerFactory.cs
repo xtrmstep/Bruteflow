@@ -3,7 +3,7 @@ using Bruteflow.Kafka.Settings;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 
-namespace Bruteflow.Kafka.Consumers
+namespace Bruteflow.Kafka.Consumers.Abstract
 {
     public abstract class AbstractConsumerFactory<TKey, TValue> : IConsumerFactory<TKey, TValue>
     {
@@ -37,7 +37,7 @@ namespace Bruteflow.Kafka.Consumers
             consumerBuilder.SetValueDeserializer(ValueDeserializer);
         }
 
-        protected virtual KafkaConsumer<TKey, TValue> CreateKafkaConsumer(ConsumerBuilder<TKey, TValue> consumerBuilder, string kafkaTopic)
+        protected virtual IKafkaConsumer<TKey, TValue> CreateKafkaConsumer(ConsumerBuilder<TKey, TValue> consumerBuilder, string kafkaTopic)
         {
             var consumer = consumerBuilder.Build();
             return new KafkaConsumer<TKey, TValue>(kafkaTopic, consumer);

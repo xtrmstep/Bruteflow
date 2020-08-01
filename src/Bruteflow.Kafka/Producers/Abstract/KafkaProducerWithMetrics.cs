@@ -3,9 +3,9 @@ using Confluent.Kafka;
 using JustEat.StatsD;
 using Microsoft.Extensions.Logging;
 
-namespace Bruteflow.Kafka.Producers
+namespace Bruteflow.Kafka.Producers.Abstract
 {
-    public class KafkaProducerWithMetrics<TKey, TValue> : KafkaProducer<TKey, TValue>
+    internal class KafkaProducerWithMetrics<TKey, TValue> : KafkaProducer<TKey, TValue>
     {
         private readonly IStatsDPublisher _stats;
 

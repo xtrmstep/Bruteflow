@@ -1,4 +1,4 @@
-﻿namespace Bruteflow.Stats
+﻿namespace Bruteflow.Kafka.Stats
 {
     public struct StatsDSettings
     {

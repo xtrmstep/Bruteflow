@@ -3,11 +3,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Bruteflow.Stats
+namespace Bruteflow.Kafka.Stats
 {
     public static class RegisterStats
     {
-        public static void ConfigureStats<T>(this IServiceCollection services, IConfigurationRoot configuration, string pipeline)
+        public static void ConfigureStatsForPipelines<T>(this IServiceCollection services, IConfigurationRoot configuration,
+            string pipeline)
         {
             services.AddStatsD(
                 provider =>

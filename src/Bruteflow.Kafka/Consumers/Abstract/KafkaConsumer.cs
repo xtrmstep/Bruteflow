@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using Confluent.Kafka;
 
-namespace Bruteflow.Kafka.Consumers
+namespace Bruteflow.Kafka.Consumers.Abstract
 {
-    public class KafkaConsumer<TKey, TValue> : IKafkaConsumer<TKey, TValue>
+    internal class KafkaConsumer<TKey, TValue> : IKafkaConsumer<TKey, TValue>
     {
         protected readonly IConsumer<TKey, TValue> Consumer;
 

@@ -4,7 +4,7 @@ using Confluent.Kafka;
 using JustEat.StatsD;
 using Microsoft.Extensions.Logging;
 
-namespace Bruteflow.Kafka.Producers
+namespace Bruteflow.Kafka.Producers.Abstract
 {
     public abstract class AbstractProducerWithMetricsFactory<TKey, TValue> : AbstractProducerFactory<TKey, TValue>
     {
@@ -24,7 +24,7 @@ namespace Bruteflow.Kafka.Producers
         {
         }
 
-        protected override KafkaProducer<TKey, TValue> CreateKafkaProducer(IProducer<TKey, TValue> producer, string kafkaTopic)
+        protected override IKafkaProducer<TKey, TValue> CreateKafkaProducer(IProducer<TKey, TValue> producer, string kafkaTopic)
         {
             var kafkaProducer = new KafkaProducerWithMetrics<TKey, TValue>(Logger, kafkaTopic, producer, Stats);
             Stats.Metric().CountInstances(kafkaProducer);

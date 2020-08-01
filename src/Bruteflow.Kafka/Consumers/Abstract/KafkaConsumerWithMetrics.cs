@@ -3,9 +3,9 @@ using Bruteflow.Kafka.Stats;
 using Confluent.Kafka;
 using JustEat.StatsD;
 
-namespace Bruteflow.Kafka.Consumers
+namespace Bruteflow.Kafka.Consumers.Abstract
 {
-    public class KafkaConsumerWithMetrics<TKey, TValue> : KafkaConsumer<TKey, TValue>
+    internal class KafkaConsumerWithMetrics<TKey, TValue> : KafkaConsumer<TKey, TValue>
     {
         protected readonly IStatsDPublisher Stats;
 

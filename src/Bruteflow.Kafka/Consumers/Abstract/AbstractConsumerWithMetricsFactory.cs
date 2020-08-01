@@ -4,7 +4,7 @@ using Confluent.Kafka;
 using JustEat.StatsD;
 using Microsoft.Extensions.Logging;
 
-namespace Bruteflow.Kafka.Consumers
+namespace Bruteflow.Kafka.Consumers.Abstract
 {
     public abstract class AbstractConsumerWithMetricsFactory<TKey, TValue> : AbstractConsumerFactory<TKey, TValue>
     {
@@ -26,7 +26,7 @@ namespace Bruteflow.Kafka.Consumers
             return kafkaConsumer;
         }
 
-        protected override KafkaConsumer<TKey, TValue> CreateKafkaConsumer(ConsumerBuilder<TKey, TValue> consumerBuilder, string kafkaTopic)
+        protected override IKafkaConsumer<TKey, TValue> CreateKafkaConsumer(ConsumerBuilder<TKey, TValue> consumerBuilder, string kafkaTopic)
         {
             var consumer = consumerBuilder.Build();
             var kafkaConsumer = new KafkaConsumerWithMetrics<TKey, TValue>(kafkaTopic, consumer, Stats);

@@ -3,7 +3,7 @@ using Bruteflow.Kafka.Settings;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 
-namespace Bruteflow.Kafka.Producers
+namespace Bruteflow.Kafka.Producers.Abstract
 {
     public abstract class AbstractProducerFactory<TKey, TValue> : IProducerFactory<TKey, TValue>
     {
@@ -49,7 +49,7 @@ namespace Bruteflow.Kafka.Producers
             }
         }
 
-        protected virtual KafkaProducer<TKey, TValue> CreateKafkaProducer(IProducer<TKey, TValue> producer, string kafkaTopic)
+        protected virtual IKafkaProducer<TKey, TValue> CreateKafkaProducer(IProducer<TKey, TValue> producer, string kafkaTopic)
         {
             return new KafkaProducer<TKey, TValue>(Logger, kafkaTopic, producer);
         }

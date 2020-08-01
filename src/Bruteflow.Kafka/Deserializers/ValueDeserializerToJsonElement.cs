@@ -5,7 +5,7 @@ using Confluent.Kafka;
 
 namespace Bruteflow.Kafka.Deserializers
 {
-    public class ValueDeserializerToJsonElement : IDeserializer<JsonElement>
+    public sealed class ValueDeserializerToJsonElement : IDeserializer<JsonElement>
     {
         public JsonElement Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
         {

@@ -4,7 +4,7 @@ using Confluent.Kafka;
 
 namespace Bruteflow.Kafka.Serializers
 {
-    public class ValueSerializerObjectToJsonString<T> : ISerializer<T>
+    public sealed class ValueSerializerObjectToJsonString<T> : ISerializer<T>
     {
         public byte[] Serialize(T data, SerializationContext context)
         {

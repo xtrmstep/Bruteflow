@@ -4,7 +4,7 @@ using MessagePack;
 
 namespace Bruteflow.Kafka.Deserializers
 {
-    public class ValueDeserializerMessagePackToType<TInput> : IDeserializer<TInput>
+    public sealed class ValueDeserializerMessagePackToType<TInput> : IDeserializer<TInput>
     {
         public TInput Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
         {

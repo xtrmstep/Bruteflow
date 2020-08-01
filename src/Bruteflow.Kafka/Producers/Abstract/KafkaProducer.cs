@@ -2,9 +2,9 @@
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 
-namespace Bruteflow.Kafka.Producers
+namespace Bruteflow.Kafka.Producers.Abstract
 {
-    public class KafkaProducer<TKey, TValue> : IKafkaProducer<TKey, TValue>
+    internal class KafkaProducer<TKey, TValue> : IKafkaProducer<TKey, TValue>
     {
         protected readonly ILogger Logger;
         protected readonly IProducer<TKey, TValue> Producer;
