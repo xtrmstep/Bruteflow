@@ -27,7 +27,7 @@ namespace Bruteflow.Kafka.Producers
         protected override KafkaProducer<TKey, TValue> CreateKafkaProducer(IProducer<TKey, TValue> producer, string kafkaTopic)
         {
             var kafkaProducer = new KafkaProducerWithMetrics<TKey, TValue>(Logger, kafkaTopic, producer, Stats);
-            Stats.Measure().CountInstances(kafkaProducer);
+            Stats.Metric().CountInstances(kafkaProducer);
             return kafkaProducer;
         }
     }

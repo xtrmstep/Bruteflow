@@ -2,44 +2,43 @@
 using System.Text;
 using System.Text.Json;
 using System.Threading;
-using System.Xml;
 using JustEat.StatsD;
 
 namespace Bruteflow.Kafka.Stats
 {
     public static class StatsDExtensions
     {
-        public static Measurement Measure(this IStatsDPublisher stats)
+        public static Metrics Metric(this IStatsDPublisher stats)
         {
-            return new Measurement(stats);
+            return new Metrics(stats);
         }
 
-        public struct Measurement
+        public struct Metrics
         {
             private readonly IStatsDPublisher _stats;
 
-            public Measurement(IStatsDPublisher stats)
+            public Metrics(IStatsDPublisher stats)
             {
                 _stats = stats;
             }
 
-            public Measurement ProduceLatency(Action action)
+            public Metrics ProduceLatency(Action action)
             {
                 _stats.Time(nameof(StatMetrics.Time.ProduceLatency), action);
                 return this;
             }
 
             /// <summary>
-            /// Counter of items which are produced to underlying stream
+            ///     Counter of items which are produced to underlying stream
             /// </summary>
             /// <returns></returns>
-            public Measurement ProduceCountIncrement()
+            public Metrics ProduceCountIncrement()
             {
                 _stats.Increment(nameof(StatMetrics.Throughput.Produced));
                 return this;
             }
 
-            public Measurement CountInstances(object instance)
+            public Metrics CountInstances(object instance)
             {
                 if (instance == null) return this;
                 _stats.Increment($"instance.{GetRealTypeName(instance.GetType())}.counter");
@@ -61,6 +60,7 @@ namespace Bruteflow.Kafka.Stats
                     sb.Append(GetRealTypeName(arg));
                     appendComma = true;
                 }
+
                 return sb.ToString();
             }
 
@@ -70,77 +70,58 @@ namespace Bruteflow.Kafka.Stats
             }
 
             /// <summary>
-            /// Counter of items consumed from outside stream
+            ///     Counter of items consumed from outside stream
             /// </summary>
             /// <remarks>Items which are consumed may be not valid for the pipeline and will be filtered on later stages</remarks>
             /// <returns></returns>
-            public Measurement ConsumeCountIncrement()
+            public Metrics ConsumedIncrement()
             {
                 _stats.Increment(nameof(StatMetrics.Throughput.Consumed));
                 return this;
             }
 
-            public Measurement Payload(in int sentBytes)
+            public Metrics SentBytes(in int sentBytes)
             {
                 _stats.Gauge(sentBytes, nameof(StatMetrics.Volume.SentBytes));
                 return this;
             }
 
-            public Measurement AvailableThreads()
+            public Metrics AvailableThreads()
             {
                 ThreadPool.GetAvailableThreads(out var workerThreads, out _);
                 _stats.Gauge(workerThreads, nameof(StatMetrics.Volume.AvailableThreads));
                 return this;
             }
 
-            public Measurement Payload(JsonElement obj)
+            public Metrics SentBytes(JsonElement obj)
             {
                 var sentBytes = Encoding.UTF8.GetBytes(obj.ToString()).Length;
-                Payload(sentBytes);
+                SentBytes(sentBytes);
                 return this;
             }
 
-            public Measurement PipelineLatency(PipelineMetadata metadata)
+            public Metrics PipelineLatency(PipelineMetadata metadata)
             {
                 var waitTime = DateTime.Now.Subtract(metadata.InputTimestamp);
                 _stats.Timing(waitTime, nameof(StatMetrics.Time.PipelineLatency));
                 return this;
             }
 
-            public Measurement CountWarnings()
+            public Metrics WarningIncrement()
             {
                 _stats.Increment(nameof(StatMetrics.Count.Warning));
                 return this;
             }
 
-            public Measurement CountErrors()
+            public Metrics ErrorsIncrement()
             {
                 _stats.Increment(nameof(StatMetrics.Count.Errors));
                 return this;
             }
 
-            public Measurement CountCrashes()
+            public Metrics FatalErrorIncrement()
             {
                 _stats.Increment(nameof(StatMetrics.Count.FatalError));
-                return this;
-            }
-
-            /// <summary>
-            /// Counter of items which are valid for a pipeline
-            /// </summary>
-            /// <returns></returns>
-            public Measurement AcceptedIncrement()
-            {
-                _stats.Increment(nameof(StatMetrics.Throughput.Accepted));
-                return this;
-            }
-            /// <summary>
-            /// Counter of items which are queued for sending
-            /// </summary>
-            /// <returns></returns>
-            public Measurement SentIncrement()
-            {
-                _stats.Increment(nameof(StatMetrics.Throughput.Sent));
                 return this;
             }
         }

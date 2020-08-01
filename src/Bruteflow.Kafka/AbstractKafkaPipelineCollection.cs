@@ -4,7 +4,7 @@ using Bruteflow;
 
 namespace Bruteflow.Kafka
 {
-    public abstract class KafkaPipelineCollection : IPipelineCollection
+    public abstract class AbstractKafkaPipelineCollection : IPipelineCollection
     {
         private readonly List<IPipeline> _pipelines = new List<IPipeline>();
 

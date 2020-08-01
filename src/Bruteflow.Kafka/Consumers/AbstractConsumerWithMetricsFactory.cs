@@ -21,7 +21,7 @@ namespace Bruteflow.Kafka.Consumers
         {
             var kafkaConsumer = base.CreateConsumer();
 
-            Stats.Measure().CountInstances(kafkaConsumer);
+            Stats.Metric().CountInstances(kafkaConsumer);
 
             return kafkaConsumer;
         }
@@ -31,7 +31,7 @@ namespace Bruteflow.Kafka.Consumers
             var consumer = consumerBuilder.Build();
             var kafkaConsumer = new KafkaConsumerWithMetrics<TKey, TValue>(kafkaTopic, consumer, Stats);
             
-            Stats.Measure().CountInstances(kafkaConsumer);
+            Stats.Metric().CountInstances(kafkaConsumer);
             
             return kafkaConsumer;
         }

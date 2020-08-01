@@ -1,35 +1,33 @@
-﻿#pragma warning disable 649
-
-namespace Bruteflow.Kafka.Stats
+﻿namespace Bruteflow.Kafka.Stats
 {
-    internal class StatMetrics
+    internal struct StatMetrics
     {
-        public class Volume
+        public struct Volume
         {
-            public object SentBytes;
-            public object AvailableThreads;
+            public const object AvailableThreads = null;
+            public const object SentBytes = null;
         }
 
-        public class Throughput
+        public struct Throughput
         {
-            public object Accepted;
-            public object Sent;
-            public object Consumed;
-            public object Produced;
+            public const object Accepted = null;
+            public const object Consumed = null;
+            public const object Produced = null;
+            public const object Sent = null;
         }
 
-        public class Time
+        public struct Time
         {
-            public object PipelineLatency;
-            public object ProduceLatency;
-            public object ConsumeLatency;
+            public const object ConsumeLatency = null;
+            public const object PipelineLatency = null;
+            public const object ProduceLatency = null;
         }
 
-        public class Count
+        public struct Count
         {
-            public object Errors;
-            public object Warning;
-            public object FatalError;
+            public const object Errors = null;
+            public const object FatalError = null;
+            public const object Warning = null;
         }
     }
 }

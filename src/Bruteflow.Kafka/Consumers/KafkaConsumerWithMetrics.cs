@@ -17,8 +17,8 @@ namespace Bruteflow.Kafka.Consumers
 
         public override ConsumeResult<TKey, TValue> Consume(CancellationToken cancellationToken)
         {
-            var consumerResult = Stats.Measure().ConsumeLatency(() => Consumer.Consume(cancellationToken));
-            Stats.Measure().ConsumeCountIncrement();
+            var consumerResult = Stats.Metric().ConsumeLatency(() => Consumer.Consume(cancellationToken));
+            Stats.Metric().ConsumedIncrement();
             return consumerResult;
         }
     }

@@ -9,18 +9,18 @@ using Bruteflow.Kafka.Stats;
 
 namespace Bruteflow.Kafka
 {
-    public abstract class KafkaPipeline<TConsumerKey, TConsumerValue> : IPipeline
+    public abstract class AbstractKafkaPipeline<TConsumerKey, TConsumerValue> : IPipeline
     {
-        private readonly ILogger _logger;
-        private readonly IStatsDPublisher _stats;
+        protected readonly ILogger Logger;
+        protected readonly IStatsDPublisher Stats;
         protected readonly IKafkaConsumer<TConsumerKey, TConsumerValue> Consumer;
         protected readonly HeadBlock<TConsumerValue> Head = new HeadBlock<TConsumerValue>();
 
-        protected KafkaPipeline(IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory,
+        protected AbstractKafkaPipeline(IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory,
             ILogger logger, IStatsDPublisher stats)
         {
-            _logger = logger;
-            _stats = stats;
+            Logger = logger;
+            Stats = stats;
             Consumer = consumerFactory.CreateConsumer();
         }
 
@@ -43,19 +43,10 @@ namespace Bruteflow.Kafka
             }
             catch (Exception err)
             {
-                _stats.Measure().CountCrashes();
-                _logger.LogError(err, err.Message);
+                Stats.Metric().FatalErrorIncrement();
+                Logger.LogError(err, err.Message);
                 throw;
             }
-        }
-
-        protected bool IsNoNullValue(object value)
-        {
-            if (value != null) return true;
-
-            _stats.Measure().CountWarnings();
-
-            return false;
         }
     }
 }

@@ -18,8 +18,8 @@ namespace Bruteflow.Kafka.Producers
 
         protected override void Emit(Message<TKey, TValue> message)
         {
-            _stats.Measure().ProduceLatency(() => Producer.Produce(Topic, message));
-            _stats.Measure().ProduceCountIncrement();
+            _stats.Metric().ProduceLatency(() => Producer.Produce(Topic, message));
+            _stats.Metric().ProduceCountIncrement();
         }
     }
 }
