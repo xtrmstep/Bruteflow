@@ -7,18 +7,18 @@ namespace Bruteflow.Kafka.Consumers
 {
     public class KafkaConsumerWithMetrics<TKey, TValue> : KafkaConsumer<TKey, TValue>
     {
-        private readonly IStatsDPublisher _stats;
+        protected readonly IStatsDPublisher Stats;
 
         public KafkaConsumerWithMetrics(string topic, IConsumer<TKey, TValue> consumer, IStatsDPublisher stats)
             : base(topic, consumer)
         {
-            _stats = stats;
+            Stats = stats;
         }
 
         public override ConsumeResult<TKey, TValue> Consume(CancellationToken cancellationToken)
         {
-            var consumerResult = _stats.Measure().ConsumeLatency(() => Consumer.Consume(cancellationToken));
-            _stats.Measure().ConsumeCountIncrement();
+            var consumerResult = Stats.Measure().ConsumeLatency(() => Consumer.Consume(cancellationToken));
+            Stats.Measure().ConsumeCountIncrement();
             return consumerResult;
         }
     }

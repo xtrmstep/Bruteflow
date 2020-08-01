@@ -8,20 +8,20 @@ namespace Bruteflow.Kafka.Consumers
 {
     public abstract class AbstractConsumerWithMetricsFactory<TKey, TValue> : AbstractConsumerFactory<TKey, TValue>
     {
-        private readonly IStatsDPublisher _stats;
+        protected readonly IStatsDPublisher Stats;
 
         protected AbstractConsumerWithMetricsFactory(ILogger<AbstractConsumerWithMetricsFactory<TKey, TValue>> logger,
-            KafkaConsumerSettings settings, IDeserializer<TValue> deserializer, IStatsDPublisher stats)
-            : base(logger, settings, deserializer)
+            KafkaConsumerSettings settings, IDeserializer<TValue> valueDeserializer, IStatsDPublisher stats)
+            : base(logger, settings, valueDeserializer)
         {
-            _stats = stats;
+            Stats = stats;
         }
 
         public override IKafkaConsumer<TKey, TValue> CreateConsumer()
         {
             var kafkaConsumer = base.CreateConsumer();
 
-            _stats.Measure().CountInstances(kafkaConsumer);
+            Stats.Measure().CountInstances(kafkaConsumer);
 
             return kafkaConsumer;
         }
@@ -29,9 +29,9 @@ namespace Bruteflow.Kafka.Consumers
         protected override KafkaConsumer<TKey, TValue> CreateKafkaConsumer(ConsumerBuilder<TKey, TValue> consumerBuilder, string kafkaTopic)
         {
             var consumer = consumerBuilder.Build();
-            var kafkaConsumer = new KafkaConsumerWithMetrics<TKey, TValue>(kafkaTopic, consumer, _stats);
+            var kafkaConsumer = new KafkaConsumerWithMetrics<TKey, TValue>(kafkaTopic, consumer, Stats);
             
-            _stats.Measure().CountInstances(kafkaConsumer);
+            Stats.Measure().CountInstances(kafkaConsumer);
             
             return kafkaConsumer;
         }

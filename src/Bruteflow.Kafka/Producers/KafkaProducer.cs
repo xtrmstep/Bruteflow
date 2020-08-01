@@ -6,13 +6,13 @@ namespace Bruteflow.Kafka.Producers
 {
     public class KafkaProducer<TKey, TValue> : IKafkaProducer<TKey, TValue>
     {
-        private readonly ILogger _logger;
+        protected readonly ILogger Logger;
         protected readonly IProducer<TKey, TValue> Producer;
         protected readonly string Topic;
 
         protected internal KafkaProducer(ILogger logger, string topic, IProducer<TKey, TValue> producer)
         {
-            _logger = logger;
+            Logger = logger;
             Topic = topic;
             Producer = producer;
         }
@@ -34,7 +34,7 @@ namespace Bruteflow.Kafka.Producers
             }
             catch (Exception err)
             {
-                _logger.LogError(err, err.Message);
+                Logger.LogError(err, err.Message);
             }
         }
 

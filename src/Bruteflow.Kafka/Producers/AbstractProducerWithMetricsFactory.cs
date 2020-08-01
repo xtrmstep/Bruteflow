@@ -8,14 +8,14 @@ namespace Bruteflow.Kafka.Producers
 {
     public abstract class AbstractProducerWithMetricsFactory<TKey, TValue> : AbstractProducerFactory<TKey, TValue>
     {
-        private readonly IStatsDPublisher _stats;
+        protected readonly IStatsDPublisher Stats;
 
         protected AbstractProducerWithMetricsFactory(ILogger<AbstractProducerWithMetricsFactory<TKey, TValue>> logger,
             KafkaProducerSettings settings, ISerializer<TKey> keySerializer, ISerializer<TValue> valueSerializer,
             IStatsDPublisher stats)
             : base(logger, settings, keySerializer, valueSerializer)
         {
-            _stats = stats;
+            Stats = stats;
         }
 
         protected AbstractProducerWithMetricsFactory(ILogger<AbstractProducerWithMetricsFactory<TKey, TValue>> logger,
@@ -26,8 +26,8 @@ namespace Bruteflow.Kafka.Producers
 
         protected override KafkaProducer<TKey, TValue> CreateKafkaProducer(IProducer<TKey, TValue> producer, string kafkaTopic)
         {
-            var kafkaProducer = new KafkaProducerWithMetrics<TKey, TValue>(Logger, kafkaTopic, producer, _stats);
-            _stats.Measure().CountInstances(kafkaProducer);
+            var kafkaProducer = new KafkaProducerWithMetrics<TKey, TValue>(Logger, kafkaTopic, producer, Stats);
+            Stats.Measure().CountInstances(kafkaProducer);
             return kafkaProducer;
         }
     }

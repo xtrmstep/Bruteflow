@@ -7,34 +7,34 @@ namespace Bruteflow.Kafka.Consumers
 {
     public abstract class AbstractConsumerFactory<TKey, TValue> : IConsumerFactory<TKey, TValue>
     {
-        private readonly IDeserializer<TValue> _deserializer;
-        private readonly ILogger<AbstractConsumerFactory<TKey, TValue>> _logger;
-        private readonly KafkaConsumerSettings _settings;
+        protected readonly IDeserializer<TValue> ValueDeserializer;
+        protected readonly ILogger<AbstractConsumerFactory<TKey, TValue>> Logger;
+        protected readonly KafkaConsumerSettings Settings;
 
         protected AbstractConsumerFactory(ILogger<AbstractConsumerFactory<TKey, TValue>> logger,
-            KafkaConsumerSettings settings, IDeserializer<TValue> deserializer)
+            KafkaConsumerSettings settings, IDeserializer<TValue> valueDeserializer)
         {
-            _logger = logger;
-            _settings = settings;
-            _deserializer = deserializer;
+            Logger = logger;
+            Settings = settings;
+            ValueDeserializer = valueDeserializer;
         }
 
         public virtual IKafkaConsumer<TKey, TValue> CreateConsumer()
         {
-            _logger.LogDebug($"Registering consumer {_settings.GroupId}");
-            _logger.LogTrace(JsonSerializer.Serialize(_settings));
+            Logger.LogDebug($"Registering consumer {Settings.GroupId}");
+            Logger.LogTrace(JsonSerializer.Serialize(Settings));
 
-            var config = CreateConsumerConfig(_settings);
+            var config = CreateConsumerConfig(Settings);
             var consumerBuilder = new ConsumerBuilder<TKey, TValue>(config);
             SetValueDeserializer(consumerBuilder);
-            var kafkaConsumer = CreateKafkaConsumer(consumerBuilder, _settings.Topic);
+            var kafkaConsumer = CreateKafkaConsumer(consumerBuilder, Settings.Topic);
 
             return kafkaConsumer;
         }
 
         protected virtual void SetValueDeserializer(ConsumerBuilder<TKey, TValue> consumerBuilder)
         {
-            consumerBuilder.SetValueDeserializer(_deserializer);
+            consumerBuilder.SetValueDeserializer(ValueDeserializer);
         }
 
         protected virtual KafkaConsumer<TKey, TValue> CreateKafkaConsumer(ConsumerBuilder<TKey, TValue> consumerBuilder, string kafkaTopic)
