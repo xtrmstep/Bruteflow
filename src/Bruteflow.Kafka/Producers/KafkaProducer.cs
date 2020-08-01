@@ -1,7 +1,5 @@
 ﻿using System;
-using Bruteflow.Kafka.Stats;
 using Confluent.Kafka;
-using JustEat.StatsD;
 using Microsoft.Extensions.Logging;
 
 namespace Bruteflow.Kafka.Producers
@@ -9,21 +7,19 @@ namespace Bruteflow.Kafka.Producers
     public class KafkaProducer<TKey, TValue> : IKafkaProducer<TKey, TValue>
     {
         private readonly ILogger _logger;
-        private readonly IProducer<TKey, TValue> _producer;
-        private readonly IStatsDPublisher _stats;
-        private readonly string _topic;
+        protected readonly IProducer<TKey, TValue> Producer;
+        protected readonly string Topic;
 
-        protected internal KafkaProducer(ILogger logger, string topic, IProducer<TKey, TValue> producer, IStatsDPublisher stats)
+        protected internal KafkaProducer(ILogger logger, string topic, IProducer<TKey, TValue> producer)
         {
             _logger = logger;
-            _topic = topic;
-            _producer = producer;
-            _stats = stats;
+            Topic = topic;
+            Producer = producer;
         }
 
         public void Dispose()
         {
-            _producer?.Dispose();
+            Producer?.Dispose();
         }
 
         public void Produce(TKey key, TValue value)
@@ -34,13 +30,17 @@ namespace Bruteflow.Kafka.Producers
                 if (key != null)
                     message.Key = key;
 
-                _stats.Measure().ProduceLatency(() => _producer.Produce(_topic, message));
-                _stats.Measure().ProduceCountIncrement();
+                Emit(message);
             }
             catch (Exception err)
             {
                 _logger.LogError(err, err.Message);
             }
+        }
+
+        protected virtual void Emit(Message<TKey, TValue> message)
+        {
+            Producer.Produce(Topic, message);
         }
     }
 }
