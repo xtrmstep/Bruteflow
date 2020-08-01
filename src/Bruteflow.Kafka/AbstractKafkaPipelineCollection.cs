@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using Bruteflow;
 
 namespace Bruteflow.Kafka
 {

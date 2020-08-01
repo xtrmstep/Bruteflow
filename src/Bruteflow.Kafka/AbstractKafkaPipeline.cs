@@ -1,26 +1,22 @@
 ﻿using System;
 using System.Threading;
-using Bruteflow;
 using Bruteflow.Blocks;
-using JustEat.StatsD;
-using Microsoft.Extensions.Logging;
 using Bruteflow.Kafka.Consumers;
-using Bruteflow.Kafka.Stats;
+using Confluent.Kafka;
+using Microsoft.Extensions.Logging;
 
 namespace Bruteflow.Kafka
 {
     public abstract class AbstractKafkaPipeline<TConsumerKey, TConsumerValue> : IPipeline
     {
-        protected readonly ILogger Logger;
-        protected readonly IStatsDPublisher Stats;
         protected readonly IKafkaConsumer<TConsumerKey, TConsumerValue> Consumer;
         protected readonly HeadBlock<TConsumerValue> Head = new HeadBlock<TConsumerValue>();
+        protected readonly ILogger Logger;
 
-        protected AbstractKafkaPipeline(IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory,
-            ILogger logger, IStatsDPublisher stats)
+        protected AbstractKafkaPipeline(ILogger<AbstractKafkaPipeline<TConsumerKey, TConsumerValue>> logger,
+            IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory)
         {
             Logger = logger;
-            Stats = stats;
             Consumer = consumerFactory.CreateConsumer();
         }
 
@@ -38,15 +34,19 @@ namespace Bruteflow.Kafka
 
                     if (consumerResult.IsPartitionEOF) continue;
 
-                    Head.Push(message.Value, pipelineMetadata);
+                    PushToFlow(message, pipelineMetadata);
                 }
             }
             catch (Exception err)
             {
-                Stats.Metric().FatalErrorIncrement();
                 Logger.LogError(err, err.Message);
                 throw;
             }
+        }
+
+        protected virtual void PushToFlow(Message<TConsumerKey, TConsumerValue> message, PipelineMetadata pipelineMetadata)
+        {
+            Head.Push(message.Value, pipelineMetadata);
         }
     }
 }
