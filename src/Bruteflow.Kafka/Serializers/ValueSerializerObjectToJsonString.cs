@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using System.Text.Json;
 using Confluent.Kafka;
+using Newtonsoft.Json;
 
 namespace Bruteflow.Kafka.Serializers
 {
@@ -8,8 +8,9 @@ namespace Bruteflow.Kafka.Serializers
     {
         public byte[] Serialize(T data, SerializationContext context)
         {
-            var json = JsonSerializer.Serialize(data);
+            var json = JsonConvert.SerializeObject(data);
             return Encoding.UTF8.GetBytes(json);
+
         }
     }
 }

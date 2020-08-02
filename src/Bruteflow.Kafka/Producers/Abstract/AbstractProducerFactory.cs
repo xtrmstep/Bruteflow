@@ -1,7 +1,7 @@
-﻿using System.Text.Json;
-using Bruteflow.Kafka.Settings;
+﻿using Bruteflow.Kafka.Settings;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Bruteflow.Kafka.Producers.Abstract
 {
@@ -33,7 +33,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
         public IKafkaProducer<TKey, TValue> CreateProducer()
         {
             Logger.LogDebug($"Registering producer for topic '{Settings.Topic}'");
-            Logger.LogTrace(JsonSerializer.Serialize(Settings));
+            Logger.LogTrace(JsonConvert.SerializeObject(Settings));
 
             if (_producerRegistrations == null) return _producerRegistrations;
             lock (_lockObject)

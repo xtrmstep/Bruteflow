@@ -1,7 +1,7 @@
-﻿using System.Text.Json;
-using Bruteflow.Kafka.Settings;
+﻿using Bruteflow.Kafka.Settings;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Bruteflow.Kafka.Consumers.Abstract
 {
@@ -22,7 +22,7 @@ namespace Bruteflow.Kafka.Consumers.Abstract
         public virtual IKafkaConsumer<TKey, TValue> CreateConsumer()
         {
             Logger.LogDebug($"Registering consumer {Settings.GroupId}");
-            Logger.LogTrace(JsonSerializer.Serialize(Settings));
+            Logger.LogTrace(JsonConvert.SerializeObject(Settings));
 
             var config = CreateConsumerConfig(Settings);
             var consumerBuilder = new ConsumerBuilder<TKey, TValue>(config);

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Bruteflow.Kafka.Stats
 {
@@ -113,9 +114,9 @@ namespace Bruteflow.Kafka.Stats
                 return this;
             }
 
-            public Metrics SentBytes(JsonElement obj)
+            public Metrics SentBytes(JObject obj)
             {
-                var sentBytes = Encoding.UTF8.GetBytes(obj.ToString()).Length;
+                var sentBytes = Encoding.UTF8.GetBytes(obj.ToString(Formatting.None)).Length;
                 SentBytes(sentBytes);
                 return this;
             }
