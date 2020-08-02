@@ -1,0 +1,31 @@
+name: Publish Bruteflow.Kafka NuGet Package
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Install dependencies
+      run: dotnet restore "src"
+    - name: Build
+      run: dotnet build "src" --configuration Release --no-restore
+    - name: Test
+      run: dotnet test "src" --no-restore --verbosity normal
+    - name: Pack
+      run: dotnet pack "src" --configuration Release
+    - name: Publish
+      run: |
+        dotnet nuget add source https://nuget.pkg.github.com/xtrmstep/index.json -n github -u xtrmstep -p ${{secrets.NUGET_SERVER_TOKEN}}
+        dotnet nuget push "src/Bruteflow.Kafka/bin/Release/Bruteflow.Kafka.1.0.0.nupkg" --source "github" --skip-duplicate --no-symbols true
