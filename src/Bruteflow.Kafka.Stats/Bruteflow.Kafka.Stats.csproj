@@ -14,13 +14,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Bruteflow.Kafka" Version="1.1.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.4" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.4" />
         <PackageReference Include="JustEat.StatsD" Version="4.1.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Bruteflow.Kafka\Bruteflow.Kafka.csproj" />
     </ItemGroup>
 
 </Project>
