@@ -5,11 +5,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Bruteflow.Kafka.Producers.Abstract
 {
-    public abstract class AbstractProducerWithMetricsFactory<TKey, TValue> : AbstractProducerFactory<TKey, TValue>
+    public class AbstractProducerWithMetricsFactory<TKey, TValue> : AbstractProducerFactory<TKey, TValue>
     {
         protected readonly IMetricsPublisher Stats;
 
-        protected AbstractProducerWithMetricsFactory(ILogger<AbstractProducerWithMetricsFactory<TKey, TValue>> logger,
+        public AbstractProducerWithMetricsFactory(ILogger<AbstractProducerWithMetricsFactory<TKey, TValue>> logger,
             KafkaProducerSettings settings, ISerializer<TKey> keySerializer, ISerializer<TValue> valueSerializer,
             IMetricsPublisher stats)
             : base(logger, settings, keySerializer, valueSerializer)
@@ -17,7 +17,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
             Stats = stats;
         }
 
-        protected AbstractProducerWithMetricsFactory(ILogger<AbstractProducerWithMetricsFactory<TKey, TValue>> logger,
+        public AbstractProducerWithMetricsFactory(ILogger<AbstractProducerWithMetricsFactory<TKey, TValue>> logger,
             KafkaProducerSettings settings, ISerializer<TValue> valueSerializer, IMetricsPublisher stats)
             : this(logger, settings, null, valueSerializer, stats)
         {

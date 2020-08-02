@@ -5,13 +5,13 @@ using Newtonsoft.Json;
 
 namespace Bruteflow.Kafka.Consumers.Abstract
 {
-    public abstract class AbstractConsumerFactory<TKey, TValue> : IConsumerFactory<TKey, TValue>
+    public class AbstractConsumerFactory<TKey, TValue> : IConsumerFactory<TKey, TValue>
     {
         protected readonly ILogger<AbstractConsumerFactory<TKey, TValue>> Logger;
         protected readonly KafkaConsumerSettings Settings;
         protected readonly IDeserializer<TValue> ValueDeserializer;
 
-        protected AbstractConsumerFactory(ILogger<AbstractConsumerFactory<TKey, TValue>> logger,
+        public AbstractConsumerFactory(ILogger<AbstractConsumerFactory<TKey, TValue>> logger,
             KafkaConsumerSettings settings, IDeserializer<TValue> valueDeserializer)
         {
             Logger = logger;

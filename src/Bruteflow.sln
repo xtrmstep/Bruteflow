@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Kafka", "Bruteflo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Kafka.Stats", "Bruteflow.Kafka.Stats\Bruteflow.Kafka.Stats.csproj", "{56B2C80F-3B2B-4E1F-9E4A-0B8746C82F51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Kafka.Tests", "Bruteflow.Kafka.Tests\Bruteflow.Kafka.Tests.csproj", "{11D5C78C-E6B6-4E80-998D-E7605A343A90}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A148939C-C18E-4D2A-867F-29F624B3BE9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{56B2C80F-3B2B-4E1F-9E4A-0B8746C82F51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56B2C80F-3B2B-4E1F-9E4A-0B8746C82F51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56B2C80F-3B2B-4E1F-9E4A-0B8746C82F51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11D5C78C-E6B6-4E80-998D-E7605A343A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11D5C78C-E6B6-4E80-998D-E7605A343A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11D5C78C-E6B6-4E80-998D-E7605A343A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11D5C78C-E6B6-4E80-998D-E7605A343A90}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{11D5C78C-E6B6-4E80-998D-E7605A343A90} = {A148939C-C18E-4D2A-867F-29F624B3BE9A}
+		{FDB86D39-193E-4BEA-86EC-06AA968292E8} = {A148939C-C18E-4D2A-867F-29F624B3BE9A}
 	EndGlobalSection
 EndGlobal
