@@ -1,12 +1,11 @@
 ﻿using System;
 using Bruteflow.Kafka.Settings;
-using FluentAssertions;
 
-namespace Bruteflow.Kafka.Tests.Pipeline
+namespace Bruteflow.Kafka.Tests.Pipeline.Consumers
 {
-    class TestKafkaConsumerSettings : KafkaConsumerSettings
+    public class KafkaConsumerIncomingEventsSettings : KafkaConsumerSettings
     {
-        public TestKafkaConsumerSettings()
+        public KafkaConsumerIncomingEventsSettings()
         {
             Brokers.Add("localhost:9092");
             Topic = "bruteflow-incoming-events";

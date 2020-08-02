@@ -5,11 +5,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Bruteflow.Kafka.Consumers.Abstract
 {
-    public class AbstractConsumerWithMetricsFactory<TKey, TValue> : AbstractConsumerFactory<TKey, TValue>
+    public abstract class AbstractConsumerWithMetricsFactory<TKey, TValue> : AbstractConsumerFactory<TKey, TValue>
     {
         protected readonly IMetricsPublisher Stats;
 
-        public AbstractConsumerWithMetricsFactory(ILogger<AbstractConsumerWithMetricsFactory<TKey, TValue>> logger,
+        protected AbstractConsumerWithMetricsFactory(ILogger<AbstractConsumerWithMetricsFactory<TKey, TValue>> logger,
             KafkaConsumerSettings settings, IDeserializer<TValue> valueDeserializer, IMetricsPublisher stats)
             : base(logger, settings, valueDeserializer)
         {

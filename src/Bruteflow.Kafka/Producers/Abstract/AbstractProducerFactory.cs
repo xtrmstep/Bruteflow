@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Bruteflow.Kafka.Producers.Abstract
 {
-    public class AbstractProducerFactory<TKey, TValue> : IProducerFactory<TKey, TValue>
+    public abstract class AbstractProducerFactory<TKey, TValue> : IProducerFactory<TKey, TValue>
     {
         private static readonly object _lockObject = new object();
         private static volatile IKafkaProducer<TKey, TValue> _producerRegistrations;
@@ -15,7 +15,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
         protected readonly KafkaProducerSettings Settings;
         protected readonly ISerializer<TValue> ValueSerializer;
 
-        public AbstractProducerFactory(ILogger<AbstractProducerFactory<TKey, TValue>> logger,
+        protected AbstractProducerFactory(ILogger<AbstractProducerFactory<TKey, TValue>> logger,
             KafkaProducerSettings settings, ISerializer<TKey> keySerializer, ISerializer<TValue> valueSerializer)
         {
             Logger = logger;
@@ -24,7 +24,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
             ValueSerializer = valueSerializer;
         }
 
-        public AbstractProducerFactory(ILogger<AbstractProducerFactory<TKey, TValue>> logger,
+        protected AbstractProducerFactory(ILogger<AbstractProducerFactory<TKey, TValue>> logger,
             KafkaProducerSettings settings, ISerializer<TValue> valueSerializer)
             : this(logger, settings, null, valueSerializer)
         {
