@@ -1,16 +1,15 @@
 ﻿using Bruteflow.Kafka.Stats;
 using Confluent.Kafka;
-using JustEat.StatsD;
 using Microsoft.Extensions.Logging;
 
 namespace Bruteflow.Kafka.Producers.Abstract
 {
     internal class KafkaProducerWithMetrics<TKey, TValue> : KafkaProducer<TKey, TValue>
     {
-        private readonly IStatsDPublisher _stats;
+        private readonly IMetricsPublisher _stats;
 
         protected internal KafkaProducerWithMetrics(ILogger logger, string topic, IProducer<TKey, TValue> producer,
-            IStatsDPublisher stats)
+            IMetricsPublisher stats)
             : base(logger, topic, producer)
         {
             _stats = stats;

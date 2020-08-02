@@ -1,10 +1,8 @@
-﻿using JustEat.StatsD;
-
-namespace Bruteflow.Kafka.Stats
+﻿namespace Bruteflow.Kafka.Stats
 {
-    public class SilentStatsDPublisher : IStatsDPublisher
+    public class SilentStatsDPublisher : IMetricsPublisher
     {
-        public void Increment(long value, double sampleRate, string bucket)
+        public void Increment(long value, string bucket)
         {
             // do nothing
         }
@@ -14,7 +12,7 @@ namespace Bruteflow.Kafka.Stats
             // do nothing
         }
 
-        public void Timing(long duration, double sampleRate, string bucket)
+        public void Timing(long duration, string bucket)
         {
             // do nothing
         }

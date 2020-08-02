@@ -1,17 +1,16 @@
 ﻿using Bruteflow.Kafka.Settings;
 using Bruteflow.Kafka.Stats;
 using Confluent.Kafka;
-using JustEat.StatsD;
 using Microsoft.Extensions.Logging;
 
 namespace Bruteflow.Kafka.Consumers.Abstract
 {
     public abstract class AbstractConsumerWithMetricsFactory<TKey, TValue> : AbstractConsumerFactory<TKey, TValue>
     {
-        protected readonly IStatsDPublisher Stats;
+        protected readonly IMetricsPublisher Stats;
 
         protected AbstractConsumerWithMetricsFactory(ILogger<AbstractConsumerWithMetricsFactory<TKey, TValue>> logger,
-            KafkaConsumerSettings settings, IDeserializer<TValue> valueDeserializer, IStatsDPublisher stats)
+            KafkaConsumerSettings settings, IDeserializer<TValue> valueDeserializer, IMetricsPublisher stats)
             : base(logger, settings, valueDeserializer)
         {
             Stats = stats;

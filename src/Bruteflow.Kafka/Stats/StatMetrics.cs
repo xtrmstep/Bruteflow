@@ -10,10 +10,8 @@
 
         public struct Throughput
         {
-            public const object Accepted = null;
             public const object Consumed = null;
             public const object Produced = null;
-            public const object Sent = null;
         }
 
         public struct Time

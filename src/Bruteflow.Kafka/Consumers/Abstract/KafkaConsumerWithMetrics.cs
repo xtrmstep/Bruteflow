@@ -1,15 +1,14 @@
 ﻿using System.Threading;
 using Bruteflow.Kafka.Stats;
 using Confluent.Kafka;
-using JustEat.StatsD;
 
 namespace Bruteflow.Kafka.Consumers.Abstract
 {
     internal class KafkaConsumerWithMetrics<TKey, TValue> : KafkaConsumer<TKey, TValue>
     {
-        protected readonly IStatsDPublisher Stats;
+        protected readonly IMetricsPublisher Stats;
 
-        public KafkaConsumerWithMetrics(string topic, IConsumer<TKey, TValue> consumer, IStatsDPublisher stats)
+        public KafkaConsumerWithMetrics(string topic, IConsumer<TKey, TValue> consumer, IMetricsPublisher stats)
             : base(topic, consumer)
         {
             Stats = stats;

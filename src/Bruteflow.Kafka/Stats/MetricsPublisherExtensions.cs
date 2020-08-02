@@ -1,30 +1,31 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
-using JustEat.StatsD;
 
 namespace Bruteflow.Kafka.Stats
 {
-    public static class StatsDExtensions
+    public static class MetricsPublisherExtensions
     {
-        public static Metrics Metric(this IStatsDPublisher stats)
+        public static Metrics Metric(this IMetricsPublisher stats)
         {
             return new Metrics(stats);
         }
 
         public struct Metrics
         {
-            private readonly IStatsDPublisher _stats;
+            private readonly IMetricsPublisher _stats;
 
-            public Metrics(IStatsDPublisher stats)
+            public Metrics(IMetricsPublisher stats)
             {
                 _stats = stats;
             }
 
             public Metrics ProduceLatency(Action action)
             {
-                _stats.Time(nameof(StatMetrics.Time.ProduceLatency), action);
+                var elapsed = TimeCounter(action);
+                _stats.Timing((long)elapsed.TotalMilliseconds, nameof(StatMetrics.Time.ProduceLatency));
                 return this;
             }
 
@@ -34,14 +35,14 @@ namespace Bruteflow.Kafka.Stats
             /// <returns></returns>
             public Metrics ProduceCountIncrement()
             {
-                _stats.Increment(nameof(StatMetrics.Throughput.Produced));
+                _stats.Increment(1, nameof(StatMetrics.Throughput.Produced));
                 return this;
             }
 
             public Metrics CountInstances(object instance)
             {
                 if (instance == null) return this;
-                _stats.Increment($"instance.{GetRealTypeName(instance.GetType())}.counter");
+                _stats.Increment(1, $"instance.{GetRealTypeName(instance.GetType())}.counter");
                 return this;
             }
 
@@ -66,7 +67,26 @@ namespace Bruteflow.Kafka.Stats
 
             public T ConsumeLatency<T>(Func<T> func)
             {
-                return _stats.Time(nameof(StatMetrics.Time.ConsumeLatency), func);
+                var result = TimeCounter(func, out var elapsed);
+                _stats.Timing((long)elapsed.TotalMilliseconds, nameof(StatMetrics.Time.ConsumeLatency));
+                return result;
+            }
+
+            private static T TimeCounter<T>(Func<T> func, out TimeSpan elapsed)
+            {
+                var sw = Stopwatch.StartNew();
+                var result = func();
+                sw.Stop();
+                elapsed = sw.Elapsed;
+                return result;
+            }
+            
+            private static TimeSpan TimeCounter(Action action)
+            {
+                var sw = Stopwatch.StartNew();
+                action();
+                sw.Stop();
+                return sw.Elapsed;
             }
 
             /// <summary>
@@ -76,7 +96,7 @@ namespace Bruteflow.Kafka.Stats
             /// <returns></returns>
             public Metrics ConsumedIncrement()
             {
-                _stats.Increment(nameof(StatMetrics.Throughput.Consumed));
+                _stats.Increment(1, nameof(StatMetrics.Throughput.Consumed));
                 return this;
             }
 
@@ -102,26 +122,26 @@ namespace Bruteflow.Kafka.Stats
 
             public Metrics PipelineLatency(PipelineMetadata metadata)
             {
-                var waitTime = DateTime.Now.Subtract(metadata.InputTimestamp);
-                _stats.Timing(waitTime, nameof(StatMetrics.Time.PipelineLatency));
+                var latency = DateTime.Now.Subtract(metadata.InputTimestamp);
+                _stats.Timing((long)latency.TotalMilliseconds, nameof(StatMetrics.Time.PipelineLatency));
                 return this;
             }
 
             public Metrics WarningIncrement()
             {
-                _stats.Increment(nameof(StatMetrics.Count.Warning));
+                _stats.Increment(1, nameof(StatMetrics.Count.Warning));
                 return this;
             }
 
             public Metrics ErrorsIncrement()
             {
-                _stats.Increment(nameof(StatMetrics.Count.Errors));
+                _stats.Increment(1, nameof(StatMetrics.Count.Errors));
                 return this;
             }
 
             public Metrics FatalErrorIncrement()
             {
-                _stats.Increment(nameof(StatMetrics.Count.FatalError));
+                _stats.Increment(1, nameof(StatMetrics.Count.FatalError));
                 return this;
             }
         }
