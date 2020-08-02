@@ -26,8 +26,14 @@ namespace Bruteflow.Kafka
             do
             {
                 if (cancellationToken.IsCancellationRequested) return false;
-
-                consumerResult = Consumer.Consume(cancellationToken);
+                try
+                {
+                    consumerResult = Consumer.Consume(cancellationToken);
+                }
+                catch (OperationCanceledException err)
+                {
+                    return false;
+                }
             } while (consumerResult.IsPartitionEOF);
 
             entity = consumerResult.Message.Value;

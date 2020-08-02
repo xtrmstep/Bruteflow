@@ -53,24 +53,12 @@ namespace Bruteflow.Kafka.Tests
             });            
             var serviceProvider = services.BuildServiceProvider();
 
-            // configure tests infrastructure
-            var cts = new CancellationTokenSource();
-            // start producing of test events, in the end the cancellation token should be requested for cancellation
-            var produceTestEventsTask = BeginProduceTestEvents(serviceProvider, 100);
+            // produce test events
+            ProduceTestEvents(serviceProvider, 100);
 
             // start pipeline to listen events
-            var pipelineExecuteTask = Task.Run(() =>
-            {
-                var pipeline = serviceProvider.GetService<TestKafkaPipeline>();
-                pipeline.Execute(cts.Token);
-            }, new CancellationTokenSource().Token);
-            
-            // sleep current thread and wait while others do their job
-            Task.Delay(1000, cts.Token);
-            //cts.Cancel();
-
-            // wait tests producer to finish its work
-            Task.WaitAll(produceTestEventsTask, pipelineExecuteTask);
+            var pipeline = serviceProvider.GetService<TestKafkaPipeline>();
+            pipeline.Execute(new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
 
             // verify that all messages consumed and produced
             var testEvent = ConsumeTestEvents(serviceProvider);
@@ -92,17 +80,13 @@ namespace Bruteflow.Kafka.Tests
             return testEvent;
         }
 
-        private static Task BeginProduceTestEvents(ServiceProvider serviceProvider, int numberOfEvents)
+        private static void ProduceTestEvents(ServiceProvider serviceProvider, int numberOfEvents)
         {
             var producer = serviceProvider.GetService<ProducerIncomingEventsFactory>().CreateProducer();
-            var task = Task.Run(() =>
+            for (var i = 0; i < numberOfEvents; i++)
             {
-                for (var i = 0; i < numberOfEvents; i++)
-                {
-                    producer.Produce(i.ToString(), JObject.FromObject(new TestEvent {Value = i}));
-                }
-            }, new CancellationTokenSource().Token);
-            return task;
+                producer.Produce(i.ToString(), JObject.FromObject(new TestEvent {Value = i}));
+            }
         }
     }
 }
