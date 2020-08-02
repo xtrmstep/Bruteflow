@@ -6,10 +6,9 @@ namespace Bruteflow.Kafka
 {
     public static class BruteflowKafkaServiceCollectionExtension
     {
-        public static void AddBruteflowKafkaPipelines<T>(this IServiceCollection services, Action<IServiceCollection> register = null)
+        public static void AddBruteflowKafkaPipelines<T>(this IServiceCollection services)
         {
             services.AddSingleton<IMetricsPublisher, SilentStatsDPublisher>();
-            register?.Invoke(services);
         }
     }
 }

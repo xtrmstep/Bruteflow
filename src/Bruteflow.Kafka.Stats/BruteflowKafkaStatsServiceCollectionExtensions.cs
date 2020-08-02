@@ -1,15 +1,17 @@
-﻿using JustEat.StatsD;
+﻿using System;
+using JustEat.StatsD;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Bruteflow.Kafka.Stats
 {
-    public static class RegisterStats
+    public static class BruteflowKafkaStatsServiceCollectionExtensions
     {
         public static void ConfigureStatsForPipelines<T>(this IServiceCollection services, IConfigurationRoot configuration,
             string pipeline)
         {
+            services.AddSingleton<IMetricsPublisher, BruteflowStatsDPublisher>();
             services.AddStatsD(
                 provider =>
                 {
