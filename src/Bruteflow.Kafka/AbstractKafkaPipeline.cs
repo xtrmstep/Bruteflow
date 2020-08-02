@@ -19,9 +19,10 @@ namespace Bruteflow.Kafka
             Consumer = consumerFactory.CreateConsumer();
         }
 
-        protected override bool ReadNextEntity(CancellationToken cancellationToken, out TConsumerValue entity)
+        protected override bool ReadNextEntity(CancellationToken cancellationToken, out TConsumerValue entity, out PipelineMetadata metadata)
         {
             entity = default;
+            metadata = default;
             ConsumeResult<TConsumerKey, TConsumerValue> consumerResult;
             do
             {
@@ -29,6 +30,7 @@ namespace Bruteflow.Kafka
                 try
                 {
                     consumerResult = Consumer.Consume(cancellationToken);
+                    metadata = new PipelineMetadata {Metadata = consumerResult.Message, InputTimestamp = DateTime.Now};
                 }
                 catch (OperationCanceledException err)
                 {
