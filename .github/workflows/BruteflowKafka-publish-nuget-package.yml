@@ -18,13 +18,13 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Install dependencies
-      run: dotnet restore "src"
+      run: dotnet restore "src/Bruteflow.Kafka"
     - name: Build
-      run: dotnet build "src" --configuration Release --no-restore
+      run: dotnet build "src/Bruteflow.Kafka" --configuration Release --no-restore
     - name: Test
-      run: dotnet test "src" --no-restore --verbosity normal
+      run: dotnet test "src/Bruteflow.Kafka" --no-restore --verbosity normal
     - name: Pack
-      run: dotnet pack "src" --configuration Release
+      run: dotnet pack "src/Bruteflow.Kafka" --configuration Release
     - name: Publish
       run: |
         dotnet nuget add source https://nuget.pkg.github.com/xtrmstep/index.json -n github -u xtrmstep -p ${{secrets.NUGET_SERVER_TOKEN}}

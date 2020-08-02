@@ -1,4 +1,4 @@
-name: Publish Bruteflow NuGet Package
+name: Publish Bruteflow.Kafka NuGet Package
 
 on:
   push:
@@ -18,14 +18,14 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Install dependencies
-      run: dotnet restore "src/Bruteflow"
+      run: dotnet restore "src/Bruteflow.Kafka.Stats"
     - name: Build
-      run: dotnet build "src/Bruteflow" --configuration Release --no-restore
+      run: dotnet build "src/Bruteflow.Kafka.Stats" --configuration Release --no-restore
     - name: Test
-      run: dotnet test "src/Bruteflow" --no-restore --verbosity normal
+      run: dotnet test "src/Bruteflow.Kafka.Stats" --no-restore --verbosity normal
     - name: Pack
-      run: dotnet pack "src/Bruteflow" --configuration Release
+      run: dotnet pack "src/Bruteflow.Kafka.Stats" --configuration Release
     - name: Publish
       run: |
         dotnet nuget add source https://nuget.pkg.github.com/xtrmstep/index.json -n github -u xtrmstep -p ${{secrets.NUGET_SERVER_TOKEN}}
-        dotnet nuget push "src/Bruteflow/bin/Release/Bruteflow.1.1.0.nupkg" --source "github" --skip-duplicate --no-symbols true
+        dotnet nuget push "src/Bruteflow.Kafka.Stats/bin/Release/Bruteflow.Kafka.Stats.1.0.0.nupkg" --source "github" --skip-duplicate --no-symbols true
