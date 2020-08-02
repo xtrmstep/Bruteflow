@@ -13,6 +13,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -38,14 +39,21 @@ namespace Bruteflow.Kafka.Tests
             // configure tests infrastructure
             var cts = new CancellationTokenSource();
             // start producing of test events, in the end the cancellation token should be requested for cancellation
-            var task = BeginProduceTestEvents(cts, 100);
+            var produceTestEventsTask = BeginProduceTestEvents(100);
 
             // start pipeline to listen events
-            var pipeline = serviceProvider.GetService<TestKafkaPipeline>();
-            pipeline.Execute(cts.Token);
+            var pipelineExecuteTask = Task.Run(() =>
+            {
+                var pipeline = serviceProvider.GetService<TestKafkaPipeline>();
+                pipeline.Execute(cts.Token);
+            }, new CancellationTokenSource().Token);
+            
+            // sleep current thread and wait while others do their job
+            Task.Delay(1000, cts.Token);
+            cts.Cancel();
 
             // wait tests producer to finish its work
-            task.Wait(cts.Token);
+            Task.WaitAll(produceTestEventsTask, pipelineExecuteTask);
 
             // verify that all messages consumed and produced
             var testEvent = ConsumeTestEvents();
@@ -62,7 +70,8 @@ namespace Bruteflow.Kafka.Tests
                     {
                         Brokers = {"localhost:9092"},
                         Topic = "bruteflow-events-after-pipeline",
-                        GroupId = $"bruteflow-{dateTime:yyyyMMdd}-{dateTime:HH:mm:ss}"
+                        GroupId = $"bruteflow-{dateTime:yyyyMMdd}-{dateTime:HH:mm:ss}",
+                        TestMode = true // force to read the topic from the very beginning 
                     },
                     new ValueDeserializerToJObject()
                 )
@@ -78,7 +87,7 @@ namespace Bruteflow.Kafka.Tests
             return testEvent;
         }
 
-        private static Task BeginProduceTestEvents(CancellationTokenSource cts, int numberOfEvents)
+        private static Task BeginProduceTestEvents(int numberOfEvents)
         {
             var producer = new AbstractProducerFactory<string, JObject>(
                     Mock.Of<ILogger<AbstractProducerFactory<string, JObject>>>(),
@@ -94,11 +103,9 @@ namespace Bruteflow.Kafka.Tests
             {
                 for (var i = 0; i < numberOfEvents; i++)
                 {
-                    producer.Produce(i.ToString(), new JObject(new {value = i}));
+                    producer.Produce(i.ToString(), JObject.FromObject(new TestEvent {Value = i}));
                 }
-
-                cts.Cancel();
-            }, cts.Token);
+            }, new CancellationTokenSource().Token);
             return task;
         }
     }
