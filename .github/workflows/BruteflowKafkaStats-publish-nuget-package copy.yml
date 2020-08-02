@@ -1,4 +1,4 @@
-name: Publish Bruteflow.Kafka NuGet Package
+name: Publish Bruteflow.Kafka.Stats NuGet Package
 
 on:
   push:
