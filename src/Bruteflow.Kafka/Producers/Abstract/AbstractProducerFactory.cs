@@ -7,8 +7,8 @@ namespace Bruteflow.Kafka.Producers.Abstract
 {
     public abstract class AbstractProducerFactory<TKey, TValue> : IProducerFactory<TKey, TValue>
     {
-        private static readonly object _lockObject = new object();
-        private static volatile IKafkaProducer<TKey, TValue> _producerRegistrations;
+        private readonly object _lockObject = new object();
+        private IKafkaProducer<TKey, TValue> _producerRegistrations;
 
         protected readonly ISerializer<TKey> KeySerializer;
         protected readonly ILogger<AbstractProducerFactory<TKey, TValue>> Logger;
