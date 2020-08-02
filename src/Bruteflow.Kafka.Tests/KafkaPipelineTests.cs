@@ -58,7 +58,7 @@ namespace Bruteflow.Kafka.Tests
 
             // start pipeline to listen events
             var pipeline = serviceProvider.GetService<TestKafkaPipeline>();
-            pipeline.Execute(new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
+            pipeline.Execute(new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token); // 5 seconds is minimum time to wait while events fully processed
 
             // verify that all messages consumed and produced
             var testEvent = ConsumeTestEvents(serviceProvider);
