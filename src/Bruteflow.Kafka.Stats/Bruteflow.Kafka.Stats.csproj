@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Bruteflow.Kafka.Stats</Title>
+        <Authors>Alexander Goida</Authors>
+        <Copyright>Alexander Goida</Copyright>
+        <PackageProjectUrl>https://github.com/xtrmstep/Bruteflow</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/xtrmstep/Bruteflow/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/xtrmstep/Bruteflow</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.4" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.4" />
+        <PackageReference Include="JustEat.StatsD" Version="4.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Bruteflow.Kafka\Bruteflow.Kafka.csproj" />
+    </ItemGroup>
+
+</Project>

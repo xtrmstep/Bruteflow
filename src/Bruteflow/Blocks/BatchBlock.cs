@@ -2,7 +2,11 @@
 
 namespace Bruteflow.Blocks
 {
-    public class BatchBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity[]>
+    /// <summary>
+    ///     Block which keeps a number of entities (size of batch) before pushing them to the following block
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    public sealed class BatchBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity[]>
     {
         private readonly List<TEntity> _batch = new List<TEntity>();
         private readonly int _batchSize;
@@ -10,7 +14,7 @@ namespace Bruteflow.Blocks
         private PipelineMetadata _latestMetadata;
         private IReceiverBlock<TEntity[]> _next;
 
-        protected internal BatchBlock(int batchSize)
+        internal BatchBlock(int batchSize)
         {
             _batchSize = batchSize;
         }

@@ -2,11 +2,15 @@
 
 namespace Bruteflow.Blocks
 {
-    public class ActionBlock<TInput> : IReceiverBlock<TInput>
+    /// <summary>
+    ///     Ending block of the chained flow pipeline
+    /// </summary>
+    /// <typeparam name="TInput">Data type which the block receives</typeparam>
+    public sealed class ActionBlock<TInput> : IReceiverBlock<TInput>
     {
         private readonly Action<TInput, PipelineMetadata> _action;
 
-        protected internal ActionBlock(Action<TInput, PipelineMetadata> action)
+        internal ActionBlock(Action<TInput, PipelineMetadata> action)
         {
             _action = action;
         }

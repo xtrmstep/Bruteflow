@@ -2,11 +2,15 @@
 
 namespace Bruteflow.Blocks
 {
-    public class DistributeBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity>
+    /// <summary>
+    ///     The block which pushes entities to all following blocks synchronously
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    public sealed class DistributeBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity>
     {
         private readonly List<IReceiverBlock<TEntity>> _targets = new List<IReceiverBlock<TEntity>>();
 
-        protected internal DistributeBlock()
+        internal DistributeBlock()
         {
         }
 

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Bruteflow.Kafka</Title>
+        <Authors>Alexander Goida</Authors>
+        <Copyright>Alexander Goida</Copyright>
+        <PackageProjectUrl>https://github.com/xtrmstep/Bruteflow</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/xtrmstep/Bruteflow/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/xtrmstep/Bruteflow</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Confluent.Kafka" Version="1.4.3" />
+        <PackageReference Include="MessagePack" Version="2.1.152" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Bruteflow\Bruteflow.csproj" />
+    </ItemGroup>
+
+</Project>
