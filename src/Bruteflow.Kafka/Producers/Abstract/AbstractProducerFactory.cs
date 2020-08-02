@@ -7,8 +7,8 @@ namespace Bruteflow.Kafka.Producers.Abstract
 {
     public abstract class AbstractProducerFactory<TKey, TValue> : IProducerFactory<TKey, TValue>
     {
-        private static readonly object _lockObject = new object();
-        private static IKafkaProducer<TKey, TValue> _producerRegistrations;
+        private readonly object _lockObject = new object();
+        private IKafkaProducer<TKey, TValue> _producerRegistrations;
 
         protected readonly ISerializer<TKey> KeySerializer;
         protected readonly ILogger<AbstractProducerFactory<TKey, TValue>> Logger;
@@ -35,18 +35,19 @@ namespace Bruteflow.Kafka.Producers.Abstract
             Logger.LogDebug($"Registering producer for topic '{Settings.Topic}'");
             Logger.LogTrace(JsonConvert.SerializeObject(Settings));
 
-            if (_producerRegistrations == null) return _producerRegistrations;
+            if (_producerRegistrations != null) return _producerRegistrations;
+            
             lock (_lockObject)
             {
-                if (_producerRegistrations == null) return _producerRegistrations;
-
+                if (_producerRegistrations != null) return _producerRegistrations;
+                
                 var producerBuilder = CreateProducerBuilder();
                 SetKeySerializer(producerBuilder);
                 SetValueSerializer(producerBuilder);
                 var producer = producerBuilder.Build();
                 _producerRegistrations = CreateKafkaProducer(producer, Settings.Topic);
-                return _producerRegistrations;
             }
+            return _producerRegistrations;
         }
 
         protected virtual IKafkaProducer<TKey, TValue> CreateKafkaProducer(IProducer<TKey, TValue> producer, string kafkaTopic)
