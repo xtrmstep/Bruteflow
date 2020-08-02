@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Bruteflow.Abstract;
-using Bruteflow.Blocks;
 using Bruteflow.Kafka.Consumers;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;

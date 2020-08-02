@@ -30,9 +30,9 @@ namespace Bruteflow.Kafka.Consumers.Abstract
         {
             var consumer = consumerBuilder.Build();
             var kafkaConsumer = new KafkaConsumerWithMetrics<TKey, TValue>(kafkaTopic, consumer, Stats);
-            
+
             Stats.Metric().CountInstances(kafkaConsumer);
-            
+
             return kafkaConsumer;
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using Bruteflow.Kafka.Consumers;
 using Bruteflow.Kafka.Stats;
-using Confluent.Kafka;
 using JustEat.StatsD;
 using Microsoft.Extensions.Logging;
 

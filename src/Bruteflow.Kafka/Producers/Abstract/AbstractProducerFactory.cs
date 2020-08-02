@@ -9,11 +9,11 @@ namespace Bruteflow.Kafka.Producers.Abstract
     {
         private static readonly object _lockObject = new object();
         private static IKafkaProducer<TKey, TValue> _producerRegistrations;
-        
+
         protected readonly ISerializer<TKey> KeySerializer;
+        protected readonly ILogger<AbstractProducerFactory<TKey, TValue>> Logger;
         protected readonly KafkaProducerSettings Settings;
         protected readonly ISerializer<TValue> ValueSerializer;
-        protected readonly ILogger<AbstractProducerFactory<TKey, TValue>> Logger;
 
         protected AbstractProducerFactory(ILogger<AbstractProducerFactory<TKey, TValue>> logger,
             KafkaProducerSettings settings, ISerializer<TKey> keySerializer, ISerializer<TValue> valueSerializer)
