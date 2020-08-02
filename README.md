@@ -1,5 +1,7 @@
 ![Publish NuGet Package](https://github.com/xtrmstep/Bruteflow/workflows/Publish%20NuGet%20Package/badge.svg)
+
 ![Publish Bruteflow.Kafka NuGet Package](https://github.com/xtrmstep/Bruteflow/workflows/Publish%20Bruteflow.Kafka%20NuGet%20Package/badge.svg)
+
 ![Publish Bruteflow.Kafka.Stats NuGet Package](https://github.com/xtrmstep/Bruteflow/workflows/Publish%20Bruteflow.Kafka.Stats%20NuGet%20Package/badge.svg)
 
 # Bruteflow
