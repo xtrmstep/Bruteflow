@@ -8,7 +8,10 @@
         {
             var next = new DistributeBlock<TPrecedingOutput>();
             var producer = (IProducerBlock<TPrecedingOutput>) next;
-            foreach (var followingBlock in followingBlocks) producer.Link(followingBlock);
+            foreach (var followingBlock in followingBlocks)
+            {
+                producer.Link(followingBlock);
+            }
             precedingBlock.Link(next);
         }
     }

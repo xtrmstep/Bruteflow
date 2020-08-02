@@ -2,7 +2,11 @@
 
 namespace Bruteflow.Blocks
 {
-    public class HeadBlock<TInput> : IHeadBlock<TInput>, IReceiverBlock<TInput>, IProducerBlock<TInput>
+    /// <summary>
+    /// The starting block for any Bruteflow pipeline or branch
+    /// </summary>
+    /// <typeparam name="TInput"></typeparam>
+    public sealed class HeadBlock<TInput> : IHeadBlock<TInput>, IReceiverBlock<TInput>, IProducerBlock<TInput>
     {
         private readonly Action<Action<TInput, PipelineMetadata>> _process;
         private IReceiverBlock<TInput> _following;

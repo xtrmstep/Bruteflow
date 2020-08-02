@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Bruteflow.Abstract;
 using Bruteflow.Blocks;
 using Bruteflow.Kafka.Consumers;
 using Confluent.Kafka;
@@ -7,10 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Bruteflow.Kafka
 {
-    public abstract class AbstractKafkaPipeline<TConsumerKey, TConsumerValue> : IPipeline
+    public abstract class AbstractKafkaPipeline<TConsumerKey, TConsumerValue> : AbstractPipeline<TConsumerValue>
     {
         protected readonly IKafkaConsumer<TConsumerKey, TConsumerValue> Consumer;
-        protected readonly HeadBlock<TConsumerValue> Head = new HeadBlock<TConsumerValue>();
         protected readonly ILogger Logger;
 
         protected AbstractKafkaPipeline(ILogger<AbstractKafkaPipeline<TConsumerKey, TConsumerValue>> logger,
@@ -20,33 +20,29 @@ namespace Bruteflow.Kafka
             Consumer = consumerFactory.CreateConsumer();
         }
 
-        public void Execute(CancellationToken cancellationToken)
+        protected override bool ReadNextEntity(CancellationToken cancellationToken, out TConsumerValue entity)
         {
-            try
+            entity = default;
+            ConsumeResult<TConsumerKey, TConsumerValue> consumerResult;
+            do
             {
-                while (true)
-                {
-                    if (cancellationToken.IsCancellationRequested) break;
+                if (cancellationToken.IsCancellationRequested) return false;
 
-                    var consumerResult = Consumer.Consume(cancellationToken);
-                    var message = consumerResult.Message;
-                    var pipelineMetadata = new PipelineMetadata {Metadata = message, InputTimestamp = DateTime.Now};
+                consumerResult = Consumer.Consume(cancellationToken);
+            } while (!consumerResult.IsPartitionEOF);
 
-                    if (consumerResult.IsPartitionEOF) continue;
-
-                    PushToFlow(message, pipelineMetadata);
-                }
-            }
-            catch (Exception err)
-            {
-                Logger.LogError(err, err.Message);
-                throw;
-            }
+            entity = consumerResult.Message.Value;
+            return true;
         }
 
-        protected virtual void PushToFlow(Message<TConsumerKey, TConsumerValue> message, PipelineMetadata pipelineMetadata)
+        protected override void PushToFlow(TConsumerValue entity, PipelineMetadata pipelineMetadata)
         {
-            Head.Push(message.Value, pipelineMetadata);
+            Head.Push(entity, pipelineMetadata);
+        }
+
+        protected override void OnError(Exception err)
+        {
+            Logger.LogError(err, err.Message);
         }
     }
 }

@@ -2,16 +2,21 @@
 
 namespace Bruteflow.Blocks
 {
-    public class ProcessBlock<TInput, TOutput> : IReceiverBlock<TInput>, IProducerBlock<TOutput>
+    /// <summary>
+    /// The block which applies a transformation or other logic to incoming entity, before pushing it further
+    /// </summary>
+    /// <typeparam name="TInput"></typeparam>
+    /// <typeparam name="TOutput"></typeparam>
+    public sealed class ProcessBlock<TInput, TOutput> : IReceiverBlock<TInput>, IProducerBlock<TOutput>
     {
         private readonly Func<TInput, PipelineMetadata, TOutput> _process;
         private IReceiverBlock<TOutput> _following;
 
-        protected internal ProcessBlock() : this(null)
+        internal ProcessBlock() : this(null)
         {
         }
 
-        protected internal ProcessBlock(Func<TInput, PipelineMetadata, TOutput> process)
+        internal ProcessBlock(Func<TInput, PipelineMetadata, TOutput> process)
         {
             _process = process;
         }

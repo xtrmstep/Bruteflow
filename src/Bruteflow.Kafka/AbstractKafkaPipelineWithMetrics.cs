@@ -18,19 +18,16 @@ namespace Bruteflow.Kafka
             Stats = stats;
         }
 
-        protected override void PushToFlow(Message<TConsumerKey, TConsumerValue> message, PipelineMetadata pipelineMetadata)
+        protected override void PushToFlow(TConsumerValue entity, PipelineMetadata pipelineMetadata)
         {
-            try
-            {
-                base.PushToFlow(message, pipelineMetadata);
-                Stats.Metric().PipelineLatency(pipelineMetadata);
-            }
-            catch (Exception err)
-            {
-                Stats.Metric().FatalErrorIncrement();
-                Logger.LogError(err, err.Message);
-                throw;
-            }
+            base.PushToFlow(entity, pipelineMetadata);
+            Stats.Metric().PipelineLatency(pipelineMetadata);
+        }
+
+        protected override void OnError(Exception err)
+        {
+            base.OnError(err);
+            Stats.Metric().FatalErrorIncrement();
         }
     }
 }

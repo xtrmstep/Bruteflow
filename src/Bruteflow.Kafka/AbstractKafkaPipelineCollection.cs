@@ -9,7 +9,10 @@ namespace Bruteflow.Kafka
 
         public void Execute(CancellationToken cancellationToken)
         {
-            foreach (var pipeline in _pipelines) ThreadPool.QueueUserWorkItem(data => pipeline.Execute(cancellationToken));
+            foreach (var pipeline in _pipelines)
+            {
+                ThreadPool.QueueUserWorkItem(data => pipeline.Execute(cancellationToken));
+            }
         }
 
         public IReadOnlyList<IPipeline> Pipelines => _pipelines;
