@@ -12,12 +12,10 @@ namespace Bruteflow.Abstract
         {
             try
             {
-                while (ReadNextEntity(cancellationToken, out var entity))
+                while (ReadNextEntity(cancellationToken, out var entity, out var metadata))
                 {
                     if (cancellationToken.IsCancellationRequested) break;
-
-                    var pipelineMetadata = CreateMetadata(entity);
-                    PushToFlow(entity, pipelineMetadata);
+                    PushToFlow(entity, metadata);
                 }
             }
             catch (Exception err)
@@ -32,12 +30,7 @@ namespace Bruteflow.Abstract
             // do nothing
         }
 
-        private static PipelineMetadata CreateMetadata(TInput entity)
-        {
-            return new PipelineMetadata {Metadata = entity, InputTimestamp = DateTime.Now};
-        }
-
-        protected abstract bool ReadNextEntity(CancellationToken cancellationToken, out TInput entity);
+        protected abstract bool ReadNextEntity(CancellationToken cancellationToken, out TInput entity, out PipelineMetadata pipelineMetadata);
 
         protected virtual void PushToFlow(TInput entity, PipelineMetadata pipelineMetadata)
         {
