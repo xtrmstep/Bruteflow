@@ -3,7 +3,7 @@
 namespace Bruteflow.Blocks
 {
     /// <summary>
-    /// The block which applies a transformation or other logic to incoming entity, before pushing it further
+    ///     The block which applies a transformation or other logic to incoming entity, before pushing it further
     /// </summary>
     /// <typeparam name="TInput"></typeparam>
     /// <typeparam name="TOutput"></typeparam>

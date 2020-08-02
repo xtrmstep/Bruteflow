@@ -3,7 +3,7 @@
 namespace Bruteflow.Blocks
 {
     /// <summary>
-    /// Block which keeps a number of entities (size of batch) before pushing them to the following block
+    ///     Block which keeps a number of entities (size of batch) before pushing them to the following block
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     public sealed class BatchBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity[]>

@@ -3,7 +3,7 @@
 namespace Bruteflow.Blocks
 {
     /// <summary>
-    /// The block which pushes entities to all following blocks synchronously
+    ///     The block which pushes entities to all following blocks synchronously
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     public sealed class DistributeBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity>

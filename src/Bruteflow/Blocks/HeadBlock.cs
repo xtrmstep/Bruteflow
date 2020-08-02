@@ -3,7 +3,7 @@
 namespace Bruteflow.Blocks
 {
     /// <summary>
-    /// The starting block for any Bruteflow pipeline or branch
+    ///     The starting block for any Bruteflow pipeline or branch
     /// </summary>
     /// <typeparam name="TInput"></typeparam>
     public sealed class HeadBlock<TInput> : IHeadBlock<TInput>, IReceiverBlock<TInput>, IProducerBlock<TInput>

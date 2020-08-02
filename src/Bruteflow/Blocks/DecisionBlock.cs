@@ -3,8 +3,8 @@
 namespace Bruteflow.Blocks
 {
     /// <summary>
-    /// The block applies boolean check to incoming entity and pushes them further depends on the result.
-    /// If True, the entity is pushed to the positive branch. If False - to the negative one.
+    ///     The block applies boolean check to incoming entity and pushes them further depends on the result.
+    ///     If True, the entity is pushed to the positive branch. If False - to the negative one.
     /// </summary>
     /// <typeparam name="TInput"></typeparam>
     public sealed class DecisionBlock<TInput> : IReceiverBlock<TInput>, IConditionalProducerBlock<TInput, TInput>
