@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  zookeeper:
+    restart: always
+    image: ${IMAGE_ZOOKEEPER}
+    container_name: zookeeper
+    ports:
+      - "${PORT_ZOOKEEPER}:2181"
+      
+  kafka:
+    restart: always
+    image: ${IMAGE_KAFKA}
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "${PORT_KAFKA}:${PORT_KAFKA}"
+    expose:
+      - "29092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: ${KAFKA_HOST}
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://${KAFKA_HOST}:${PORT_KAFKA}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:${PORT_KAFKA}
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:${PORT_ZOOKEEPER}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
