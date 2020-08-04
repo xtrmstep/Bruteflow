@@ -2,6 +2,9 @@
 
 namespace Bruteflow
 {
+    /// <summary>
+    /// Interface of a data flow pipeline
+    /// </summary>
     public interface IPipeline
     {
         /// <summary>

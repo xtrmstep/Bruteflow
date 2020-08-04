@@ -12,6 +12,11 @@ namespace Bruteflow.Kafka.Producers.Abstract
 
         protected internal KafkaProducer(ILogger logger, string topic, IProducer<TKey, TValue> producer)
         {
+            if (typeof(TKey) == typeof(Ignore)) // todo support Ignore for key
+            {
+                throw new TypeInitializationException("Ignore is not supported", null);
+            }
+            
             Logger = logger;
             Topic = topic;
             Producer = producer;

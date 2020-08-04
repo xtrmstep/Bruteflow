@@ -13,7 +13,7 @@ namespace Bruteflow.Kafka.Tests.Pipeline
 
         public TestKafkaPipeline(ILogger<TestKafkaPipeline> logger,
             IConsumerFactory<Ignore, JObject> consumerFactory,
-            IProducerFactory<string, JObject> producerFactory // Ignore is not supported for key
+            IProducerFactory<string, JObject> producerFactory
         )
             : base(logger, consumerFactory)
         {

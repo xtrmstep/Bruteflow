@@ -3,7 +3,7 @@
 namespace Bruteflow.Blocks
 {
     /// <summary>
-    ///     Ending block of the chained flow pipeline
+    ///     Ending block of a chained dataflow pipeline
     /// </summary>
     /// <typeparam name="TInput">Data type which the block receives</typeparam>
     public sealed class ActionBlock<TInput> : IReceiverBlock<TInput>
