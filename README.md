@@ -14,6 +14,6 @@ This is no way a replcement for Dataflow (Task Parallel Library). It uses anothe
 
 | Library | Description |
 | ------ | ------ |
-| [Bruteflow](src/Bruteflow/README.md) | Basic building blocks to contruct a dataflow pipeline. |
-| [Bruteflow.Kafka](src/Bruteflow.Kafka/README.md) | Implementation of basic blocks to contruct pipeline which consumes and produces data from Kafka topic as a stream. |
-| [Bruteflow.Kafka.Stats](src/Bruteflow.Kafka.Stats/README.md) | Implementation of StatsD metric capturing. Uses [JustEat.StatsD](https://github.com/justeat/JustEat.StatsD). |
+| [Bruteflow](/src/Bruteflow/README.md) | Basic building blocks to contruct a dataflow pipeline. |
+| [Bruteflow.Kafka](/src/Bruteflow.Kafka/README.md) | Implementation of basic blocks to contruct pipeline which consumes and produces data from Kafka topic as a stream. |
+| [Bruteflow.Kafka.Stats](/src/Bruteflow.Kafka.Stats/README.md) | Implementation of StatsD metric capturing. Uses [JustEat.StatsD](https://github.com/justeat/JustEat.StatsD). |

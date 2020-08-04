@@ -69,3 +69,7 @@ Json serialization/deserialization is implemented using `Newtonsoft.Json`, becau
 ## Metrics
 
 There are classes with `WithMetrics` in their names. Such classes sends metrics on specific events. By default, the a silent implementation of metric publisher is used.
+
+## Example
+
+Check the test of Bruteflow.Kafka [here](/src/Bruteflow.Kafka.Tests/README.md)
