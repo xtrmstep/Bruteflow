@@ -2,7 +2,7 @@
 
 I use docker-compose stack to deploy one-node Kafka cluster on your local Docker. Install Docker before running code below.
 
-In order to test from IDE, you will need to have deployed Kafka cluster. After each run you'll need to delete created topics. If you don't want to do that, you can use Bash script provided in [tests](tests) folder in the root of the repository.
+In order to test from IDE, you will need to have deployed Kafka cluster. After each run you'll need to delete created topics. If you don't want to do that, you can use Bash script provided in [tests](~/tests) folder in the root of the repository.
 
 Before running Bash script, make sure you're located in _tests_ folder.
 
