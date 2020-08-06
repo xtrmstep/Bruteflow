@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using Bruteflow.Blocks;
 using FluentAssertions;
 using Xunit;
@@ -13,17 +14,19 @@ namespace Bruteflow.Tests
             var result = new List<string>();
 
             var head = new HeadBlock<string>();
-            head.Process((str, md) => str + "A")
+            head.Process((ct, str, md) => str + "A")
                 .Batch(3)
-                .Process((str, md) => string.Join(',', str))
-                .Action((str, md) => result.Add(str));
+                .Process((ct, str, md) => string.Join(',', str))
+                .Action((ct, str, md) => result.Add(str));
+            
+            var cts = new CancellationTokenSource();
 
-            head.Push("C", new PipelineMetadata());
-            head.Push("C", new PipelineMetadata());
-            head.Push("C", new PipelineMetadata());
+            head.Push(cts.Token, "C", new PipelineMetadata());
+            head.Push(cts.Token, "C", new PipelineMetadata());
+            head.Push(cts.Token, "C", new PipelineMetadata());
             // this one will be lost because of the batching
-            head.Push("C", new PipelineMetadata());
-            head.Flush();
+            head.Push(cts.Token, "C", new PipelineMetadata());
+            head.Flush(cts.Token);
 
             result.Count.Should().Be(2);
             result[0].Should().Be("CA,CA,CA");
@@ -38,21 +41,22 @@ namespace Bruteflow.Tests
             var head = new HeadBlock<string>();
             var positive = new HeadBlock<string>();
             var negative = new HeadBlock<string>();
-            head.Process((str, md) => str + "A")
-                .Decision((str, md) => str == "AA", positive, negative);
+            head.Process((ct, str, md) => str + "A")
+                .Decision((ct, str, md) => str == "AA", positive, negative);
 
             positive
-                .Process((str, md) => str + "B")
-                .Action((str, md) => result = str);
+                .Process((ct, str, md) => str + "B")
+                .Action((ct, str, md) => result = str);
 
             negative
-                .Process((str, md) => str + "C")
-                .Action((str, md) => result = str);
+                .Process((ct, str, md) => str + "C")
+                .Action((ct, str, md) => result = str);
 
-            head.Push("A", new PipelineMetadata());
+            var cts = new CancellationTokenSource();
+            head.Push(cts.Token, "A", new PipelineMetadata());
             result.Should().Be("AAB");
 
-            head.Push("B", new PipelineMetadata());
+            head.Push(cts.Token, "B", new PipelineMetadata());
             result.Should().Be("BAC");
         }
 
@@ -65,19 +69,20 @@ namespace Bruteflow.Tests
             var head = new HeadBlock<string>();
             var branch1 = new HeadBlock<string>();
             var branch2 = new HeadBlock<string>();
-            head.Process((str, md) => str + "A")
-                .Process((str, md) => str + "-")
+            head.Process((ct, str, md) => str + "A")
+                .Process((ct, str, md) => str + "-")
                 .Distribute(branch1, branch2);
 
             branch1
-                .Process((str, md) => str + "B")
-                .Action((str, md) => result1 = str);
+                .Process((ct, str, md) => str + "B")
+                .Action((ct, str, md) => result1 = str);
 
             branch2
-                .Process((str, md) => str + "C")
-                .Action((str, md) => result2 = str);
-
-            head.Push(string.Empty, new PipelineMetadata());
+                .Process((ct, str, md) => str + "C")
+                .Action((ct, str, md) => result2 = str);
+            
+            var cts = new CancellationTokenSource();
+            head.Push(cts.Token, string.Empty, new PipelineMetadata());
 
             result1.Should().Be("A-B");
             result2.Should().Be("A-C");
@@ -88,12 +93,13 @@ namespace Bruteflow.Tests
         {
             var result = string.Empty;
             var head = new HeadBlock<string>();
-            head.Process((str, md) => str + "A")
-                .Process((str, md) => str + "B")
-                .Process((str, md) => str + "C")
-                .Action((str, md) => result = str);
+            head.Process((ct, str, md) => str + "A")
+                .Process((ct, str, md) => str + "B")
+                .Process((ct, str, md) => str + "C")
+                .Action((ct, str, md) => result = str);
 
-            head.Push(string.Empty, new PipelineMetadata());
+            var cts = new CancellationTokenSource();
+            head.Push(cts.Token, string.Empty, new PipelineMetadata());
 
             result.Should().Be("ABC");
         }

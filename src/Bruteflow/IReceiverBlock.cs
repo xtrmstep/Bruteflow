@@ -1,4 +1,6 @@
-﻿namespace Bruteflow
+﻿using System.Threading;
+
+namespace Bruteflow
 {
     /// <summary>
     /// Interface of a block which can receive data
@@ -7,11 +9,12 @@
     public interface IReceiverBlock<in TInput>
     {
         // Push an entity to this block 
-        void Push(TInput input, PipelineMetadata metadata);
+        void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata);
 
         /// <summary>
         ///     Push internal state to following blocks and flush the state
         /// </summary>
-        void Flush();
+        /// <param name="cancellationToken"></param>
+        void Flush(CancellationToken cancellationToken);
     }
 }

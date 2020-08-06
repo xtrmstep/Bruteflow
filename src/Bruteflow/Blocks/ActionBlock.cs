@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Bruteflow.Blocks
 {
@@ -8,21 +9,21 @@ namespace Bruteflow.Blocks
     /// <typeparam name="TInput">Data type which the block receives</typeparam>
     public sealed class ActionBlock<TInput> : IReceiverBlock<TInput>
     {
-        private readonly Action<TInput, PipelineMetadata> _action;
+        private readonly Action<CancellationToken, TInput, PipelineMetadata> _action;
 
-        internal ActionBlock(Action<TInput, PipelineMetadata> action)
+        internal ActionBlock(Action<CancellationToken, TInput, PipelineMetadata> action)
         {
             _action = action;
         }
 
-        public void Push(TInput input, PipelineMetadata metadata)
+        public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
             var inp = input;
             var md = metadata;
-            _action(inp, md);
+            _action(cancellationToken, inp, md);
         }
 
-        public void Flush()
+        public void Flush(CancellationToken cancellationToken)
         {
             // do nothing
         }

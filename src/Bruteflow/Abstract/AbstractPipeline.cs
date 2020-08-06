@@ -61,7 +61,7 @@ namespace Bruteflow.Abstract
         /// <param name="pipelineMetadata"></param>
         protected virtual void PushToFlow(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
         {
-            Head.Push(entity, pipelineMetadata);
+            Head.Push(cancellationToken, entity, pipelineMetadata);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace Bruteflow.Blocks
 {
@@ -19,16 +20,16 @@ namespace Bruteflow.Blocks
             _targets.Add(receiverBlock);
         }
 
-        public void Push(TEntity input, PipelineMetadata metadata)
+        public void Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
             if (_targets == null) return;
 
-            foreach (var target in _targets) target.Push(input, metadata);
+            foreach (var target in _targets) target.Push(cancellationToken, input, metadata);
         }
 
-        public void Flush()
+        public void Flush(CancellationToken cancellationToken)
         {
-            foreach (var target in _targets) target.Flush();
+            foreach (var target in _targets) target.Flush(cancellationToken);
         }
     }
 }

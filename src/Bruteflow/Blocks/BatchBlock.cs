@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace Bruteflow.Blocks
 {
@@ -24,23 +25,23 @@ namespace Bruteflow.Blocks
             _next = receiverBlock;
         }
 
-        public void Push(TEntity input, PipelineMetadata metadata)
+        public void Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
             _latestMetadata = metadata;
-            if (_delayedCount + 1 > _batchSize) SendBatchedData(metadata);
+            if (_delayedCount + 1 > _batchSize) SendBatchedData(cancellationToken, metadata);
 
             _delayedCount++;
             _batch.Add(input);
         }
 
-        public void Flush()
+        public void Flush(CancellationToken cancellationToken)
         {
-            SendBatchedData(_latestMetadata);
+            SendBatchedData(cancellationToken, _latestMetadata);
         }
 
-        private void SendBatchedData(PipelineMetadata metadata)
+        private void SendBatchedData(CancellationToken cancellationToken, PipelineMetadata metadata)
         {
-            _next?.Push(_batch.ToArray(), metadata);
+            _next?.Push(cancellationToken, _batch.ToArray(), metadata);
             _batch.Clear();
             _delayedCount = 0;
         }

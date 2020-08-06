@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Bruteflow.Blocks
 {
@@ -6,7 +7,7 @@ namespace Bruteflow.Blocks
     {
         public static void Action<TPrecedingOutput>(
             this IProducerBlock<TPrecedingOutput> precedingBlock,
-            Action<TPrecedingOutput, PipelineMetadata> action)
+            Action<CancellationToken, TPrecedingOutput, PipelineMetadata> action)
         {
             var next = new ActionBlock<TPrecedingOutput>(action);
             precedingBlock.Link(next);

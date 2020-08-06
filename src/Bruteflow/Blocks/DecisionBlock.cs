@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Bruteflow.Blocks
 {
@@ -9,11 +10,11 @@ namespace Bruteflow.Blocks
     /// <typeparam name="TInput"></typeparam>
     public sealed class DecisionBlock<TInput> : IReceiverBlock<TInput>, IConditionalProducerBlock<TInput, TInput>
     {
-        private readonly Func<TInput, PipelineMetadata, bool> _condition;
+        private readonly Func<CancellationToken, TInput, PipelineMetadata, bool> _condition;
         private IReceiverBlock<TInput> _negative;
         private IReceiverBlock<TInput> _positive;
 
-        internal DecisionBlock(Func<TInput, PipelineMetadata, bool> condition)
+        internal DecisionBlock(Func<CancellationToken, TInput, PipelineMetadata, bool> condition)
         {
             _condition = condition;
         }
@@ -28,18 +29,18 @@ namespace Bruteflow.Blocks
             _negative = receiverBlock;
         }
 
-        public void Push(TInput input, PipelineMetadata metadata)
+        public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            var condition = _condition(input, metadata);
+            var condition = _condition(cancellationToken, input, metadata);
 
-            if (condition) _positive?.Push(input, metadata);
-            else _negative?.Push(input, metadata);
+            if (condition) _positive?.Push(cancellationToken, input, metadata);
+            else _negative?.Push(cancellationToken, input, metadata);
         }
 
-        public void Flush()
+        public void Flush(CancellationToken cancellationToken)
         {
-            _positive?.Flush();
-            _negative?.Flush();
+            _positive?.Flush(cancellationToken);
+            _negative?.Flush(cancellationToken);
         }
     }
 }
