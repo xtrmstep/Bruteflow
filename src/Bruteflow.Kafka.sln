@@ -1,8 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow", "Bruteflow\Bruteflow.csproj", "{95F9FD59-1332-4D0B-ABD6-1040BFC973AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Kafka", "Bruteflow.Kafka\Bruteflow.Kafka.csproj", "{3B4C7E74-C736-44F7-8267-BFD2D9B37548}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Tests", "Bruteflow.Tests\Bruteflow.Tests.csproj", "{FDB86D39-193E-4BEA-86EC-06AA968292E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Kafka.Stats", "Bruteflow.Kafka.Stats\Bruteflow.Kafka.Stats.csproj", "{56B2C80F-3B2B-4E1F-9E4A-0B8746C82F51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Kafka.Tests", "Bruteflow.Kafka.Tests\Bruteflow.Kafka.Tests.csproj", "{11D5C78C-E6B6-4E80-998D-E7605A343A90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,7 +34,5 @@ Global
 		{11D5C78C-E6B6-4E80-998D-E7605A343A90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{11D5C78C-E6B6-4E80-998D-E7605A343A90} = {A148939C-C18E-4D2A-867F-29F624B3BE9A}
-		{FDB86D39-193E-4BEA-86EC-06AA968292E8} = {A148939C-C18E-4D2A-867F-29F624B3BE9A}
 	EndGlobalSection
 EndGlobal
