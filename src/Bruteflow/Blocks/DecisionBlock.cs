@@ -22,16 +22,20 @@ namespace Bruteflow.Blocks
 
         void IConditionalProducerBlock<TInput, TInput>.LinkPositive(IReceiverBlock<TInput> receiverBlock)
         {
-            _positive = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
+            _positive = receiverBlock;
         }
 
         void IConditionalProducerBlock<TInput, TInput>.LinkNegative(IReceiverBlock<TInput> receiverBlock)
         {
-            _negative = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
+            _negative = receiverBlock;
         }
 
         public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
+            if (_positive == null && _negative == null)
+            {
+                throw new InvalidOperationException("Decision block should have at least one branch");
+            }
             var conditionResult = false;
             Parallel.Invoke(() =>
             {
