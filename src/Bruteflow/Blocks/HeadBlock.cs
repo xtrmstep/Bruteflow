@@ -23,6 +23,10 @@ namespace Bruteflow.Blocks
 
         public void Start(CancellationToken cancellationToken)
         {
+            if (_process == null)
+            {
+                throw new InvalidOperationException("Pipeline should be initialized with a process to use this method");
+            }
             _process(_following.Push);
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Bruteflow.Blocks
@@ -17,12 +18,16 @@ namespace Bruteflow.Blocks
 
         internal BatchBlock(int batchSize)
         {
+            if (batchSize <= 0)
+            {
+                throw new ArgumentNullException(nameof(batchSize), "Must be greater than 0");
+            }
             _batchSize = batchSize;
         }
 
         void IProducerBlock<TEntity[]>.Link(IReceiverBlock<TEntity[]> receiverBlock)
         {
-            _next = receiverBlock;
+            _next = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
         public void Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)

@@ -19,12 +19,12 @@ namespace Bruteflow.Blocks
 
         internal ProcessBlock(Func<CancellationToken, TInput, PipelineMetadata, TOutput> process)
         {
-            _process = process;
+            _process = process ?? throw new ArgumentNullException(nameof(process), "Cannot be null");
         }
 
         void IProducerBlock<TOutput>.Link(IReceiverBlock<TOutput> receiverBlock)
         {
-            _following = receiverBlock;
+            _following = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
         public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)

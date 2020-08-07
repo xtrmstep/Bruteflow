@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Bruteflow.Blocks
@@ -17,6 +18,11 @@ namespace Bruteflow.Blocks
 
         void IProducerBlock<TEntity>.Link(IReceiverBlock<TEntity> receiverBlock)
         {
+            if (receiverBlock == null)
+            {
+                throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
+            }
+
             _targets.Add(receiverBlock);
         }
 

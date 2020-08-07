@@ -13,7 +13,7 @@ namespace Bruteflow.Blocks
 
         internal ActionBlock(Action<CancellationToken, TInput, PipelineMetadata> action)
         {
-            _action = action;
+            _action = action ?? throw new ArgumentNullException(nameof(action), "Cannot be null");
         }
 
         public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)

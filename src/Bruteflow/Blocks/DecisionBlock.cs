@@ -16,17 +16,17 @@ namespace Bruteflow.Blocks
 
         internal DecisionBlock(Func<CancellationToken, TInput, PipelineMetadata, bool> condition)
         {
-            _condition = condition;
+            _condition = condition ?? throw new ArgumentNullException(nameof(condition), "Cannot be null");
         }
 
         void IConditionalProducerBlock<TInput, TInput>.LinkPositive(IReceiverBlock<TInput> receiverBlock)
         {
-            _positive = receiverBlock;
+            _positive = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
         void IConditionalProducerBlock<TInput, TInput>.LinkNegative(IReceiverBlock<TInput> receiverBlock)
         {
-            _negative = receiverBlock;
+            _negative = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
         public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
