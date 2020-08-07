@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow.Blocks
 {
@@ -9,14 +10,14 @@ namespace Bruteflow.Blocks
     /// <typeparam name="TInput"></typeparam>
     public sealed class HeadBlock<TInput> : IHeadBlock<TInput>, IReceiverBlock<TInput>, IProducerBlock<TInput>
     {
-        private readonly Action<Action<CancellationToken, TInput, PipelineMetadata>> _process;
+        private readonly Action<CancellationToken, Action<CancellationToken, TInput, PipelineMetadata>> _process;
         private IReceiverBlock<TInput> _following;
 
         public HeadBlock() : this(null)
         {
         }
 
-        public HeadBlock(Action<Action<CancellationToken, TInput, PipelineMetadata>> process)
+        public HeadBlock(Action<CancellationToken, Action<CancellationToken, TInput, PipelineMetadata>> process)
         {
             _process = process;
         }
@@ -27,17 +28,18 @@ namespace Bruteflow.Blocks
             {
                 throw new InvalidOperationException("Pipeline should be initialized with a process to use this method");
             }
-            _process(_following.Push);
+
+            Parallel.Invoke(() => _process(cancellationToken, _following.Push));
         }
 
         public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            _following?.Push(cancellationToken, input, metadata);
+            Parallel.Invoke(() => _following?.Push(cancellationToken, input, metadata));
         }
 
         public void Flush(CancellationToken cancellationToken)
         {
-            _following?.Flush(cancellationToken);
+            Parallel.Invoke(() => _following?.Flush(cancellationToken));
         }
 
         void IProducerBlock<TInput>.Link(IReceiverBlock<TInput> receiverBlock)

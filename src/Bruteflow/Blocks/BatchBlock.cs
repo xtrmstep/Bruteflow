@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow.Blocks
 {
@@ -33,8 +34,10 @@ namespace Bruteflow.Blocks
         public void Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
             _latestMetadata = metadata;
-            if (_delayedCount + 1 > _batchSize) SendBatchedData(cancellationToken, metadata);
-
+            if (_delayedCount + 1 > _batchSize)
+            {
+                SendBatchedData(cancellationToken, metadata);
+            }
             _delayedCount++;
             _batch.Add(input);
         }
@@ -46,7 +49,7 @@ namespace Bruteflow.Blocks
 
         private void SendBatchedData(CancellationToken cancellationToken, PipelineMetadata metadata)
         {
-            _next?.Push(cancellationToken, _batch.ToArray(), metadata);
+            Parallel.Invoke(() => _next?.Push(cancellationToken, _batch.ToArray(), metadata));
             _batch.Clear();
             _delayedCount = 0;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow.Blocks
 {
@@ -29,14 +30,17 @@ namespace Bruteflow.Blocks
 
         public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            var output = _process(cancellationToken, input, metadata);
-
-            _following?.Push(cancellationToken, output, metadata);
+            TOutput output = default;            
+            Parallel.Invoke(() =>
+            {
+                output = _process(cancellationToken, input, metadata);
+            });
+            Parallel.Invoke(() => _following?.Push(cancellationToken, output, metadata));
         }
 
         public void Flush(CancellationToken cancellationToken)
         {
-            _following?.Flush(cancellationToken);
+            Parallel.Invoke(() => _following?.Flush(cancellationToken));
         }
     }
 }
