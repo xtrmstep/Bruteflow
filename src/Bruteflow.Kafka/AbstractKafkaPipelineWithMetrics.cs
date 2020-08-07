@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Bruteflow.Kafka.Consumers;
 using Bruteflow.Kafka.Stats;
 using Microsoft.Extensions.Logging;
@@ -16,9 +17,9 @@ namespace Bruteflow.Kafka
             Stats = stats;
         }
 
-        protected override void PushToFlow(TConsumerValue entity, PipelineMetadata pipelineMetadata)
+        protected override void PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
         {
-            base.PushToFlow(entity, pipelineMetadata);
+            base.PushToFlow(cancellationToken, entity, pipelineMetadata);
             Stats.Metric().PipelineLatency(pipelineMetadata);
         }
 

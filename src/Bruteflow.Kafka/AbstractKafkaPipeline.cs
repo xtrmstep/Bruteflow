@@ -42,9 +42,9 @@ namespace Bruteflow.Kafka
             return true;
         }
 
-        protected override void PushToFlow(TConsumerValue entity, PipelineMetadata pipelineMetadata)
+        protected override void PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
         {
-            Head.Push(entity, pipelineMetadata);
+            Head.Push(cancellationToken, entity, pipelineMetadata);
         }
 
         protected override void OnError(Exception err)
