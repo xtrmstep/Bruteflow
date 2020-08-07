@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow.Blocks
 {
@@ -9,37 +11,47 @@ namespace Bruteflow.Blocks
     /// <typeparam name="TInput"></typeparam>
     public sealed class DecisionBlock<TInput> : IReceiverBlock<TInput>, IConditionalProducerBlock<TInput, TInput>
     {
-        private readonly Func<TInput, PipelineMetadata, bool> _condition;
+        private readonly Func<CancellationToken, TInput, PipelineMetadata, bool> _condition;
         private IReceiverBlock<TInput> _negative;
         private IReceiverBlock<TInput> _positive;
 
-        internal DecisionBlock(Func<TInput, PipelineMetadata, bool> condition)
+        internal DecisionBlock(Func<CancellationToken, TInput, PipelineMetadata, bool> condition)
         {
-            _condition = condition;
+            _condition = condition ?? throw new ArgumentNullException(nameof(condition), "Cannot be null");
         }
 
         void IConditionalProducerBlock<TInput, TInput>.LinkPositive(IReceiverBlock<TInput> receiverBlock)
         {
-            _positive = receiverBlock;
+            _positive = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
         void IConditionalProducerBlock<TInput, TInput>.LinkNegative(IReceiverBlock<TInput> receiverBlock)
         {
-            _negative = receiverBlock;
+            _negative = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
-        public void Push(TInput input, PipelineMetadata metadata)
+        public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            var condition = _condition(input, metadata);
-
-            if (condition) _positive?.Push(input, metadata);
-            else _negative?.Push(input, metadata);
+            var conditionResult = false;
+            Parallel.Invoke(() =>
+            {
+                conditionResult = _condition(cancellationToken, input, metadata);
+            });
+            if (conditionResult)
+            {
+                Parallel.Invoke(() => _positive?.Push(cancellationToken, input, metadata));
+            }
+            else
+            {
+                Parallel.Invoke(() => _negative?.Push(cancellationToken, input, metadata));
+            }
         }
 
-        public void Flush()
+        public void Flush(CancellationToken cancellationToken)
         {
-            _positive?.Flush();
-            _negative?.Flush();
+            Parallel.Invoke(
+                () => _positive?.Flush(cancellationToken),
+                () => _negative?.Flush(cancellationToken));
         }
     }
 }

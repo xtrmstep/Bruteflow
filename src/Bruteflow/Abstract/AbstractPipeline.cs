@@ -25,7 +25,7 @@ namespace Bruteflow.Abstract
                 while (ReadNextEntity(cancellationToken, out var entity, out var metadata))
                 {
                     if (cancellationToken.IsCancellationRequested) break;
-                    PushToFlow(entity, metadata);
+                    PushToFlow(cancellationToken, entity, metadata);
                 }
             }
             catch (Exception err)
@@ -56,11 +56,12 @@ namespace Bruteflow.Abstract
         /// <summary>
         /// Pushes a data entity to the internal block chain
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <param name="entity"></param>
         /// <param name="pipelineMetadata"></param>
-        protected virtual void PushToFlow(TInput entity, PipelineMetadata pipelineMetadata)
+        protected virtual void PushToFlow(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
         {
-            Head.Push(entity, pipelineMetadata);
+            Head.Push(cancellationToken, entity, pipelineMetadata);
         }
     }
 }

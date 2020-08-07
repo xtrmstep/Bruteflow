@@ -10,7 +10,11 @@
         <PackageLicenseUrl>https://github.com/xtrmstep/Bruteflow/blob/master/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/xtrmstep/Bruteflow</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageVersion>1.2.0</PackageVersion>
+        <PackageVersion>1.3.0</PackageVersion>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="README.md" />
+    </ItemGroup>
 
 </Project>

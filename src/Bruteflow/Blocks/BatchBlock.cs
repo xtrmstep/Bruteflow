@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow.Blocks
 {
@@ -16,31 +19,37 @@ namespace Bruteflow.Blocks
 
         internal BatchBlock(int batchSize)
         {
+            if (batchSize <= 0)
+            {
+                throw new ArgumentNullException(nameof(batchSize), "Must be greater than 0");
+            }
             _batchSize = batchSize;
         }
 
         void IProducerBlock<TEntity[]>.Link(IReceiverBlock<TEntity[]> receiverBlock)
         {
-            _next = receiverBlock;
+            _next = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
-        public void Push(TEntity input, PipelineMetadata metadata)
+        public void Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
             _latestMetadata = metadata;
-            if (_delayedCount + 1 > _batchSize) SendBatchedData(metadata);
-
+            if (_delayedCount + 1 > _batchSize)
+            {
+                SendBatchedData(cancellationToken, metadata);
+            }
             _delayedCount++;
             _batch.Add(input);
         }
 
-        public void Flush()
+        public void Flush(CancellationToken cancellationToken)
         {
-            SendBatchedData(_latestMetadata);
+            SendBatchedData(cancellationToken, _latestMetadata);
         }
 
-        private void SendBatchedData(PipelineMetadata metadata)
+        private void SendBatchedData(CancellationToken cancellationToken, PipelineMetadata metadata)
         {
-            _next?.Push(_batch.ToArray(), metadata);
+            Parallel.Invoke(() => _next?.Push(cancellationToken, _batch.ToArray(), metadata));
             _batch.Clear();
             _delayedCount = 0;
         }

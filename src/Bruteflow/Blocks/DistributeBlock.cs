@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow.Blocks
 {
@@ -16,19 +19,23 @@ namespace Bruteflow.Blocks
 
         void IProducerBlock<TEntity>.Link(IReceiverBlock<TEntity> receiverBlock)
         {
+            if (receiverBlock == null)
+            {
+                throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
+            }
+
             _targets.Add(receiverBlock);
         }
 
-        public void Push(TEntity input, PipelineMetadata metadata)
+        public void Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
             if (_targets == null) return;
-
-            foreach (var target in _targets) target.Push(input, metadata);
+            Parallel.ForEach(_targets, target => target.Push(cancellationToken, input, metadata));
         }
 
-        public void Flush()
+        public void Flush(CancellationToken cancellationToken)
         {
-            foreach (var target in _targets) target.Flush();
+            Parallel.ForEach(_targets, target => target.Flush(cancellationToken));
         }
     }
 }
