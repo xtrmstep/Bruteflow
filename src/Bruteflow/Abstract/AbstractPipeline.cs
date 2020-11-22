@@ -23,11 +23,12 @@ namespace Bruteflow.Abstract
         {
             try
             {
-                while (await ReadNextEntity(cancellationToken, out var entity, out var metadata))
+                EntityItem<TInput> nextEntity;
+                while ((nextEntity = await ReadNextEntity(cancellationToken)) != null)
                 {
-                    if (cancellationToken.IsCancellationRequested) break;
-                    await PushToFlow(cancellationToken, entity, metadata);
-                }
+                    if (cancellationToken.IsCancellationRequested) break;                    
+                    await PushToFlow(cancellationToken, nextEntity.Entity, nextEntity.Metadata);
+                }                
             }
             catch (Exception err)
             {
@@ -50,10 +51,8 @@ namespace Bruteflow.Abstract
         /// Implement this method to read and return data entities
         /// </summary>
         /// <param name="cancellationToken"></param>
-        /// <param name="entity">Data entity</param>
-        /// <param name="pipelineMetadata"></param>
         /// <returns></returns>
-        protected abstract Task<bool> ReadNextEntity(CancellationToken cancellationToken, out TInput entity, out PipelineMetadata pipelineMetadata);
+        protected abstract Task<EntityItem<TInput>> ReadNextEntity(CancellationToken cancellationToken);
 
         /// <summary>
         /// Pushes a data entity to the internal block chain
