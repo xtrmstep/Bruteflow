@@ -1,4 +1,5 @@
-﻿using JustEat.StatsD;
+﻿using System.Threading.Tasks;
+using JustEat.StatsD;
 
 namespace Bruteflow.Kafka.Stats
 {
@@ -11,19 +12,22 @@ namespace Bruteflow.Kafka.Stats
             _stats = stats;
         }
         
-        public void Increment(long value, string bucket)
+        public Task Increment(long value, string bucket)
         {
             _stats.Increment(value, bucket);
+            return Task.CompletedTask;
         }
 
-        public void Gauge(double value, string bucket)
+        public Task Gauge(double value, string bucket)
         {
             _stats.Gauge(value, bucket);
+            return Task.CompletedTask;
         }
 
-        public void Timing(long duration, string bucket)
+        public Task Timing(long duration, string bucket)
         {
             _stats.Timing(duration, bucket);
+            return Task.CompletedTask;
         }
     }
 }

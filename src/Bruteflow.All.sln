@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow", "Bruteflow\Bruteflow.csproj", "{5B18325C-5C85-4149-92FF-1108A89B90AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Kafka", "Bruteflow.Kafka\Bruteflow.Kafka.csproj", "{A73F187E-97F5-49D0-AA30-98FB5E0D286C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Kafka.Stats", "Bruteflow.Kafka.Stats\Bruteflow.Kafka.Stats.csproj", "{6B81BFA7-F686-4E3E-8152-58A5ABE7F281}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Kafka.Tests", "Bruteflow.Kafka.Tests\Bruteflow.Kafka.Tests.csproj", "{ADBB8668-D00D-4ABF-AEDE-82F71359043F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruteflow.Tests", "Bruteflow.Tests\Bruteflow.Tests.csproj", "{DC7C2034-0FA1-462B-9136-20AF38ED669C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bruteflow", "Bruteflow", "{2C55FDFF-75FA-4B48-B84F-98D7048470E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bruteflow.Kafka", "Bruteflow.Kafka", "{8A1C1A20-107D-4494-B174-48CEEDDED4D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bruteflow.Kafka.Stats", "Bruteflow.Kafka.Stats", "{1C4656FE-72EC-4F56-B815-D7645812BF8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B18325C-5C85-4149-92FF-1108A89B90AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B18325C-5C85-4149-92FF-1108A89B90AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B18325C-5C85-4149-92FF-1108A89B90AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B18325C-5C85-4149-92FF-1108A89B90AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A73F187E-97F5-49D0-AA30-98FB5E0D286C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A73F187E-97F5-49D0-AA30-98FB5E0D286C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A73F187E-97F5-49D0-AA30-98FB5E0D286C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A73F187E-97F5-49D0-AA30-98FB5E0D286C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B81BFA7-F686-4E3E-8152-58A5ABE7F281}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B81BFA7-F686-4E3E-8152-58A5ABE7F281}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B81BFA7-F686-4E3E-8152-58A5ABE7F281}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B81BFA7-F686-4E3E-8152-58A5ABE7F281}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADBB8668-D00D-4ABF-AEDE-82F71359043F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADBB8668-D00D-4ABF-AEDE-82F71359043F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADBB8668-D00D-4ABF-AEDE-82F71359043F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADBB8668-D00D-4ABF-AEDE-82F71359043F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC7C2034-0FA1-462B-9136-20AF38ED669C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC7C2034-0FA1-462B-9136-20AF38ED669C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC7C2034-0FA1-462B-9136-20AF38ED669C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC7C2034-0FA1-462B-9136-20AF38ED669C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5B18325C-5C85-4149-92FF-1108A89B90AC} = {2C55FDFF-75FA-4B48-B84F-98D7048470E8}
+		{DC7C2034-0FA1-462B-9136-20AF38ED669C} = {2C55FDFF-75FA-4B48-B84F-98D7048470E8}
+		{A73F187E-97F5-49D0-AA30-98FB5E0D286C} = {8A1C1A20-107D-4494-B174-48CEEDDED4D7}
+		{ADBB8668-D00D-4ABF-AEDE-82F71359043F} = {8A1C1A20-107D-4494-B174-48CEEDDED4D7}
+		{6B81BFA7-F686-4E3E-8152-58A5ABE7F281} = {1C4656FE-72EC-4F56-B815-D7645812BF8D}
+	EndGlobalSection
+EndGlobal
