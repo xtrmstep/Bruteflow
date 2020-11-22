@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Bruteflow.Abstract;
 using Bruteflow.Kafka.Consumers;
 using Confluent.Kafka;
@@ -19,37 +20,41 @@ namespace Bruteflow.Kafka
             Consumer = consumerFactory.CreateConsumer();
         }
 
-        protected override bool ReadNextEntity(CancellationToken cancellationToken, out TConsumerValue entity, out PipelineMetadata metadata)
+        protected override async Task<EntityItem<TConsumerValue>> ReadNextEntity(CancellationToken cancellationToken)
         {
-            entity = default;
-            metadata = default;
+            await Task.Yield();
+
+            var entity = new EntityItem<TConsumerValue>();
             ConsumeResult<TConsumerKey, TConsumerValue> consumerResult;
-            do
+            try
             {
-                if (cancellationToken.IsCancellationRequested) return false;
-                try
+                consumerResult = await Consumer.Consume(cancellationToken);
+                while (consumerResult != null && consumerResult.IsPartitionEOF)
                 {
-                    consumerResult = Consumer.Consume(cancellationToken);
-                    metadata = new PipelineMetadata {Metadata = consumerResult.Message, InputTimestamp = DateTime.Now};
+                    consumerResult = await Consumer.Consume(cancellationToken);
                 }
-                catch (OperationCanceledException err)
-                {
-                    return false;
-                }
-            } while (consumerResult.IsPartitionEOF);
+            }
+            catch (OperationCanceledException err)
+            {
+                return null;
+            }
 
-            entity = consumerResult.Message.Value;
-            return true;
+            if (consumerResult == null) return null;
+            
+            entity.Entity = consumerResult.Message.Value;
+            entity.Metadata = new PipelineMetadata {Metadata = consumerResult.Message, InputTimestamp = DateTime.Now};
+            return entity;
         }
 
-        protected override void PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
+        protected override Task PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
         {
-            Head.Push(cancellationToken, entity, pipelineMetadata);
+            return Head.Push(cancellationToken, entity, pipelineMetadata);
         }
 
-        protected override void OnError(Exception err)
+        protected override Task OnError(Exception err)
         {
             Logger.LogError(err, err.Message);
+            return Task.CompletedTask;
         }
     }
 }

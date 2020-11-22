@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using Bruteflow.Blocks;
 using Bruteflow.Kafka.Consumers;
 using Bruteflow.Kafka.Producers;
@@ -26,15 +27,15 @@ namespace Bruteflow.Kafka.Tests.Pipeline
                 .Action(Send);
         }
 
-        private void Send(CancellationToken cancellationToken, JObject json, PipelineMetadata metadata)
+        private Task Send(CancellationToken cancellationToken, JObject json, PipelineMetadata metadata)
         {
-            _producer.Produce("key", json);
+            return _producer.ProduceAsync("key", json);
         }
 
-        private static JObject AddProperty(CancellationToken cancellationToken, JObject json, PipelineMetadata metadata)
+        private static Task<JObject> AddProperty(CancellationToken cancellationToken, JObject json, PipelineMetadata metadata)
         {
             json.Add(new JProperty("testProperty", 1));
-            return json;
+            return Task.FromResult(json);
         }
     }
 }

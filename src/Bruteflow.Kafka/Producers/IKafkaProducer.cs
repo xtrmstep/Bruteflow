@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Bruteflow.Kafka.Producers
 {
-    public interface IKafkaProducer<TKey, TValue> : IDisposable // todo support Ignore for key
+    public interface IKafkaProducer<TKey, TValue> : IAsyncDisposable // todo support Ignore for key
     {
-        void Produce(TKey key, TValue value);
+        Task ProduceAsync(TKey key, TValue value);
     }
 }

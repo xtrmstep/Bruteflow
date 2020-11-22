@@ -1,11 +1,12 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using Confluent.Kafka;
 
 namespace Bruteflow.Kafka.Consumers.Abstract
 {
     internal class KafkaConsumer<TKey, TValue> : IKafkaConsumer<TKey, TValue>
     {
-        protected readonly IConsumer<TKey, TValue> Consumer;
+        protected IConsumer<TKey, TValue> Consumer;
 
         public KafkaConsumer(string topic, IConsumer<TKey, TValue> consumer)
         {
@@ -13,19 +14,25 @@ namespace Bruteflow.Kafka.Consumers.Abstract
             Consumer.Subscribe(topic);
         }
 
-        public virtual ConsumeResult<TKey, TValue> Consume(CancellationToken cancellationToken)
+        public virtual async Task<ConsumeResult<TKey, TValue>> Consume(CancellationToken cancellationToken)
         {
-            return Consumer.Consume(cancellationToken);
+            await Task.Yield();
+            var consumeResult = Consumer.Consume(cancellationToken);
+            return consumeResult;
         }
 
-        public void Close()
+        public Task Close()
         {
             Consumer.Close();
+            return Task.CompletedTask;
         }
 
-        public void Dispose()
+        /// <inheritdoc />
+        public ValueTask DisposeAsync()
         {
             Consumer?.Dispose();
+            Consumer = null;
+            return new ValueTask(Task.CompletedTask);
         }
     }
 }

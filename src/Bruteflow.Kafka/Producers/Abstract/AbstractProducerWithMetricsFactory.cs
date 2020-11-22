@@ -1,4 +1,5 @@
-﻿using Bruteflow.Kafka.Settings;
+﻿using System.Threading.Tasks;
+using Bruteflow.Kafka.Settings;
 using Bruteflow.Kafka.Stats;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,9 @@ namespace Bruteflow.Kafka.Producers.Abstract
         protected override IKafkaProducer<TKey, TValue> CreateKafkaProducer(IProducer<TKey, TValue> producer, string kafkaTopic)
         {
             var kafkaProducer = new KafkaProducerWithMetrics<TKey, TValue>(Logger, kafkaTopic, producer, Stats);
+#pragma warning disable 4014
             Stats.Metric().CountInstances(kafkaProducer);
+#pragma warning restore 4014
             return kafkaProducer;
         }
     }

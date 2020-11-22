@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -23,10 +24,10 @@ namespace Bruteflow.Kafka.Stats
                 _stats = stats;
             }
 
-            public Metrics ProduceLatency(Action action)
+            public async Task<Metrics> ProduceLatency(Func<Task> action)
             {
-                var elapsed = TimeCounter(action);
-                _stats.Timing((long)elapsed.TotalMilliseconds, nameof(StatMetrics.Time.ProduceLatency));
+                var elapsed = await TimeCounter(action);
+                await _stats.Timing((long)elapsed.TotalMilliseconds, nameof(StatMetrics.Time.ProduceLatency));
                 return this;
             }
 
@@ -34,16 +35,16 @@ namespace Bruteflow.Kafka.Stats
             ///     Counter of items which are produced to underlying stream
             /// </summary>
             /// <returns></returns>
-            public Metrics ProduceCountIncrement()
+            public async Task<Metrics> ProduceCountIncrement()
             {
-                _stats.Increment(1, nameof(StatMetrics.Throughput.Produced));
+                await _stats.Increment(1, nameof(StatMetrics.Throughput.Produced));
                 return this;
             }
 
-            public Metrics CountInstances(object instance)
+            public async Task<Metrics> CountInstances(object instance)
             {
                 if (instance == null) return this;
-                _stats.Increment(1, $"instance.{GetRealTypeName(instance.GetType())}.counter");
+                await _stats.Increment(1, $"instance.{GetRealTypeName(instance.GetType())}.counter");
                 return this;
             }
 
@@ -66,26 +67,29 @@ namespace Bruteflow.Kafka.Stats
                 return sb.ToString();
             }
 
-            public T ConsumeLatency<T>(Func<T> func)
+            public async Task<T> ConsumeLatency<T>(Func<Task<T>> func)
             {
-                var result = TimeCounter(func, out var elapsed);
-                _stats.Timing((long)elapsed.TotalMilliseconds, nameof(StatMetrics.Time.ConsumeLatency));
-                return result;
-            }
-
-            private static T TimeCounter<T>(Func<T> func, out TimeSpan elapsed)
-            {
-                var sw = Stopwatch.StartNew();
-                var result = func();
-                sw.Stop();
-                elapsed = sw.Elapsed;
-                return result;
+                var result = await TimeCounter(func);
+                await _stats.Timing((long)result.Elapsed.TotalMilliseconds, nameof(StatMetrics.Time.ConsumeLatency));
+                return result.Result;
             }
             
-            private static TimeSpan TimeCounter(Action action)
+            private static async Task<TimeCounterResult<T>> TimeCounter<T>(Func<Task<T>> func)
             {
                 var sw = Stopwatch.StartNew();
-                action();
+                var result = await func();
+                sw.Stop();                
+                return new TimeCounterResult<T>
+                {
+                    Result = result,
+                    Elapsed = sw.Elapsed
+                };
+            }
+            
+            private static async Task<TimeSpan> TimeCounter(Func<Task> action)
+            {
+                var sw = Stopwatch.StartNew();
+                await action();
                 sw.Stop();
                 return sw.Elapsed;
             }
@@ -95,54 +99,54 @@ namespace Bruteflow.Kafka.Stats
             /// </summary>
             /// <remarks>Items which are consumed may be not valid for the pipeline and will be filtered on later stages</remarks>
             /// <returns></returns>
-            public Metrics ConsumedIncrement()
+            public async Task<Metrics> ConsumedIncrement()
             {
-                _stats.Increment(1, nameof(StatMetrics.Throughput.Consumed));
+                await _stats.Increment(1, nameof(StatMetrics.Throughput.Consumed));
                 return this;
             }
 
-            public Metrics SentBytes(in int sentBytes)
+            public async Task<Metrics> SentBytes(int sentBytes)
             {
-                _stats.Gauge(sentBytes, nameof(StatMetrics.Volume.SentBytes));
+                await _stats.Gauge(sentBytes, nameof(StatMetrics.Volume.SentBytes));
                 return this;
             }
 
-            public Metrics AvailableThreads()
+            public async Task<Metrics> AvailableThreads()
             {
                 ThreadPool.GetAvailableThreads(out var workerThreads, out _);
-                _stats.Gauge(workerThreads, nameof(StatMetrics.Volume.AvailableThreads));
+                await _stats.Gauge(workerThreads, nameof(StatMetrics.Volume.AvailableThreads));
                 return this;
             }
 
-            public Metrics SentBytes(JObject obj)
+            public async Task<Metrics> SentBytes(JObject obj)
             {
                 var sentBytes = Encoding.UTF8.GetBytes(obj.ToString(Formatting.None)).Length;
-                SentBytes(sentBytes);
+                await SentBytes(sentBytes);
                 return this;
             }
 
-            public Metrics PipelineLatency(PipelineMetadata metadata)
+            public async Task<Metrics> PipelineLatency(PipelineMetadata metadata)
             {
                 var latency = DateTime.Now.Subtract(metadata.InputTimestamp);
-                _stats.Timing((long)latency.TotalMilliseconds, nameof(StatMetrics.Time.PipelineLatency));
+                await _stats.Timing((long)latency.TotalMilliseconds, nameof(StatMetrics.Time.PipelineLatency));
                 return this;
             }
 
-            public Metrics WarningIncrement()
+            public async Task<Metrics> WarningIncrement()
             {
-                _stats.Increment(1, nameof(StatMetrics.Count.Warning));
+                await _stats.Increment(1, nameof(StatMetrics.Count.Warning));
                 return this;
             }
 
-            public Metrics ErrorsIncrement()
+            public async Task<Metrics> ErrorsIncrement()
             {
-                _stats.Increment(1, nameof(StatMetrics.Count.Errors));
+                await _stats.Increment(1, nameof(StatMetrics.Count.Errors));
                 return this;
             }
 
-            public Metrics FatalErrorIncrement()
+            public async Task<Metrics> FatalErrorIncrement()
             {
-                _stats.Increment(1, nameof(StatMetrics.Count.FatalError));
+                await _stats.Increment(1, nameof(StatMetrics.Count.FatalError));
                 return this;
             }
         }

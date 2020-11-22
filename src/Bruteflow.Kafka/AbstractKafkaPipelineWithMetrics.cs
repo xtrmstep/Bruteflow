@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Bruteflow.Kafka.Consumers;
 using Bruteflow.Kafka.Stats;
 using Microsoft.Extensions.Logging;
@@ -17,16 +18,16 @@ namespace Bruteflow.Kafka
             Stats = stats;
         }
 
-        protected override void PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
+        protected override async Task PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
         {
-            base.PushToFlow(cancellationToken, entity, pipelineMetadata);
-            Stats.Metric().PipelineLatency(pipelineMetadata);
+            await base.PushToFlow(cancellationToken, entity, pipelineMetadata);
+            await Stats.Metric().PipelineLatency(pipelineMetadata);
         }
 
-        protected override void OnError(Exception err)
+        protected override async Task OnError(Exception err)
         {
-            base.OnError(err);
-            Stats.Metric().FatalErrorIncrement();
+            await base.OnError(err);
+            await Stats.Metric().FatalErrorIncrement();
         }
     }
 }

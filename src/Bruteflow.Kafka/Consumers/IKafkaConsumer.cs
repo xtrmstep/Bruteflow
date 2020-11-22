@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Confluent.Kafka;
 
 namespace Bruteflow.Kafka.Consumers
 {
-    public interface IKafkaConsumer<TKey, TValue> : IDisposable
+    public interface IKafkaConsumer<TKey, TValue> : IAsyncDisposable
     {
-        ConsumeResult<TKey, TValue> Consume(CancellationToken cancellationToken);
-        void Close();
+        Task<ConsumeResult<TKey, TValue>> Consume(CancellationToken cancellationToken);
+        Task Close();
     }
 }

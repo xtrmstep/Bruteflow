@@ -1,4 +1,5 @@
-﻿using Bruteflow.Kafka.Settings;
+﻿using System.Threading.Tasks;
+using Bruteflow.Kafka.Settings;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -8,7 +9,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
     public abstract class AbstractProducerFactory<TKey, TValue> : IProducerFactory<TKey, TValue>
     {
         private readonly object _lockObject = new object();
-        private IKafkaProducer<TKey, TValue> _producerRegistrations;
+        private volatile IKafkaProducer<TKey, TValue> _producerRegistrations;
 
         protected readonly ISerializer<TKey> KeySerializer;
         protected readonly ILogger<AbstractProducerFactory<TKey, TValue>> Logger;

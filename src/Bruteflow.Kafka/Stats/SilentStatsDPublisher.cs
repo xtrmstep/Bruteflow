@@ -1,20 +1,25 @@
-﻿namespace Bruteflow.Kafka.Stats
+﻿using System.Threading.Tasks;
+
+namespace Bruteflow.Kafka.Stats
 {
     public class SilentStatsDPublisher : IMetricsPublisher
     {
-        public void Increment(long value, string bucket)
+        public Task Increment(long value, string bucket)
         {
             // do nothing
+            return Task.CompletedTask;
         }
 
-        public void Gauge(double value, string bucket)
+        public Task Gauge(double value, string bucket)
         {
             // do nothing
+            return Task.CompletedTask;
         }
 
-        public void Timing(long duration, string bucket)
+        public Task Timing(long duration, string bucket)
         {
             // do nothing
+            return Task.CompletedTask;
         }
     }
 }

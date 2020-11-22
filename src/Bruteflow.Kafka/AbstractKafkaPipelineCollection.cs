@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow.Kafka
 {
@@ -7,9 +9,9 @@ namespace Bruteflow.Kafka
     {
         private readonly List<IPipeline> _pipelines = new List<IPipeline>();
 
-        public void Execute(CancellationToken cancellationToken)
+        public Task Execute(CancellationToken cancellationToken)
         {
-            foreach (var pipeline in _pipelines) ThreadPool.QueueUserWorkItem(data => pipeline.Execute(cancellationToken));
+            return Task.WhenAll(_pipelines.Select(pipeline => pipeline.Execute(cancellationToken)).ToArray());
         }
 
         public IReadOnlyList<IPipeline> Pipelines => _pipelines;

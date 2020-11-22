@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using Bruteflow.Kafka.Stats;
 using Confluent.Kafka;
 
@@ -14,10 +15,12 @@ namespace Bruteflow.Kafka.Consumers.Abstract
             Stats = stats;
         }
 
-        public override ConsumeResult<TKey, TValue> Consume(CancellationToken cancellationToken)
+        public override async Task<ConsumeResult<TKey, TValue>> Consume(CancellationToken cancellationToken)
         {
-            var consumerResult = Stats.Metric().ConsumeLatency(() => Consumer.Consume(cancellationToken));
+            var consumerResult = await Stats.Metric().ConsumeLatency(() => Task.FromResult(Consumer.Consume(cancellationToken)));
+#pragma warning disable 4014
             Stats.Metric().ConsumedIncrement();
+#pragma warning restore 4014
             return consumerResult;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 
@@ -7,7 +8,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
     internal class KafkaProducer<TKey, TValue> : IKafkaProducer<TKey, TValue>
     {
         protected readonly ILogger Logger;
-        protected readonly IProducer<TKey, TValue> Producer;
+        protected IProducer<TKey, TValue> Producer;
         protected readonly string Topic;
 
         protected internal KafkaProducer(ILogger logger, string topic, IProducer<TKey, TValue> producer)
@@ -22,12 +23,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
             Producer = producer;
         }
 
-        public void Dispose()
-        {
-            Producer?.Dispose();
-        }
-
-        public void Produce(TKey key, TValue value)
+        public async Task ProduceAsync(TKey key, TValue value)
         {
             try
             {
@@ -35,7 +31,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
                 if (key != null)
                     message.Key = key;
 
-                Emit(message);
+                await Emit(message);
             }
             catch (Exception err)
             {
@@ -43,9 +39,17 @@ namespace Bruteflow.Kafka.Producers.Abstract
             }
         }
 
-        protected virtual void Emit(Message<TKey, TValue> message)
+        protected virtual Task Emit(Message<TKey, TValue> message)
         {
-            Producer.Produce(Topic, message);
+            return Producer.ProduceAsync(Topic, message);
+        }
+
+        /// <inheritdoc />
+        public ValueTask DisposeAsync()
+        {
+            Producer?.Dispose();
+            Producer = null;
+            return new ValueTask(Task.CompletedTask);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Bruteflow.Kafka.Stats;
+﻿using System.Threading.Tasks;
+using Bruteflow.Kafka.Stats;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 
@@ -15,10 +16,10 @@ namespace Bruteflow.Kafka.Producers.Abstract
             _stats = stats;
         }
 
-        protected override void Emit(Message<TKey, TValue> message)
+        protected override async Task Emit(Message<TKey, TValue> message)
         {
-            _stats.Metric().ProduceLatency(() => Producer.Produce(Topic, message));
-            _stats.Metric().ProduceCountIncrement();
+            await _stats.Metric().ProduceLatency(() => Producer.ProduceAsync(Topic, message));
+            await _stats.Metric().ProduceCountIncrement();
         }
     }
 }
