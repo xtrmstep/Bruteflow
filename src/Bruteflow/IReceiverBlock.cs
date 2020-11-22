@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow
 {
@@ -9,12 +10,12 @@ namespace Bruteflow
     public interface IReceiverBlock<in TInput>
     {
         // Push an entity to this block 
-        void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata);
+        Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata);
 
         /// <summary>
         ///     Push internal state to following blocks and flush the state
         /// </summary>
         /// <param name="cancellationToken"></param>
-        void Flush(CancellationToken cancellationToken);
+        Task Flush(CancellationToken cancellationToken);
     }
 }

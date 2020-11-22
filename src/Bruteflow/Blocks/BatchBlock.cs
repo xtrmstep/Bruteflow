@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics.Tracing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,13 +11,13 @@ namespace Bruteflow.Blocks
     ///     Block which keeps a number of entities (size of batch) before pushing them to the following block
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public sealed class BatchBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity[]>
+    public sealed class BatchBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<ImmutableArray<TEntity>>
     {
         private readonly List<TEntity> _batch = new List<TEntity>();
         private readonly int _batchSize;
-        private int _delayedCount;
+        private int _bufferedCount;
         private PipelineMetadata _latestMetadata;
-        private IReceiverBlock<TEntity[]> _next;
+        private IReceiverBlock<ImmutableArray<TEntity>> _next;
 
         internal BatchBlock(int batchSize)
         {
@@ -26,32 +28,35 @@ namespace Bruteflow.Blocks
             _batchSize = batchSize;
         }
 
-        void IProducerBlock<TEntity[]>.Link(IReceiverBlock<TEntity[]> receiverBlock)
+        void IProducerBlock<ImmutableArray<TEntity>>.Link(IReceiverBlock<ImmutableArray<TEntity>> receiverBlock)
         {
             _next = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
-        public void Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
+        public Task Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
             _latestMetadata = metadata;
-            if (_delayedCount + 1 > _batchSize)
+            var batchedTask = Task.CompletedTask;
+            if (_bufferedCount + 1 > _batchSize)
             {
-                SendBatchedData(cancellationToken, metadata);
+                batchedTask = SendBatchedData(cancellationToken, metadata);
             }
-            _delayedCount++;
+            _bufferedCount++;
             _batch.Add(input);
+            return Task.WhenAll(batchedTask, Task.CompletedTask);
         }
 
-        public void Flush(CancellationToken cancellationToken)
+        public Task Flush(CancellationToken cancellationToken)
         {
-            SendBatchedData(cancellationToken, _latestMetadata);
+            return SendBatchedData(cancellationToken, _latestMetadata);
         }
 
-        private void SendBatchedData(CancellationToken cancellationToken, PipelineMetadata metadata)
+        private Task SendBatchedData(CancellationToken cancellationToken, PipelineMetadata metadata)
         {
-            Parallel.Invoke(() => _next?.Push(cancellationToken, _batch.ToArray(), metadata));
+            var task = _next?.Push(cancellationToken, _batch.ToImmutableArray(), metadata);
             _batch.Clear();
-            _delayedCount = 0;
+            _bufferedCount = 0;
+            return task;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Bruteflow.Blocks;
 
 namespace Bruteflow.Abstract
@@ -18,19 +19,19 @@ namespace Bruteflow.Abstract
         /// </summary>
         protected readonly HeadBlock<TInput> Head = new HeadBlock<TInput>();
 
-        public void Execute(CancellationToken cancellationToken)
+        public async Task Execute(CancellationToken cancellationToken)
         {
             try
             {
-                while (ReadNextEntity(cancellationToken, out var entity, out var metadata))
+                while (await ReadNextEntity(cancellationToken, out var entity, out var metadata))
                 {
                     if (cancellationToken.IsCancellationRequested) break;
-                    PushToFlow(cancellationToken, entity, metadata);
+                    await PushToFlow(cancellationToken, entity, metadata);
                 }
             }
             catch (Exception err)
             {
-                OnError(err);
+                await OnError(err);
                 throw;
             }
         }
@@ -39,9 +40,10 @@ namespace Bruteflow.Abstract
         /// Overload this method to define special behaviour after a fatal error, when execution of the pipeline stopped   
         /// </summary>
         /// <param name="err"></param>
-        protected virtual void OnError(Exception err)
+        protected virtual Task OnError(Exception err)
         {
             // do nothing
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -51,7 +53,7 @@ namespace Bruteflow.Abstract
         /// <param name="entity">Data entity</param>
         /// <param name="pipelineMetadata"></param>
         /// <returns></returns>
-        protected abstract bool ReadNextEntity(CancellationToken cancellationToken, out TInput entity, out PipelineMetadata pipelineMetadata);
+        protected abstract Task<bool> ReadNextEntity(CancellationToken cancellationToken, out TInput entity, out PipelineMetadata pipelineMetadata);
 
         /// <summary>
         /// Pushes a data entity to the internal block chain
@@ -59,9 +61,9 @@ namespace Bruteflow.Abstract
         /// <param name="cancellationToken"></param>
         /// <param name="entity"></param>
         /// <param name="pipelineMetadata"></param>
-        protected virtual void PushToFlow(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
+        protected virtual Task PushToFlow(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
         {
-            Head.Push(cancellationToken, entity, pipelineMetadata);
+            return Head.Push(cancellationToken, entity, pipelineMetadata);
         }
     }
 }

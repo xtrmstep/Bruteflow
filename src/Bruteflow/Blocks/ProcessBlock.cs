@@ -11,14 +11,14 @@ namespace Bruteflow.Blocks
     /// <typeparam name="TOutput"></typeparam>
     public sealed class ProcessBlock<TInput, TOutput> : IReceiverBlock<TInput>, IProducerBlock<TOutput>
     {
-        private readonly Func<CancellationToken, TInput, PipelineMetadata, TOutput> _process;
+        private readonly Func<CancellationToken, TInput, PipelineMetadata, Task<TOutput>> _process;
         private IReceiverBlock<TOutput> _following;
 
         internal ProcessBlock() : this(null)
         {
         }
 
-        internal ProcessBlock(Func<CancellationToken, TInput, PipelineMetadata, TOutput> process)
+        internal ProcessBlock(Func<CancellationToken, TInput, PipelineMetadata, Task<TOutput>> process)
         {
             _process = process ?? throw new ArgumentNullException(nameof(process), "Cannot be null");
         }
@@ -28,19 +28,18 @@ namespace Bruteflow.Blocks
             _following = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
-        public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
+        public async Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            TOutput output = default;            
-            Parallel.Invoke(() =>
+            var output = await _process(cancellationToken, input, metadata);
+            if (_following != null)
             {
-                output = _process(cancellationToken, input, metadata);
-            });
-            Parallel.Invoke(() => _following?.Push(cancellationToken, output, metadata));
+                await _following.Push(cancellationToken, output, metadata);
+            }
         }
 
-        public void Flush(CancellationToken cancellationToken)
+        public Task Flush(CancellationToken cancellationToken)
         {
-            Parallel.Invoke(() => _following?.Flush(cancellationToken));
+            return _following?.Flush(cancellationToken) ?? Task.CompletedTask;
         }
     }
 }

@@ -10,21 +10,22 @@ namespace Bruteflow.Blocks
     /// <typeparam name="TInput">Data type which the block receives</typeparam>
     public sealed class ActionBlock<TInput> : IReceiverBlock<TInput>
     {
-        private readonly Action<CancellationToken, TInput, PipelineMetadata> _action;
+        private readonly Func<CancellationToken, TInput, PipelineMetadata, Task> _action;
 
-        internal ActionBlock(Action<CancellationToken, TInput, PipelineMetadata> action)
+        internal ActionBlock(Func<CancellationToken, TInput, PipelineMetadata, Task> action)
         {
             _action = action ?? throw new ArgumentNullException(nameof(action), "Cannot be null");
         }
 
-        public void Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
+        public Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            Parallel.Invoke(() => _action(cancellationToken, input, metadata));
+            return _action(cancellationToken, input, metadata);
         }
 
-        public void Flush(CancellationToken cancellationToken)
+        public Task Flush(CancellationToken cancellationToken)
         {
             // do nothing
+            return Task.CompletedTask;
         }
     }
 }

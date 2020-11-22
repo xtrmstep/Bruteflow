@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace Bruteflow.Blocks
     ///     The block which pushes entities to all following blocks synchronously
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public sealed class DistributeBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity>
+    public sealed class DistributeBlock<TEntity> : IReceiverBlock<TEntity>, IProducerBlock<TEntity> 
     {
         private readonly List<IReceiverBlock<TEntity>> _targets = new List<IReceiverBlock<TEntity>>();
 
@@ -27,15 +28,17 @@ namespace Bruteflow.Blocks
             _targets.Add(receiverBlock);
         }
 
-        public void Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
+        public Task Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
-            if (_targets == null) return;
-            Parallel.ForEach(_targets, target => target.Push(cancellationToken, input, metadata));
+            if (_targets == null) return Task.CompletedTask;
+            var tasks = _targets.Select(target => target.Push(cancellationToken, input, metadata)).ToArray();
+            return Task.WhenAll(tasks);
         }
 
-        public void Flush(CancellationToken cancellationToken)
+        public Task Flush(CancellationToken cancellationToken)
         {
-            Parallel.ForEach(_targets, target => target.Flush(cancellationToken));
+            var tasks = _targets.Select(target => target.Flush(cancellationToken)).ToArray();
+            return Task.WhenAll(tasks);
         }
     }
 }

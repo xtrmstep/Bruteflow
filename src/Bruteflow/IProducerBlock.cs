@@ -4,7 +4,7 @@
     /// Interface of a block which can produces data
     /// </summary>
     /// <typeparam name="TOutput">Data type which block produces</typeparam>
-    public interface IProducerBlock<out TOutput>
+    public interface IProducerBlock<out TOutput> 
     {
         /// <summary>
         ///     Link a receiving block

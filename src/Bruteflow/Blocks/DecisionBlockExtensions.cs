@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow.Blocks
 {
@@ -7,9 +8,9 @@ namespace Bruteflow.Blocks
     {
         public static void Decision<TPrecedingOutput>(
             this IProducerBlock<TPrecedingOutput> precedingBlock,
-            Func<CancellationToken, TPrecedingOutput, PipelineMetadata, bool> condition,
+            Func<CancellationToken, TPrecedingOutput, PipelineMetadata, Task<bool>> condition,
             IReceiverBlock<TPrecedingOutput> positive,
-            IReceiverBlock<TPrecedingOutput> negative)
+            IReceiverBlock<TPrecedingOutput> negative)           
         {
             var next = new DecisionBlock<TPrecedingOutput>(condition);
             var conditional = (IConditionalProducerBlock<TPrecedingOutput, TPrecedingOutput>) next;

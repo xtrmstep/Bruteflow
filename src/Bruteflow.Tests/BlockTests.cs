@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
+using System.Threading.Tasks;
 using Bruteflow.Blocks;
 using FluentAssertions;
 using Xunit;
@@ -9,24 +12,31 @@ namespace Bruteflow.Tests
     public class BlockTests
     {
         [Fact]
-        public void Batch_pipeline_one_input_accumulate_to_one_output()
+        public async Task Batch_pipeline_one_input_accumulate_to_one_output()
         {
             var result = new List<string>();
 
             var head = new HeadBlock<string>();
-            head.Process((ct, str, md) => str + "A")
+            head.Process((ct, str, md) => Task.FromResult(str + "A"))
                 .Batch(3)
-                .Process((ct, str, md) => string.Join(',', str))
-                .Action((ct, str, md) => result.Add(str));
+                .Process((ct, str, md) => Task.FromResult(string.Join(",", str)))
+                .Action((ct, str, md) =>
+                {
+                    result.Add(str);
+                    return Task.CompletedTask;
+                });
             
             var cts = new CancellationTokenSource();
 
-            head.Push(cts.Token, "C", new PipelineMetadata());
-            head.Push(cts.Token, "C", new PipelineMetadata());
-            head.Push(cts.Token, "C", new PipelineMetadata());
-            // this one will be lost because of the batching
-            head.Push(cts.Token, "C", new PipelineMetadata());
-            head.Flush(cts.Token);
+            await Task.WhenAll(new[]
+            {
+                head.Push(cts.Token, "C", new PipelineMetadata()),
+                head.Push(cts.Token, "C", new PipelineMetadata()),
+                head.Push(cts.Token, "C", new PipelineMetadata()),
+                // this one will be lost because of the batching
+                head.Push(cts.Token, "C", new PipelineMetadata()),
+                head.Flush(cts.Token)
+            });
 
             result.Count.Should().Be(2);
             result[0].Should().Be("CA,CA,CA");
@@ -34,34 +44,34 @@ namespace Bruteflow.Tests
         }
 
         [Fact]
-        public void Decision_pipeline_one_input_different_outputs()
+        public async Task Decision_pipeline_one_input_different_outputs()
         {
             var result = string.Empty;
 
             var head = new HeadBlock<string>();
             var positive = new HeadBlock<string>();
             var negative = new HeadBlock<string>();
-            head.Process((ct, str, md) => str + "A")
-                .Decision((ct, str, md) => str == "AA", positive, negative);
+            head.Process((ct, str, md) => Task.FromResult(str + "A"))
+                .Decision((ct, str, md) => Task.FromResult(str == "AA"), positive, negative);
 
             positive
-                .Process((ct, str, md) => str + "B")
-                .Action((ct, str, md) => result = str);
+                .Process((ct, str, md) => Task.FromResult(str + "B"))
+                .Action((ct, str, md) => Task.FromResult(result = str));
 
             negative
-                .Process((ct, str, md) => str + "C")
-                .Action((ct, str, md) => result = str);
+                .Process((ct, str, md) => Task.FromResult(str + "C"))
+                .Action((ct, str, md) => Task.FromResult(result = str));
 
             var cts = new CancellationTokenSource();
-            head.Push(cts.Token, "A", new PipelineMetadata());
+            await head.Push(cts.Token, "A", new PipelineMetadata());
             result.Should().Be("AAB");
 
-            head.Push(cts.Token, "B", new PipelineMetadata());
+            await head.Push(cts.Token, "B", new PipelineMetadata());
             result.Should().Be("BAC");
         }
 
         [Fact]
-        public void Distribute_pipeline_one_input_two_outputs()
+        public async Task Distribute_pipeline_one_input_two_outputs()
         {
             var result1 = string.Empty;
             var result2 = string.Empty;
@@ -69,37 +79,37 @@ namespace Bruteflow.Tests
             var head = new HeadBlock<string>();
             var branch1 = new HeadBlock<string>();
             var branch2 = new HeadBlock<string>();
-            head.Process((ct, str, md) => str + "A")
-                .Process((ct, str, md) => str + "-")
+            head.Process((ct, str, md) => Task.FromResult(str + "A"))
+                .Process((ct, str, md) => Task.FromResult(str + "-"))
                 .Distribute(branch1, branch2);
 
             branch1
-                .Process((ct, str, md) => str + "B")
-                .Action((ct, str, md) => result1 = str);
+                .Process((ct, str, md) => Task.FromResult(str + "B"))
+                .Action((ct, str, md) => Task.FromResult(result1 = str));
 
             branch2
-                .Process((ct, str, md) => str + "C")
-                .Action((ct, str, md) => result2 = str);
+                .Process((ct, str, md) => Task.FromResult(str + "C"))
+                .Action((ct, str, md) => Task.FromResult(result2 = str));
             
             var cts = new CancellationTokenSource();
-            head.Push(cts.Token, string.Empty, new PipelineMetadata());
+            await head.Push(cts.Token, string.Empty, new PipelineMetadata());
 
             result1.Should().Be("A-B");
             result2.Should().Be("A-C");
         }
 
         [Fact]
-        public void Process_pipeline_one_input_one_output()
+        public async Task Process_pipeline_one_input_one_output()
         {
             var result = string.Empty;
             var head = new HeadBlock<string>();
-            head.Process((ct, str, md) => str + "A")
-                .Process((ct, str, md) => str + "B")
-                .Process((ct, str, md) => str + "C")
-                .Action((ct, str, md) => result = str);
+            head.Process((ct, str, md) => Task.FromResult(str + "A"))
+                .Process((ct, str, md) => Task.FromResult(str + "B"))
+                .Process((ct, str, md) => Task.FromResult(str + "C"))
+                .Action((ct, str, md) => Task.FromResult(result = str));
 
             var cts = new CancellationTokenSource();
-            head.Push(cts.Token, string.Empty, new PipelineMetadata());
+            await head.Push(cts.Token, string.Empty, new PipelineMetadata());
 
             result.Should().Be("ABC");
         }

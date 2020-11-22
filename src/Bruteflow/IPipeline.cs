@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow
 {
@@ -11,6 +12,6 @@ namespace Bruteflow
         ///     Launch the pipeline.
         /// </summary>
         /// <param name="cancellationToken"></param>
-        void Execute(CancellationToken cancellationToken);
+        Task Execute(CancellationToken cancellationToken);
     }
 }

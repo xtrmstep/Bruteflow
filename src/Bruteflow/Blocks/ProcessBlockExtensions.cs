@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bruteflow.Blocks
 {
@@ -15,7 +16,7 @@ namespace Bruteflow.Blocks
         /// <returns></returns>
         public static IProducerBlock<TCurrentOutput> Process<TPrecedingOutput, TCurrentOutput>(
             this IProducerBlock<TPrecedingOutput> precedingBlock,
-            Func<CancellationToken, TPrecedingOutput, PipelineMetadata, TCurrentOutput> process)
+            Func<CancellationToken, TPrecedingOutput, PipelineMetadata, Task<TCurrentOutput>> process)
         {
             var next = new ProcessBlock<TPrecedingOutput, TCurrentOutput>(process);
             precedingBlock.Link(next);
