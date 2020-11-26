@@ -20,7 +20,7 @@ namespace Bruteflow.Kafka.Consumers.Abstract
         {
             var kafkaConsumer = base.CreateConsumer();
 
-            Stats.Metric().CountInstances(kafkaConsumer);
+            Stats.Metric().CountInstances(kafkaConsumer).GetAwaiter().GetResult();
 
             return kafkaConsumer;
         }
@@ -30,7 +30,7 @@ namespace Bruteflow.Kafka.Consumers.Abstract
             var consumer = consumerBuilder.Build();
             var kafkaConsumer = new KafkaConsumerWithMetrics<TKey, TValue>(kafkaTopic, consumer, Stats);
 
-            Stats.Metric().CountInstances(kafkaConsumer);
+            Stats.Metric().CountInstances(kafkaConsumer).GetAwaiter().GetResult();
 
             return kafkaConsumer;
         }
