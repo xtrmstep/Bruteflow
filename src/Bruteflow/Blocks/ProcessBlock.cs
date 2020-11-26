@@ -28,18 +28,15 @@ namespace Bruteflow.Blocks
             _following = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
-        public Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
+        public async Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            return _process(cancellationToken, input, metadata)
-                .ContinueWith(antecedent => _following != null 
-                            ? _following.Push(cancellationToken, antecedent.Result, metadata) 
-                            : Task.CompletedTask, 
-                    TaskContinuationOptions.OnlyOnRanToCompletion);
+            var result = await _process(cancellationToken, input, metadata).ConfigureAwait(false);
+            _following?.Push(cancellationToken, result, metadata);
         }
 
         public Task Flush(CancellationToken cancellationToken)
         {
-            return _following?.Flush(cancellationToken) ?? Task.CompletedTask;
+            return _following?.Flush(cancellationToken);
         }
     }
 }
