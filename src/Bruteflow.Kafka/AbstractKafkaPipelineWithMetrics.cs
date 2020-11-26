@@ -20,14 +20,14 @@ namespace Bruteflow.Kafka
 
         protected override async Task PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
         {
-            await base.PushToFlow(cancellationToken, entity, pipelineMetadata);
-            await Stats.Metric().PipelineLatency(pipelineMetadata);
+            await base.PushToFlow(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
+            await Stats.Metric().PipelineLatency(pipelineMetadata).ConfigureAwait(false);
         }
 
         protected override async Task OnError(Exception err)
         {
-            await base.OnError(err);
-            await Stats.Metric().FatalErrorIncrement();
+            await base.OnError(err).ConfigureAwait(false);
+            await Stats.Metric().FatalErrorIncrement().ConfigureAwait(false);
         }
     }
 }

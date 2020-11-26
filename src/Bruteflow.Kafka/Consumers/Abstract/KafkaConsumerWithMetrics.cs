@@ -17,10 +17,8 @@ namespace Bruteflow.Kafka.Consumers.Abstract
 
         public override async Task<ConsumeResult<TKey, TValue>> Consume(CancellationToken cancellationToken)
         {
-            var consumerResult = await Stats.Metric().ConsumeLatency(() => Task.FromResult(Consumer.Consume(cancellationToken)));
-#pragma warning disable 4014
-            Stats.Metric().ConsumedIncrement();
-#pragma warning restore 4014
+            var consumerResult = await Stats.Metric().ConsumeLatency(() => Task.FromResult(Consumer.Consume(cancellationToken))).ConfigureAwait(false);
+            await Stats.Metric().ConsumedIncrement().ConfigureAwait(false);
             return consumerResult;
         }
     }

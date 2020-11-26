@@ -18,8 +18,8 @@ namespace Bruteflow.Kafka.Producers.Abstract
 
         protected override async Task Emit(Message<TKey, TValue> message)
         {
-            await _stats.Metric().ProduceLatency(() => Producer.ProduceAsync(Topic, message));
-            await _stats.Metric().ProduceCountIncrement();
+            await _stats.Metric().ProduceLatency(() => Producer.ProduceAsync(Topic, message)).ConfigureAwait(false);
+            await _stats.Metric().ProduceCountIncrement().ConfigureAwait(false);
         }
     }
 }

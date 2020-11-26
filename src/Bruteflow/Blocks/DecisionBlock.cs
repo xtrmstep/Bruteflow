@@ -37,12 +37,12 @@ namespace Bruteflow.Blocks
                 throw new InvalidOperationException("Decision block should have at least one branch");
             }
             var conditionResult = false;
-            conditionResult = await _condition(cancellationToken, input, metadata);
+            conditionResult = await _condition(cancellationToken, input, metadata).ConfigureAwait(false);
             var branchTask = conditionResult 
                 ? _positive?.Push(cancellationToken, input, metadata) 
                 : _negative?.Push(cancellationToken, input, metadata);
             
-            await (branchTask ?? Task.CompletedTask);
+            await (branchTask ?? Task.CompletedTask).ConfigureAwait(false);
         }
 
         public Task Flush(CancellationToken cancellationToken)

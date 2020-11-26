@@ -30,10 +30,10 @@ namespace Bruteflow.Blocks
 
         public async Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            var output = await _process(cancellationToken, input, metadata);
+            var output = await _process(cancellationToken, input, metadata).ConfigureAwait(false);
             if (_following != null)
             {
-                await _following.Push(cancellationToken, output, metadata);
+                await _following.Push(cancellationToken, output, metadata).ConfigureAwait(false);
             }
         }
 

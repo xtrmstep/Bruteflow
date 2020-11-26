@@ -22,16 +22,14 @@ namespace Bruteflow.Kafka
 
         protected override async Task<EntityItem<TConsumerValue>> ReadNextEntity(CancellationToken cancellationToken)
         {
-            await Task.Yield();
-
             var entity = new EntityItem<TConsumerValue>();
             ConsumeResult<TConsumerKey, TConsumerValue> consumerResult;
             try
             {
-                consumerResult = await Consumer.Consume(cancellationToken);
+                consumerResult = await Consumer.Consume(cancellationToken).ConfigureAwait(false);
                 while (consumerResult != null && consumerResult.IsPartitionEOF)
                 {
-                    consumerResult = await Consumer.Consume(cancellationToken);
+                    consumerResult = await Consumer.Consume(cancellationToken).ConfigureAwait(false);
                 }
             }
             catch (OperationCanceledException err)

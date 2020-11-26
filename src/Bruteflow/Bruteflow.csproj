@@ -10,7 +10,8 @@
         <PackageLicenseUrl>https://github.com/xtrmstep/Bruteflow/blob/master/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/xtrmstep/Bruteflow</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageVersion>2.0.1</PackageVersion>
+        <PackageVersion>2.0.2</PackageVersion>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

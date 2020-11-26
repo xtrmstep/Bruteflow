@@ -31,7 +31,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
                 if (key != null)
                     message.Key = key;
 
-                await Emit(message);
+                await Emit(message).ConfigureAwait(false);
             }
             catch (Exception err)
             {

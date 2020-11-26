@@ -24,15 +24,15 @@ namespace Bruteflow.Abstract
             try
             {
                 EntityItem<TInput> nextEntity;
-                while ((nextEntity = await ReadNextEntity(cancellationToken)) != null)
+                while ((nextEntity = await ReadNextEntity(cancellationToken).ConfigureAwait(false)) != null)
                 {
                     if (cancellationToken.IsCancellationRequested) break;                    
-                    await PushToFlow(cancellationToken, nextEntity.Entity, nextEntity.Metadata);
+                    await PushToFlow(cancellationToken, nextEntity.Entity, nextEntity.Metadata).ConfigureAwait(false);
                 }                
             }
             catch (Exception err)
             {
-                await OnError(err);
+                await OnError(err).ConfigureAwait(false);
                 throw;
             }
         }
