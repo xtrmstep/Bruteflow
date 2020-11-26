@@ -18,16 +18,16 @@ namespace Bruteflow.Kafka
             Stats = stats;
         }
 
-        protected override async Task PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
+        protected override Task PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
         {
-            await base.PushToFlow(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
-            await Stats.Metric().PipelineLatency(pipelineMetadata).ConfigureAwait(false);
+            return base.PushToFlow(cancellationToken, entity, pipelineMetadata)
+                .ContinueWith(antecedent => Stats.Metric().PipelineLatency(pipelineMetadata), cancellationToken);
         }
 
-        protected override async Task OnError(Exception err)
+        protected override Task OnError(Exception err)
         {
-            await base.OnError(err).ConfigureAwait(false);
-            await Stats.Metric().FatalErrorIncrement().ConfigureAwait(false);
+            return base.OnError(err)
+                .ContinueWith(antecedent => Stats.Metric().FatalErrorIncrement());
         }
     }
 }

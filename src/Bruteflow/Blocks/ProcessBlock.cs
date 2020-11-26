@@ -28,13 +28,13 @@ namespace Bruteflow.Blocks
             _following = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
-        public async Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
+        public Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            var output = await _process(cancellationToken, input, metadata).ConfigureAwait(false);
-            if (_following != null)
-            {
-                await _following.Push(cancellationToken, output, metadata).ConfigureAwait(false);
-            }
+            return _process(cancellationToken, input, metadata)
+                .ContinueWith(antecedent => _following != null 
+                            ? _following.Push(cancellationToken, antecedent.Result, metadata) 
+                            : Task.CompletedTask, 
+                    TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
         public Task Flush(CancellationToken cancellationToken)

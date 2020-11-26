@@ -23,7 +23,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
             Producer = producer;
         }
 
-        public async Task ProduceAsync(TKey key, TValue value)
+        public Task ProduceAsync(TKey key, TValue value)
         {
             try
             {
@@ -31,12 +31,14 @@ namespace Bruteflow.Kafka.Producers.Abstract
                 if (key != null)
                     message.Key = key;
 
-                await Emit(message).ConfigureAwait(false);
+                return Emit(message);
             }
             catch (Exception err)
             {
                 Logger.LogError(err, err.Message);
             }
+
+            return Task.CompletedTask;
         }
 
         protected virtual Task Emit(Message<TKey, TValue> message)

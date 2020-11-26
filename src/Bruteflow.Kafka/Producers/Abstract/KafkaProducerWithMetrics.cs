@@ -16,10 +16,10 @@ namespace Bruteflow.Kafka.Producers.Abstract
             _stats = stats;
         }
 
-        protected override async Task Emit(Message<TKey, TValue> message)
+        protected override Task Emit(Message<TKey, TValue> message)
         {
-            await _stats.Metric().ProduceLatency(() => Producer.ProduceAsync(Topic, message)).ConfigureAwait(false);
-            await _stats.Metric().ProduceCountIncrement().ConfigureAwait(false);
+            return _stats.Metric().ProduceLatency(() => Producer.ProduceAsync(Topic, message))
+                .ContinueWith(antecedent => _stats.Metric().ProduceCountIncrement(), TaskContinuationOptions.OnlyOnRanToCompletion);
         }
     }
 }

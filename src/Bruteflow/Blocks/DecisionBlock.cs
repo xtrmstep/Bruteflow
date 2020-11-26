@@ -30,19 +30,21 @@ namespace Bruteflow.Blocks
             _negative = receiverBlock;
         }
 
-        public async Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
+        public Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
             if (_positive == null && _negative == null)
             {
                 throw new InvalidOperationException("Decision block should have at least one branch");
             }
-            var conditionResult = false;
-            conditionResult = await _condition(cancellationToken, input, metadata).ConfigureAwait(false);
-            var branchTask = conditionResult 
-                ? _positive?.Push(cancellationToken, input, metadata) 
-                : _negative?.Push(cancellationToken, input, metadata);
-            
-            await (branchTask ?? Task.CompletedTask).ConfigureAwait(false);
+
+            var conditionTask = _condition(cancellationToken, input, metadata);
+            var positiveContinue = conditionTask
+                .ContinueWith(antecedent => antecedent.Result ? _positive?.Push(cancellationToken, input, metadata) : Task.CompletedTask,
+                    TaskContinuationOptions.OnlyOnRanToCompletion);
+            var negativeContinue = conditionTask
+                .ContinueWith(antecedent => antecedent.Result ? _negative?.Push(cancellationToken, input, metadata) : Task.CompletedTask,
+                    TaskContinuationOptions.OnlyOnRanToCompletion);
+            return Task.WhenAll(positiveContinue, negativeContinue);
         }
 
         public Task Flush(CancellationToken cancellationToken)

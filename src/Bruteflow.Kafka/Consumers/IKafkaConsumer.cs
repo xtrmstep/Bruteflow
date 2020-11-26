@@ -5,9 +5,9 @@ using Confluent.Kafka;
 
 namespace Bruteflow.Kafka.Consumers
 {
-    public interface IKafkaConsumer<TKey, TValue> : IAsyncDisposable
+    public interface IKafkaConsumer<TKey, TValue> : IDisposable
     {
-        Task<ConsumeResult<TKey, TValue>> Consume(CancellationToken cancellationToken);
-        Task Close();
+        ConsumeResult<TKey, TValue> Consume(CancellationToken cancellationToken);
+        void Close();
     }
 }

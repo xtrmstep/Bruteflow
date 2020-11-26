@@ -26,13 +26,19 @@ namespace Bruteflow.Kafka
             ConsumeResult<TConsumerKey, TConsumerValue> consumerResult;
             try
             {
-                consumerResult = await Consumer.Consume(cancellationToken).ConfigureAwait(false);
-                while (consumerResult != null && consumerResult.IsPartitionEOF)
+                consumerResult = await Task.Run(() =>
                 {
-                    consumerResult = await Consumer.Consume(cancellationToken).ConfigureAwait(false);
-                }
+                    var r = Consumer.Consume(cancellationToken);
+                    while (r != null && r.IsPartitionEOF)
+                    {
+                        r = Consumer.Consume(cancellationToken);
+                    }
+                    return r;
+                }, cancellationToken)
+                    .ConfigureAwait(false);
+                
             }
-            catch (OperationCanceledException err)
+            catch (OperationCanceledException)
             {
                 return null;
             }

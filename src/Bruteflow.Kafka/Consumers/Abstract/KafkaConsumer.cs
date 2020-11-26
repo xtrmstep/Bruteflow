@@ -14,24 +14,22 @@ namespace Bruteflow.Kafka.Consumers.Abstract
             Consumer.Subscribe(topic);
         }
 
-        public virtual Task<ConsumeResult<TKey, TValue>> Consume(CancellationToken cancellationToken)
+        public virtual ConsumeResult<TKey, TValue> Consume(CancellationToken cancellationToken)
         {
             var consumeResult = Consumer.Consume(cancellationToken);
-            return Task.FromResult(consumeResult);
+            return consumeResult;
         }
 
-        public Task Close()
+        public void Close()
         {
             Consumer.Close();
-            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
-        public ValueTask DisposeAsync()
+        public void Dispose()
         {
             Consumer?.Dispose();
             Consumer = null;
-            return new ValueTask(Task.CompletedTask);
         }
     }
 }

@@ -49,27 +49,27 @@ namespace Bruteflow.Kafka.Tests
             var serviceProvider = services.BuildServiceProvider();
 
             // produce test events
-            await ProduceTestEvents(serviceProvider, 100).ConfigureAwait(false);
+            await ProduceTestEvents(serviceProvider, 100);
 
             // start pipeline to listen events
             var pipeline = serviceProvider.GetService<TestKafkaPipeline>();
             // wait 10 seconds to make sure all sent event could be read
             // if less, then less message could be read and the test will fail
-            await pipeline.Execute(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token).ConfigureAwait(false); 
+            await pipeline.Execute(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token); 
 
             // verify that all messages consumed and produced
-            var testEvent = await ConsumeTestEvents(serviceProvider).ConfigureAwait(false);
+            var testEvent = ConsumeTestEvents(serviceProvider);
             testEvent.Count.Should().Be(100);
         }
 
-        private static async Task<List<JObject>> ConsumeTestEvents(ServiceProvider serviceProvider)
+        private static List<JObject> ConsumeTestEvents(ServiceProvider serviceProvider)
         {
             var testEvent = new List<JObject>();
             var consumerTestEvents = serviceProvider.GetService<ConsumerEventsAfterPipelineFactory>().CreateConsumer();
             var cts = new CancellationTokenSource();
             while (true)
             {
-                var result = await consumerTestEvents.Consume(cts.Token).ConfigureAwait(false);
+                var result = consumerTestEvents.Consume(cts.Token);
                 if (result.IsPartitionEOF) break;
                 testEvent.Add(result.Message.Value);
             }
