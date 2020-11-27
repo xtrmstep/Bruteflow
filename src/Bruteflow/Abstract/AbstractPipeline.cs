@@ -30,7 +30,7 @@ namespace Bruteflow.Abstract
                 while ((nextEntity = await ReadNextEntity(cancellationToken).ConfigureAwait(false)) != null)
                 {
                     if (cancellationToken.IsCancellationRequested) break;                    
-                    await PushToFlow(cancellationToken, nextEntity.Entity, nextEntity.Metadata).ConfigureAwait(false);
+                    PushToFlow(cancellationToken, nextEntity.Entity, nextEntity.Metadata);
                 }                
             }
             catch (Exception err)
@@ -63,9 +63,9 @@ namespace Bruteflow.Abstract
         /// <param name="cancellationToken"></param>
         /// <param name="entity"></param>
         /// <param name="pipelineMetadata"></param>
-        protected virtual Task PushToFlow(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
+        protected virtual void PushToFlow(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
         {
-            return Task.Run(async () =>
+            Task.Run(async () =>
             {
                 using var scope = _serviceProvider.CreateScope();
                 var pipe = CreatePipe(scope.ServiceProvider);
