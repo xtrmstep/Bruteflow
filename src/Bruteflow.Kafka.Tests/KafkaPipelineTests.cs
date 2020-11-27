@@ -44,6 +44,7 @@ namespace Bruteflow.Kafka.Tests
                 collection.AddTransient<ConsumerEventsAfterPipelineFactory>();
                 
                 // pipeline
+                collection.AddTransient<TestPipe>();
                 collection.AddTransient<TestKafkaPipeline>();
             });            
             var serviceProvider = services.BuildServiceProvider();

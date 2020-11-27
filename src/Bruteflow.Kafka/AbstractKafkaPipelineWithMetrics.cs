@@ -12,22 +12,22 @@ namespace Bruteflow.Kafka
         protected readonly IMetricsPublisher Stats;
 
         protected AbstractKafkaPipelineWithMetrics(ILogger<AbstractKafkaPipelineWithMetrics<TConsumerKey, TConsumerValue>> logger,
-            IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory, IMetricsPublisher stats)
-            : base(logger, consumerFactory)
+            IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory, IMetricsPublisher stats, IServiceProvider serviceProvider)
+            : base(logger, consumerFactory, serviceProvider)
         {
             Stats = stats;
         }
 
-        protected override Task PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
+        protected override async Task PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
         {
-            return base.PushToFlow(cancellationToken, entity, pipelineMetadata)
-                .ContinueWith(antecedent => Stats.Metric().PipelineLatency(pipelineMetadata), cancellationToken);
+            await base.PushToFlow(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
+            await Stats.Metric().PipelineLatency(pipelineMetadata).ConfigureAwait(false);
         }
 
-        protected override Task OnError(Exception err)
+        protected override async Task OnError(Exception err)
         {
-            return base.OnError(err)
-                .ContinueWith(antecedent => Stats.Metric().FatalErrorIncrement());
+            await base.OnError(err).ConfigureAwait(false);
+            await Stats.Metric().FatalErrorIncrement().ConfigureAwait(false);
         }
     }
 }

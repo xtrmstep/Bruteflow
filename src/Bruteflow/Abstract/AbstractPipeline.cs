@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Bruteflow.Blocks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Bruteflow.Abstract
 {
@@ -14,11 +15,13 @@ namespace Bruteflow.Abstract
     /// <typeparam name="TInput"></typeparam>
     public abstract class AbstractPipeline<TInput> : IPipeline
     {
-        /// <summary>
-        /// The head of the main pipeline 
-        /// </summary>
-        protected readonly HeadBlock<TInput> Head = new HeadBlock<TInput>();
+        private readonly IServiceProvider _serviceProvider;
 
+        protected AbstractPipeline(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+        
         public async Task Execute(CancellationToken cancellationToken)
         {
             try
@@ -62,7 +65,14 @@ namespace Bruteflow.Abstract
         /// <param name="pipelineMetadata"></param>
         protected virtual Task PushToFlow(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
         {
-            return Head.Push(cancellationToken, entity, pipelineMetadata);
+            return Task.Run(async () =>
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var pipe = CreatePipe(scope.ServiceProvider);
+                await pipe.Head.Push(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
+            }, cancellationToken);
         }
+
+        protected abstract IPipe<TInput> CreatePipe(IServiceProvider scopeServiceProvider);
     }
 }

@@ -15,12 +15,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bruteflow" Version="2.0.4" />
         <PackageReference Include="Confluent.Kafka" Version="1.5.2" />
         <PackageReference Include="MessagePack" Version="2.2.60" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.10" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.10" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Bruteflow\Bruteflow.csproj" />
     </ItemGroup>
 
 </Project>

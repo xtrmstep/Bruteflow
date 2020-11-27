@@ -14,7 +14,8 @@ namespace Bruteflow.Kafka
         protected readonly ILogger Logger;
 
         protected AbstractKafkaPipeline(ILogger<AbstractKafkaPipeline<TConsumerKey, TConsumerValue>> logger,
-            IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory)
+            IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory, IServiceProvider serviceProvider) 
+            : base(serviceProvider)
         {
             Logger = logger;
             Consumer = consumerFactory.CreateConsumer();
@@ -48,11 +49,6 @@ namespace Bruteflow.Kafka
             entity.Entity = consumerResult.Message.Value;
             entity.Metadata = new PipelineMetadata {Metadata = consumerResult.Message, InputTimestamp = DateTime.Now};
             return entity;
-        }
-
-        protected override Task PushToFlow(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
-        {
-            return Head.Push(cancellationToken, entity, pipelineMetadata);
         }
 
         protected override Task OnError(Exception err)
