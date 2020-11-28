@@ -1,8 +1,9 @@
-﻿using Bruteflow.Blocks;
+﻿using System;
+using Bruteflow.Blocks;
 
 namespace Bruteflow
 {
-    public interface IPipe<TInput>
+    public interface IPipe<TInput> : IDisposable
     {
         /// <summary>
         /// The head of the main pipeline 

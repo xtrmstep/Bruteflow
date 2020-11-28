@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Bruteflow.Kafka.Consumers;
 using Bruteflow.Kafka.Producers;
 using Bruteflow.Kafka.Tests.Pipeline;
-using Bruteflow.Kafka.Tests.Pipeline.Consumers;
-using Bruteflow.Kafka.Tests.Pipeline.Producers;
+using Bruteflow.Kafka.Tests.Pipeline.EventsAfter;
+using Bruteflow.Kafka.Tests.Pipeline.EventsIncoming;
 using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,27 +25,29 @@ namespace Bruteflow.Kafka.Tests
         {
             // configure dependencies
             IServiceCollection services = new ServiceCollection();
-            services.AddBruteflowKafkaPipelines((provider, collection) =>
-            {
-                collection.AddTransient<KafkaConsumerIncomingEventsSettings>();
-                collection.AddTransient<KafkaConsumerEventsAfterPipelineSettings>();
-                collection.AddTransient<KafkaProducerIncomingEventsSettings>();
-                collection.AddTransient<KafkaProducerEventsAfterPipelineSettings>();
-                
-                collection.AddTransient(svc => Mock.Of<ILogger<TestKafkaPipeline>>());
-                collection.AddTransient(svc => Mock.Of<ILogger<ConsumerIncomingEventsFactory>>());
-                collection.AddTransient(svc => Mock.Of<ILogger<ConsumerEventsAfterPipelineFactory>>());
-                collection.AddTransient(svc => Mock.Of<ILogger<ProducerIncomingEventsFactory>>());
-                collection.AddTransient(svc => Mock.Of<ILogger<ProducerEventsAfterPipelineFactory>>());
+            
+            // classes to generate of test events
+            services.AddTransient(svc => Mock.Of<ILogger<ProducerFactoryTestEvents>>());
+            services.AddTransient<ProducerFactoryTestEvents>();
+            services.AddTransient<KafkaSettingsTestEvents>();
+            
+            // classes to read processed events (from destination topic)
+            services.AddTransient(svc => Mock.Of<ILogger<ConsumerFactoryDestinationEvents>>());
+            services.AddTransient<ConsumerFactoryDestinationEvents>();
+            services.AddTransient<KafkaSettingsDestinationEvents>();
 
-                collection.AddTransient(typeof(IConsumerFactory<Ignore, JObject>), typeof(ConsumerIncomingEventsFactory));
-                collection.AddTransient(typeof(IProducerFactory<string, JObject>), typeof(ProducerEventsAfterPipelineFactory));
-                collection.AddTransient<ProducerIncomingEventsFactory>();
-                collection.AddTransient<ConsumerEventsAfterPipelineFactory>();
-                
-                // pipeline
-                collection.AddTransient<TestPipe>();
-                collection.AddTransient<TestKafkaPipeline>();
+            // classes of the pipeline
+            services.AddTransient(svc => Mock.Of<ILogger<TestPipeline>>());
+            services.AddTransient(svc => Mock.Of<ILogger<PipelineConsumerFactory>>());
+            services.AddTransient(svc => Mock.Of<ILogger<PipelineProducerFactory>>());            
+            services.AddTransient<PipelineProducerFactory>();            
+            services.AddTransient<TestPipelineProducerSettings>();            
+            
+            services.AddBruteflowKafkaPipelines(o =>
+            {
+                var s = new TestPipelineSettings();
+                o.Pipeline<TestPipeline, JObject, TestPipe, TestRoutines, PipelineConsumerFactory, TestPipelineSettings>(s);
+
             });            
             var serviceProvider = services.BuildServiceProvider();
 
@@ -53,7 +55,7 @@ namespace Bruteflow.Kafka.Tests
             await ProduceTestEvents(serviceProvider, 100);
 
             // start pipeline to listen events
-            var pipeline = serviceProvider.GetService<TestKafkaPipeline>();
+            var pipeline = serviceProvider.GetService<TestPipeline>();
             // wait 10 seconds to make sure all sent event could be read
             // if less, then less message could be read and the test will fail
             await pipeline.StartAsync(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token); 
@@ -66,7 +68,7 @@ namespace Bruteflow.Kafka.Tests
         private static List<JObject> ConsumeTestEvents(ServiceProvider serviceProvider)
         {
             var testEvent = new List<JObject>();
-            var consumerTestEvents = serviceProvider.GetService<ConsumerEventsAfterPipelineFactory>().CreateConsumer();
+            var consumerTestEvents = serviceProvider.GetService<ConsumerFactoryDestinationEvents>().CreateConsumer();
             var cts = new CancellationTokenSource();
             while (true)
             {
@@ -80,7 +82,7 @@ namespace Bruteflow.Kafka.Tests
 
         private static Task ProduceTestEvents(ServiceProvider serviceProvider, int numberOfEvents)
         {
-            var producer = serviceProvider.GetService<ProducerIncomingEventsFactory>().CreateProducer();
+            var producer = serviceProvider.GetService<ProducerFactoryTestEvents>().CreateProducer();
             var tasks = Enumerable.Range(0, numberOfEvents)
                 .Select(i => producer.ProduceAsync(i.ToString(), JObject.FromObject(new TestEvent {Value = i})))
                 .ToArray();

@@ -8,11 +8,12 @@ namespace Bruteflow.Kafka.Consumers.Abstract
     public abstract class AbstractConsumerFactory<TKey, TValue> : IConsumerFactory<TKey, TValue>
     {
         protected readonly ILogger<AbstractConsumerFactory<TKey, TValue>> Logger;
-        protected readonly KafkaConsumerSettings Settings;
+        protected readonly KafkaPipelineSettings Settings;
         protected readonly IDeserializer<TValue> ValueDeserializer;
 
         protected AbstractConsumerFactory(ILogger<AbstractConsumerFactory<TKey, TValue>> logger,
-            KafkaConsumerSettings settings, IDeserializer<TValue> valueDeserializer)
+            KafkaPipelineSettings settings,
+            IDeserializer<TValue> valueDeserializer)
         {
             Logger = logger;
             Settings = settings;
@@ -21,13 +22,13 @@ namespace Bruteflow.Kafka.Consumers.Abstract
 
         public virtual IKafkaConsumer<TKey, TValue> CreateConsumer()
         {
-            Logger.LogDebug($"Registering consumer {Settings.GroupId}");
+            Logger.LogDebug($"Registering consumer {Settings.Kafka.GroupId}");
             Logger.LogTrace(JsonConvert.SerializeObject(Settings));
 
-            var config = CreateConsumerConfig(Settings);
+            var config = CreateConsumerConfig(Settings.Kafka);
             var consumerBuilder = new ConsumerBuilder<TKey, TValue>(config);
             SetValueDeserializer(consumerBuilder);
-            var kafkaConsumer = CreateKafkaConsumer(consumerBuilder, Settings.Topic);
+            var kafkaConsumer = CreateKafkaConsumer(consumerBuilder, Settings.Kafka.Topic);
 
             return kafkaConsumer;
         }

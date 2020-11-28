@@ -10,7 +10,9 @@ namespace Bruteflow.Kafka.Consumers.Abstract
         protected readonly IMetricsPublisher Stats;
 
         protected AbstractConsumerWithMetricsFactory(ILogger<AbstractConsumerWithMetricsFactory<TKey, TValue>> logger,
-            KafkaConsumerSettings settings, IDeserializer<TValue> valueDeserializer, IMetricsPublisher stats)
+            KafkaPipelineSettings settings, 
+            IDeserializer<TValue> valueDeserializer,
+            IMetricsPublisher stats)
             : base(logger, settings, valueDeserializer)
         {
             Stats = stats;

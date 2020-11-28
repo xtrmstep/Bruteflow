@@ -3,19 +3,23 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bruteflow.Abstract;
 using Bruteflow.Kafka.Consumers;
+using Bruteflow.Kafka.Settings;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 
 namespace Bruteflow.Kafka
 {
-    public abstract class AbstractKafkaPipeline<TConsumerKey, TConsumerValue> : AbstractPipeline<TConsumerValue>
+    public abstract class AbstractKafkaPipeline<TConsumerKey, TConsumerValue, TPipe> : AbstractPipeline<TConsumerValue, TPipe>
+        where TPipe : IPipe<TConsumerValue>
     {
         protected readonly IKafkaConsumer<TConsumerKey, TConsumerValue> Consumer;
-        protected readonly ILogger Logger;
+        protected readonly ILogger<AbstractKafkaPipeline<TConsumerKey, TConsumerValue, TPipe>> Logger;
 
-        protected AbstractKafkaPipeline(ILogger<AbstractKafkaPipeline<TConsumerKey, TConsumerValue>> logger,
-            IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory, IServiceProvider serviceProvider) 
-            : base(serviceProvider)
+        protected AbstractKafkaPipeline(ILogger<AbstractKafkaPipeline<TConsumerKey, TConsumerValue, TPipe>> logger,
+            IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory,
+            KafkaPipelineSettings settings,
+            IServiceProvider serviceProvider) 
+            : base(serviceProvider, settings)
         {
             Logger = logger;
             Consumer = consumerFactory.CreateConsumer();

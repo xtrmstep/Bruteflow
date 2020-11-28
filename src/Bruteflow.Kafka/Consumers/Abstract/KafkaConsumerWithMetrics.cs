@@ -17,14 +17,8 @@ namespace Bruteflow.Kafka.Consumers.Abstract
 
         public override ConsumeResult<TKey, TValue> Consume(CancellationToken cancellationToken)
         {
-            var consumerResult = Stats.Metric().ConsumeLatency(() => Task.FromResult(Consumer.Consume(cancellationToken)))
-                .ContinueWith(antecedent =>
-                {
-                    Task.Factory.StartNew(_ => Stats.Metric().ConsumedIncrement(), TaskCreationOptions.AttachedToParent, cancellationToken);
-                    return antecedent.Result;
-                }, TaskContinuationOptions.OnlyOnRanToCompletion)
-                .ConfigureAwait(false)
-                .GetAwaiter().GetResult();
+            var consumerResult = Stats.Metric().ConsumeLatency(() => Task.FromResult(Consumer.Consume(cancellationToken))).GetAwaiter().GetResult();
+            Stats.Metric().ConsumedIncrement().GetAwaiter().GetResult();
             return consumerResult;
         }
     }

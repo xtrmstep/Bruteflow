@@ -13,13 +13,17 @@ namespace Bruteflow.Abstract
     /// You need to define a data glow pipeline in the constructor of your class, attaching blocks to the Head block
     /// </remarks>
     /// <typeparam name="TInput"></typeparam>
-    public abstract class AbstractPipeline<TInput> : IPipeline
+    /// <typeparam name="TPipe"></typeparam>
+    public abstract class AbstractPipeline<TInput, TPipe> : IPipeline
+        where TPipe: IPipe<TInput>
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly PipelineSettings _settings;
 
-        protected AbstractPipeline(IServiceProvider serviceProvider)
+        protected AbstractPipeline(IServiceProvider serviceProvider, PipelineSettings settings)
         {
             _serviceProvider = serviceProvider;
+            _settings = settings;
         }
         
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -27,7 +31,8 @@ namespace Bruteflow.Abstract
             try
             {
                 DataItem<TInput> nextData;
-                while ((nextData = await FetchNextDataAsync(cancellationToken).ConfigureAwait(false)) != null)
+                var fetchNextDataAsync = FetchNextDataAsync(cancellationToken).ConfigureAwait(false);
+                while ((nextData = await fetchNextDataAsync) != null)
                 {
                     if (cancellationToken.IsCancellationRequested) break;                    
                     PushToPipe(cancellationToken, nextData.Entity, nextData.Metadata);
@@ -63,16 +68,19 @@ namespace Bruteflow.Abstract
         /// <param name="cancellationToken"></param>
         /// <param name="entity"></param>
         /// <param name="pipelineMetadata"></param>
-        protected virtual void PushToPipe(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
+        private void PushToPipe(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
         {
             Task.Run(async () =>
             {
                 using var scope = _serviceProvider.CreateScope();
-                var pipe = CreatePipe(scope.ServiceProvider);
-                await pipe.Head.PushAsync(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
+                using var pipe = scope.ServiceProvider.GetService<TPipe>();
+                await PushToPipeAsync(cancellationToken, entity, pipelineMetadata, pipe);
             }, cancellationToken);
         }
 
-        protected abstract IPipe<TInput> CreatePipe(IServiceProvider scopeServiceProvider);
+        protected virtual async Task PushToPipeAsync(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata, IPipe<TInput> pipe)
+        {
+            await pipe.Head.PushAsync(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
+        }
     }
 }

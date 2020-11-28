@@ -2,32 +2,38 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Bruteflow.Kafka.Consumers;
+using Bruteflow.Kafka.Settings;
 using Bruteflow.Kafka.Stats;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Bruteflow.Kafka
 {
-    public abstract class AbstractKafkaPipelineWithMetrics<TConsumerKey, TConsumerValue> : AbstractKafkaPipeline<TConsumerKey, TConsumerValue>
+    public abstract class AbstractKafkaPipelineWithMetrics<TConsumerKey, TConsumerValue, TPipe> : AbstractKafkaPipeline<TConsumerKey, TConsumerValue, TPipe>
+        where TPipe : IPipe<TConsumerValue>
     {
-        protected readonly IMetricsPublisher Stats;
+        private readonly IMetricsPublisher _stats;
 
-        protected AbstractKafkaPipelineWithMetrics(ILogger<AbstractKafkaPipelineWithMetrics<TConsumerKey, TConsumerValue>> logger,
-            IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory, IMetricsPublisher stats, IServiceProvider serviceProvider)
-            : base(logger, consumerFactory, serviceProvider)
+        protected AbstractKafkaPipelineWithMetrics(ILogger<AbstractKafkaPipelineWithMetrics<TConsumerKey, TConsumerValue, TPipe>> logger,
+            IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory,
+            KafkaPipelineSettings settings,
+            IMetricsPublisher stats,
+            IServiceProvider serviceProvider)
+            : base(logger, consumerFactory, settings, serviceProvider)
         {
-            Stats = stats;
+            _stats = stats;
         }
 
-        protected override void PushToPipe(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata)
+        protected override async Task PushToPipeAsync(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata, IPipe<TConsumerValue> pipe)
         {
-            base.PushToPipe(cancellationToken, entity, pipelineMetadata);
-            Stats.Metric().PipelineLatency(pipelineMetadata).GetAwaiter().GetResult();
+            await pipe.Head.PushAsync(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
+            await _stats.Metric().PipelineLatency(pipelineMetadata).ConfigureAwait(false);
         }
 
         protected override async Task OnFatalErrorAsync(Exception err)
         {
             await base.OnFatalErrorAsync(err).ConfigureAwait(false);
-            await Stats.Metric().FatalErrorIncrement().ConfigureAwait(false);
+            await _stats.Metric().FatalErrorIncrement().ConfigureAwait(false);
         }
     }
 }
