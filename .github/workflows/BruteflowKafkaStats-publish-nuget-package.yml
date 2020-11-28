@@ -28,4 +28,4 @@ jobs:
     - name: Publish
       run: |
         dotnet nuget add source https://nuget.pkg.github.com/xtrmstep/index.json -n github -u xtrmstep -p ${{secrets.NUGET_SERVER_TOKEN}}
-        dotnet nuget push "src/Bruteflow.Kafka.Stats/bin/Release/Bruteflow.Kafka.Stats.2.1.2.nupkg" --source "github" --skip-duplicate --no-symbols true
+        dotnet nuget push "src/Bruteflow.Kafka.Stats/bin/Release/Bruteflow.Kafka.Stats.2.1.3.nupkg" --source "github" --skip-duplicate --no-symbols true
