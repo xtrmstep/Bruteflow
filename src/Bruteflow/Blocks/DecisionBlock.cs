@@ -30,7 +30,7 @@ namespace Bruteflow.Blocks
             _negative = receiverBlock;
         }
 
-        public async Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
+        public async Task PushAsync(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
             if (_positive == null && _negative == null)
             {
@@ -39,15 +39,15 @@ namespace Bruteflow.Blocks
 
             var condition = await _condition(cancellationToken, input, metadata).ConfigureAwait(false);
             var task = condition
-                ? _positive?.Push(cancellationToken, input, metadata)
-                : _negative?.Push(cancellationToken, input, metadata);
+                ? _positive?.PushAsync(cancellationToken, input, metadata)
+                : _negative?.PushAsync(cancellationToken, input, metadata);
         }
 
-        public Task Flush(CancellationToken cancellationToken)
+        public Task FlushAsync(CancellationToken cancellationToken)
         {
             return Task.WhenAll(
-                _positive?.Flush(cancellationToken) ?? Task.CompletedTask,
-                _negative?.Flush(cancellationToken) ?? Task.CompletedTask);
+                _positive?.FlushAsync(cancellationToken) ?? Task.CompletedTask,
+                _negative?.FlushAsync(cancellationToken) ?? Task.CompletedTask);
         }
     }
 }

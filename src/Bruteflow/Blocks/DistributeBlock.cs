@@ -28,16 +28,16 @@ namespace Bruteflow.Blocks
             _targets.Add(receiverBlock);
         }
 
-        public Task Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
+        public Task PushAsync(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
             if (_targets == null) return Task.CompletedTask;
-            var tasks = _targets.Select(target => target.Push(cancellationToken, input, metadata)).ToArray();
+            var tasks = _targets.Select(target => target.PushAsync(cancellationToken, input, metadata)).ToArray();
             return Task.WhenAll(tasks);
         }
 
-        public Task Flush(CancellationToken cancellationToken)
+        public Task FlushAsync(CancellationToken cancellationToken)
         {
-            var tasks = _targets.Select(target => target.Flush(cancellationToken)).ToArray();
+            var tasks = _targets.Select(target => target.FlushAsync(cancellationToken)).ToArray();
             return Task.WhenAll(tasks);
         }
     }

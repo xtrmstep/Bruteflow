@@ -9,9 +9,9 @@ namespace Bruteflow.Kafka
     {
         private readonly List<IPipeline> _pipelines = new List<IPipeline>();
 
-        public Task Execute(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            return Task.WhenAll(_pipelines.Select(pipeline => pipeline.Execute(cancellationToken)).ToArray());
+            return Task.WhenAll(_pipelines.Select(pipeline => pipeline.StartAsync(cancellationToken)).ToArray());
         }
 
         public IReadOnlyList<IPipeline> Pipelines => _pipelines;

@@ -29,12 +29,12 @@ namespace Bruteflow.Tests
             
             var cts = new CancellationTokenSource();
 
-            await head.Push(cts.Token, "C", new PipelineMetadata()).ConfigureAwait(false);
-            await head.Push(cts.Token, "C", new PipelineMetadata()).ConfigureAwait(false);
-            await head.Push(cts.Token, "C", new PipelineMetadata()).ConfigureAwait(false);
+            await head.PushAsync(cts.Token, "C", new PipelineMetadata()).ConfigureAwait(false);
+            await head.PushAsync(cts.Token, "C", new PipelineMetadata()).ConfigureAwait(false);
+            await head.PushAsync(cts.Token, "C", new PipelineMetadata()).ConfigureAwait(false);
             // this one will be lost because of the batching
-            await head.Push(cts.Token, "C", new PipelineMetadata()).ConfigureAwait(false);
-            await head.Flush(cts.Token).ConfigureAwait(false);
+            await head.PushAsync(cts.Token, "C", new PipelineMetadata()).ConfigureAwait(false);
+            await head.FlushAsync(cts.Token).ConfigureAwait(false);
 
             result.Count.Should().Be(2);
             result[0].Should().Be("CA,CA,CA");
@@ -62,10 +62,10 @@ namespace Bruteflow.Tests
                 .Action((ct, str, md) => Task.FromResult(result = str));
 
             var cts = new CancellationTokenSource();
-            await head.Push(cts.Token, "A", new PipelineMetadata()).ConfigureAwait(false);
+            await head.PushAsync(cts.Token, "A", new PipelineMetadata()).ConfigureAwait(false);
             result.Should().Be("AAB");
 
-            await head.Push(cts.Token, "B", new PipelineMetadata()).ConfigureAwait(false);
+            await head.PushAsync(cts.Token, "B", new PipelineMetadata()).ConfigureAwait(false);
             result.Should().Be("BAC");
         }
 
@@ -91,7 +91,7 @@ namespace Bruteflow.Tests
                 .Action((ct, str, md) => Task.FromResult(result2 = str));
             
             var cts = new CancellationTokenSource();
-            await head.Push(cts.Token, string.Empty, new PipelineMetadata()).ConfigureAwait(false);
+            await head.PushAsync(cts.Token, string.Empty, new PipelineMetadata()).ConfigureAwait(false);
 
             result1.Should().Be("A-B");
             result2.Should().Be("A-C");
@@ -108,7 +108,7 @@ namespace Bruteflow.Tests
                 .Action((ct, str, md) => Task.FromResult(result = str));
 
             var cts = new CancellationTokenSource().Token;
-            await head.Push(cts, string.Empty, new PipelineMetadata()).ConfigureAwait(false);
+            await head.PushAsync(cts, string.Empty, new PipelineMetadata()).ConfigureAwait(false);
 
             result.Should().Be("ABC");
         }

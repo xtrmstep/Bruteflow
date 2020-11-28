@@ -21,9 +21,9 @@ namespace Bruteflow.Kafka
             Consumer = consumerFactory.CreateConsumer();
         }
 
-        protected override async Task<EntityItem<TConsumerValue>> ReadNextEntity(CancellationToken cancellationToken)
+        protected override async Task<DataItem<TConsumerValue>> FetchNextDataAsync(CancellationToken cancellationToken)
         {
-            var entity = new EntityItem<TConsumerValue>();
+            var entity = new DataItem<TConsumerValue>();
             ConsumeResult<TConsumerKey, TConsumerValue> consumerResult;
             try
             {
@@ -51,7 +51,7 @@ namespace Bruteflow.Kafka
             return entity;
         }
 
-        protected override Task OnError(Exception err)
+        protected override Task OnFatalErrorAsync(Exception err)
         {
             Logger.LogError(err, err.Message);
             return Task.CompletedTask;

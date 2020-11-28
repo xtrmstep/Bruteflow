@@ -33,7 +33,7 @@ namespace Bruteflow.Blocks
             _next = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
-        public Task Push(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
+        public Task PushAsync(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
             _latestMetadata = metadata;
             var batchedTask = Task.CompletedTask;
@@ -46,14 +46,14 @@ namespace Bruteflow.Blocks
             return Task.WhenAll(batchedTask, Task.CompletedTask);
         }
 
-        public Task Flush(CancellationToken cancellationToken)
+        public Task FlushAsync(CancellationToken cancellationToken)
         {
             return SendBatchedData(cancellationToken, _latestMetadata);
         }
 
         private Task SendBatchedData(CancellationToken cancellationToken, PipelineMetadata metadata)
         {
-            var task = _next?.Push(cancellationToken, _batch.ToImmutableArray(), metadata);
+            var task = _next?.PushAsync(cancellationToken, _batch.ToImmutableArray(), metadata);
             _batch.Clear();
             _bufferedCount = 0;
             return task;

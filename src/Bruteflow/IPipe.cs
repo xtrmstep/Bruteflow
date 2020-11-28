@@ -2,11 +2,11 @@
 
 namespace Bruteflow
 {
-    public interface IPipe<TInput>
+    public interface IPipe<in TInput>
     {
         /// <summary>
         /// The head of the main pipeline 
         /// </summary>
-        HeadBlock<TInput> Head { get; }
+        IReceiverBlock<TInput> Head { get; }
     }
 }

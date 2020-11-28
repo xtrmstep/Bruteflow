@@ -22,20 +22,20 @@ namespace Bruteflow.Abstract
             _serviceProvider = serviceProvider;
         }
         
-        public async Task Execute(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             try
             {
-                EntityItem<TInput> nextEntity;
-                while ((nextEntity = await ReadNextEntity(cancellationToken).ConfigureAwait(false)) != null)
+                DataItem<TInput> nextData;
+                while ((nextData = await FetchNextDataAsync(cancellationToken).ConfigureAwait(false)) != null)
                 {
                     if (cancellationToken.IsCancellationRequested) break;                    
-                    PushToFlow(cancellationToken, nextEntity.Entity, nextEntity.Metadata);
+                    PushToPipe(cancellationToken, nextData.Entity, nextData.Metadata);
                 }                
             }
             catch (Exception err)
             {
-                await OnError(err).ConfigureAwait(false);
+                await OnFatalErrorAsync(err).ConfigureAwait(false);
                 throw;
             }
         }
@@ -44,32 +44,32 @@ namespace Bruteflow.Abstract
         /// Overload this method to define special behaviour after a fatal error, when execution of the pipeline stopped   
         /// </summary>
         /// <param name="err"></param>
-        protected virtual Task OnError(Exception err)
+        protected virtual Task OnFatalErrorAsync(Exception err)
         {
             // do nothing
             return Task.CompletedTask;
         }
 
         /// <summary>
-        /// Implement this method to read and return data entities
+        /// Implement this method to fetch next data item to push it to the pipeline
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        protected abstract Task<EntityItem<TInput>> ReadNextEntity(CancellationToken cancellationToken);
+        protected abstract Task<DataItem<TInput>> FetchNextDataAsync(CancellationToken cancellationToken);
 
         /// <summary>
-        /// Pushes a data entity to the internal block chain
+        /// Pushes a data entity to the internal block chain (starts a new task)
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <param name="entity"></param>
         /// <param name="pipelineMetadata"></param>
-        protected virtual void PushToFlow(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
+        protected virtual void PushToPipe(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata)
         {
             Task.Run(async () =>
             {
                 using var scope = _serviceProvider.CreateScope();
                 var pipe = CreatePipe(scope.ServiceProvider);
-                await pipe.Head.Push(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
+                await pipe.Head.PushAsync(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
             }, cancellationToken);
         }
 

@@ -10,12 +10,12 @@ namespace Bruteflow
     public interface IReceiverBlock<in TInput>
     {
         // Push an entity to this block 
-        Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata);
+        Task PushAsync(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata);
 
         /// <summary>
         ///     Push internal state to following blocks and flush the state
         /// </summary>
         /// <param name="cancellationToken"></param>
-        Task Flush(CancellationToken cancellationToken);
+        Task FlushAsync(CancellationToken cancellationToken);
     }
 }
