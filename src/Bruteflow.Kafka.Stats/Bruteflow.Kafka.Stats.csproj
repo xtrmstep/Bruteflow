@@ -15,13 +15,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bruteflow.Kafka" Version="2.1.1" />
+        <PackageReference Include="Bruteflow.Kafka" Version="2.1.2" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.10" />
         <PackageReference Include="JustEat.StatsD" Version="4.2.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Bruteflow.Kafka\Bruteflow.Kafka.csproj" />
     </ItemGroup>
 
 </Project>
