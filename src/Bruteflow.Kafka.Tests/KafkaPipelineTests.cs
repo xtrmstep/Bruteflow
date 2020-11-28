@@ -56,7 +56,7 @@ namespace Bruteflow.Kafka.Tests
             var pipeline = serviceProvider.GetService<TestKafkaPipeline>();
             // wait 10 seconds to make sure all sent event could be read
             // if less, then less message could be read and the test will fail
-            await pipeline.Execute(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token); 
+            await pipeline.StartAsync(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token); 
 
             // verify that all messages consumed and produced
             var testEvent = ConsumeTestEvents(serviceProvider);

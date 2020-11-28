@@ -12,6 +12,6 @@ namespace Bruteflow
         ///     Launch the pipeline.
         /// </summary>
         /// <param name="cancellationToken"></param>
-        Task Execute(CancellationToken cancellationToken);
+        Task StartAsync(CancellationToken cancellationToken);
     }
 }

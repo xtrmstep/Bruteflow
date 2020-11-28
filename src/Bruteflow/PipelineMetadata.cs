@@ -5,7 +5,7 @@ namespace Bruteflow
     /// <summary>
     /// Metadata for data entity of a pipeline
     /// </summary>
-    public struct PipelineMetadata
+    public class PipelineMetadata
     {
         public object Metadata { get; set; }
         /// <summary>

@@ -1,17 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Bruteflow.Abstract;
 using Bruteflow.Blocks;
 using Bruteflow.Kafka.Producers;
 using Newtonsoft.Json.Linq;
 
 namespace Bruteflow.Kafka.Tests.Pipeline
 {
-    public class TestPipe : IPipe<JObject>
+    public class TestPipe : AbstractPipe<JObject>
     {
         private readonly IKafkaProducer<string, JObject> _producer;
-
-        /// <inheritdoc />
-        public HeadBlock<JObject> Head { get; } = new HeadBlock<JObject>();
 
         public TestPipe(IProducerFactory<string, JObject> producerFactory)
         {

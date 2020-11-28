@@ -17,12 +17,12 @@ namespace Bruteflow.Blocks
             _action = action ?? throw new ArgumentNullException(nameof(action), "Cannot be null");
         }
 
-        public Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
+        public Task PushAsync(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
             return _action(cancellationToken, input, metadata);
         }
 
-        public Task Flush(CancellationToken cancellationToken)
+        public Task FlushAsync(CancellationToken cancellationToken)
         {
             // do nothing
             return Task.CompletedTask;

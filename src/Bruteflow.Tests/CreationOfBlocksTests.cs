@@ -24,7 +24,7 @@ namespace Bruteflow.Tests
                 .Action((ct, str, md) => Task.FromResult(result = str));
 
             var cts = new CancellationTokenSource();
-            await head.Push(cts.Token, "A", new PipelineMetadata());
+            await head.PushAsync(cts.Token, "A", new PipelineMetadata());
             result.Should().Be("AAB");
         }
         
@@ -44,7 +44,7 @@ namespace Bruteflow.Tests
                 .Action((ct, str, md) => Task.FromResult(result = str));
 
             var cts = new CancellationTokenSource();
-            await head.Push(cts.Token, "A", new PipelineMetadata());
+            await head.PushAsync(cts.Token, "A", new PipelineMetadata());
             result.Should().Be("AAB");
         }
     }

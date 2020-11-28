@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bruteflow.Blocks
-{
+{    
     /// <summary>
     ///     Starting block of a pipeline
     /// </summary>
@@ -31,19 +31,19 @@ namespace Bruteflow.Blocks
 
             Func<CancellationToken, TInput, PipelineMetadata, Task> dataReceiver = (token, input, metadata) => Task.CompletedTask;
             if (_following != null) 
-                dataReceiver = _following.Push;
+                dataReceiver = _following.PushAsync;
 
             return _process(cancellationToken, dataReceiver);
         }
 
-        public Task Push(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
+        public Task PushAsync(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            return _following?.Push(cancellationToken, input, metadata);
+            return _following?.PushAsync(cancellationToken, input, metadata);
         }
 
-        public Task Flush(CancellationToken cancellationToken)
+        public Task FlushAsync(CancellationToken cancellationToken)
         {
-            return _following?.Flush(cancellationToken);
+            return _following?.FlushAsync(cancellationToken);
         }
 
         void IProducerBlock<TInput>.Link(IReceiverBlock<TInput> receiverBlock)
