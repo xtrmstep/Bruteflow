@@ -73,7 +73,7 @@ namespace Bruteflow.Abstract
             {
                 using var scope = _serviceProvider.CreateScope();
                 using var pipe = scope.ServiceProvider.GetService<TPipe>();
-                await PushToPipeAsync(cancellationToken, entity, pipelineMetadata, pipe);
+                await PushToPipeAsync(cancellationToken, entity, pipelineMetadata, pipe).ConfigureAwait(false);
             }, cancellationToken);
         }
 

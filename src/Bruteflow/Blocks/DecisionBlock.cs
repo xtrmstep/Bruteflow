@@ -41,13 +41,18 @@ namespace Bruteflow.Blocks
             var task = condition
                 ? _positive?.PushAsync(cancellationToken, input, metadata)
                 : _negative?.PushAsync(cancellationToken, input, metadata);
+
+            if (task != null)
+            {
+                await task.ConfigureAwait(false);
+            }
         }
 
-        public Task FlushAsync(CancellationToken cancellationToken)
+        public async Task FlushAsync(CancellationToken cancellationToken)
         {
-            return Task.WhenAll(
+            await Task.WhenAll(
                 _positive?.FlushAsync(cancellationToken) ?? Task.CompletedTask,
-                _negative?.FlushAsync(cancellationToken) ?? Task.CompletedTask);
+                _negative?.FlushAsync(cancellationToken) ?? Task.CompletedTask).ConfigureAwait(false);
         }
     }
 }

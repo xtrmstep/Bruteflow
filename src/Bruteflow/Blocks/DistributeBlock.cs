@@ -28,17 +28,17 @@ namespace Bruteflow.Blocks
             _targets.Add(receiverBlock);
         }
 
-        public Task PushAsync(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
+        public async Task PushAsync(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
-            if (_targets == null) return Task.CompletedTask;
+            if (_targets == null) return;
             var tasks = _targets.Select(target => target.PushAsync(cancellationToken, input, metadata)).ToArray();
-            return Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
-        public Task FlushAsync(CancellationToken cancellationToken)
+        public async Task FlushAsync(CancellationToken cancellationToken)
         {
             var tasks = _targets.Select(target => target.FlushAsync(cancellationToken)).ToArray();
-            return Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
     }
 }

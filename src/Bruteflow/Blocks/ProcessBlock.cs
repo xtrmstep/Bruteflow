@@ -31,12 +31,18 @@ namespace Bruteflow.Blocks
         public async Task PushAsync(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
             var result = await _process(cancellationToken, input, metadata).ConfigureAwait(false);
-            _following?.PushAsync(cancellationToken, result, metadata);
+            if (_following != null)
+            {
+                await _following.PushAsync(cancellationToken, result, metadata).ConfigureAwait(false);
+            }
         }
 
-        public Task FlushAsync(CancellationToken cancellationToken)
+        public async Task FlushAsync(CancellationToken cancellationToken)
         {
-            return _following?.FlushAsync(cancellationToken);
+            if (_following != null)
+            {
+                await _following.FlushAsync(cancellationToken).ConfigureAwait(false);
+            }
         }
     }
 }

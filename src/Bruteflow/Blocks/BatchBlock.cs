@@ -33,30 +33,33 @@ namespace Bruteflow.Blocks
             _next = receiverBlock ?? throw new ArgumentNullException(nameof(receiverBlock), "Cannot be null");
         }
 
-        public Task PushAsync(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
+        public async Task PushAsync(CancellationToken cancellationToken, TEntity input, PipelineMetadata metadata)
         {
             _latestMetadata = metadata;
             var batchedTask = Task.CompletedTask;
             if (_bufferedCount + 1 > _batchSize)
             {
-                batchedTask = SendBatchedData(cancellationToken, metadata);
+                batchedTask = SendBatchedDataAsync(cancellationToken, metadata);
             }
             _bufferedCount++;
             _batch.Add(input);
-            return Task.WhenAll(batchedTask, Task.CompletedTask);
+            await Task.WhenAll(batchedTask, Task.CompletedTask).ConfigureAwait(false);
         }
 
-        public Task FlushAsync(CancellationToken cancellationToken)
+        public async Task FlushAsync(CancellationToken cancellationToken)
         {
-            return SendBatchedData(cancellationToken, _latestMetadata);
+            await SendBatchedDataAsync(cancellationToken, _latestMetadata).ConfigureAwait(false);
         }
 
-        private Task SendBatchedData(CancellationToken cancellationToken, PipelineMetadata metadata)
+        private async Task SendBatchedDataAsync(CancellationToken cancellationToken, PipelineMetadata metadata)
         {
             var task = _next?.PushAsync(cancellationToken, _batch.ToImmutableArray(), metadata);
             _batch.Clear();
             _bufferedCount = 0;
-            return task;
+            if (task != null)
+            {
+                await task.ConfigureAwait(false);
+            }
         }
     }
 }

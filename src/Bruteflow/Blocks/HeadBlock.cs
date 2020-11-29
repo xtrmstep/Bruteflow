@@ -22,7 +22,7 @@ namespace Bruteflow.Blocks
             _process = process;
         }
 
-        public Task Start(CancellationToken cancellationToken)
+        public async Task Start(CancellationToken cancellationToken)
         {
             if (_process == null)
             {
@@ -33,17 +33,23 @@ namespace Bruteflow.Blocks
             if (_following != null) 
                 dataReceiver = _following.PushAsync;
 
-            return _process(cancellationToken, dataReceiver);
+            await _process(cancellationToken, dataReceiver).ConfigureAwait(false);
         }
 
-        public Task PushAsync(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
+        public async Task PushAsync(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            return _following?.PushAsync(cancellationToken, input, metadata);
+            if (_following != null)
+            {
+                await _following.PushAsync(cancellationToken, input, metadata).ConfigureAwait(false);
+            }
         }
 
-        public Task FlushAsync(CancellationToken cancellationToken)
+        public async Task FlushAsync(CancellationToken cancellationToken)
         {
-            return _following?.FlushAsync(cancellationToken);
+            if (_following != null)
+            {
+                await  _following.FlushAsync(cancellationToken).ConfigureAwait(false);
+            }
         }
 
         void IProducerBlock<TInput>.Link(IReceiverBlock<TInput> receiverBlock)

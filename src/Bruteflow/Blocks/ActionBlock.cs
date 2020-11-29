@@ -17,9 +17,9 @@ namespace Bruteflow.Blocks
             _action = action ?? throw new ArgumentNullException(nameof(action), "Cannot be null");
         }
 
-        public Task PushAsync(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
+        public async Task PushAsync(CancellationToken cancellationToken, TInput input, PipelineMetadata metadata)
         {
-            return _action(cancellationToken, input, metadata);
+            await _action(cancellationToken, input, metadata).ConfigureAwait(false);
         }
 
         public Task FlushAsync(CancellationToken cancellationToken)
