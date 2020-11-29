@@ -31,8 +31,7 @@ namespace Bruteflow.Abstract
             try
             {
                 DataItem<TInput> nextData;
-                var fetchNextDataAsync = FetchNextDataAsync(cancellationToken).ConfigureAwait(false);
-                while ((nextData = await fetchNextDataAsync) != null)
+                while ((nextData = await FetchNextDataAsync(cancellationToken).ConfigureAwait(false)) != null)
                 {
                     if (cancellationToken.IsCancellationRequested) break;                    
                     PushToPipe(cancellationToken, nextData.Entity, nextData.Metadata);
