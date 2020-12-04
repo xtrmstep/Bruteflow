@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Bruteflow.Kafka
 {
-    public static class BruteflowKafkaServiceCollectionExtension
+    public static class Registration
     {
         private static bool _singletonRegistered = false;
         public static void AddBruteflowKafkaPipelines(this IServiceCollection services, Action<PipelineRegister> action)
