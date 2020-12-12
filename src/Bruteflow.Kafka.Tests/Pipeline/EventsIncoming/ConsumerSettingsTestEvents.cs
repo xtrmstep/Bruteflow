@@ -3,14 +3,9 @@ using Bruteflow.Kafka.Settings;
 
 namespace Bruteflow.Kafka.Tests.Pipeline.EventsIncoming
 {
-    public class TestPipelineSettings : AbstractKafkaPipelineSettings
+    public class ConsumerSettingsTestEvents : AbstractKafkaConsumerSettings
     {
-        public TestAbstractKafkaConsumerSettings AbstractKafka { get; set; } = new TestAbstractKafkaConsumerSettings();
-    }
-
-    public class TestAbstractKafkaConsumerSettings : AbstractKafkaConsumerSettings
-    {
-        public TestAbstractKafkaConsumerSettings()
+        public ConsumerSettingsTestEvents()
         {
             Brokers.Add("localhost:9092");
             Topic = "bruteflow-incoming-events";

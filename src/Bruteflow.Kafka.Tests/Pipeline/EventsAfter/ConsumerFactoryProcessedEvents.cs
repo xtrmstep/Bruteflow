@@ -6,10 +6,10 @@ using Newtonsoft.Json.Linq;
 
 namespace Bruteflow.Kafka.Tests.Pipeline.EventsAfter
 {
-    public class ConsumerFactoryDestinationEvents : AbstractConsumerFactory<Ignore, JObject>
+    public class ConsumerFactoryProcessedEvents : AbstractConsumerFactory<Ignore, JObject>
     {
-        public ConsumerFactoryDestinationEvents(ILogger<ConsumerFactoryDestinationEvents> logger, 
-            ConsumerSettingsDestinationEvents settings,
+        public ConsumerFactoryProcessedEvents(ILogger<ConsumerFactoryProcessedEvents> logger, 
+            ConsumerSettingsProcessedEvents settings,
             IDeserializer<JObject> valueDeserializer)
             : base(logger, settings, valueDeserializer)
         {

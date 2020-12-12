@@ -11,11 +11,10 @@ namespace Bruteflow.Kafka.Tests.Pipeline
     public class TestPipeline : AbstractKafkaPipeline<Ignore, JObject, TestPipe>
     {
         public TestPipeline(ILogger<TestPipeline> logger,
-            IConsumerFactory<Ignore, JObject> consumerFactory,
-            TestPipelineSettings settings,
+            PipelineConsumerFactory consumerFactory,
             IServiceProvider serviceProvider
         )
-            : base(logger, consumerFactory, settings, serviceProvider)
+            : base(logger, consumerFactory, serviceProvider)
         {
         }
     }

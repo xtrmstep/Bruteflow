@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Bruteflow.Kafka.Consumers;
-using Bruteflow.Kafka.Producers;
 using Bruteflow.Kafka.Tests.Pipeline;
 using Bruteflow.Kafka.Tests.Pipeline.EventsAfter;
 using Bruteflow.Kafka.Tests.Pipeline.EventsIncoming;
-using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -29,25 +26,24 @@ namespace Bruteflow.Kafka.Tests
             // classes to generate of test events
             services.AddTransient(svc => Mock.Of<ILogger<ProducerFactoryTestEvents>>());
             services.AddTransient<ProducerFactoryTestEvents>();
-            services.AddTransient<AbstractKafkaSettingsTestEvents>();
+            services.AddTransient<ProducerSettingsTestEvents>();
             
             // classes to read processed events (from destination topic)
-            services.AddTransient(svc => Mock.Of<ILogger<ConsumerFactoryDestinationEvents>>());
-            services.AddTransient<ConsumerFactoryDestinationEvents>();
-            services.AddTransient<AbstractKafkaSettingsDestinationEvents>();
+            services.AddTransient(svc => Mock.Of<ILogger<ConsumerFactoryProcessedEvents>>());
+            services.AddTransient<ConsumerFactoryProcessedEvents>();
+            services.AddTransient<ConsumerSettingsProcessedEvents>();
 
             // classes of the pipeline
             services.AddTransient(svc => Mock.Of<ILogger<TestPipeline>>());
             services.AddTransient(svc => Mock.Of<ILogger<PipelineConsumerFactory>>());
             services.AddTransient(svc => Mock.Of<ILogger<PipelineProducerFactory>>());            
             services.AddTransient<PipelineProducerFactory>();            
-            services.AddTransient<TestPipelineProducerSettings>();            
+            services.AddTransient<ProducerSettingsProcessedEvents>();            
             
             services.AddBruteflowKafkaPipelines(o =>
             {
-                var s = new TestPipelineSettings();
-                o.Pipeline<TestPipeline, JObject, TestPipe, TestRoutines, PipelineConsumerFactory, TestPipelineSettings>(s);
-
+                var s = new ConsumerSettingsTestEvents();
+                o.Pipeline<TestPipeline, JObject, TestPipe, TestRoutines, PipelineConsumerFactory, ConsumerSettingsTestEvents>();
             });            
             var serviceProvider = services.BuildServiceProvider();
 
@@ -68,7 +64,7 @@ namespace Bruteflow.Kafka.Tests
         private static List<JObject> ConsumeTestEvents(ServiceProvider serviceProvider)
         {
             var testEvent = new List<JObject>();
-            var consumerTestEvents = serviceProvider.GetService<ConsumerFactoryDestinationEvents>().CreateConsumer();
+            var consumerTestEvents = serviceProvider.GetService<ConsumerFactoryProcessedEvents>().CreateConsumer();
             var cts = new CancellationTokenSource();
             while (true)
             {

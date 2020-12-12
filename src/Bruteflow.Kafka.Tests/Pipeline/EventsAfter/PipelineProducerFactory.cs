@@ -8,7 +8,7 @@ namespace Bruteflow.Kafka.Tests.Pipeline.EventsAfter
     public class PipelineProducerFactory : AbstractProducerFactory<string, JObject>
     {
         public PipelineProducerFactory(ILogger<PipelineProducerFactory> logger, 
-            TestPipelineProducerSettings settings,
+            ProducerSettingsProcessedEvents settings,
             ISerializer<JObject> valueSerializer) 
             : base(logger, settings, valueSerializer)
         {

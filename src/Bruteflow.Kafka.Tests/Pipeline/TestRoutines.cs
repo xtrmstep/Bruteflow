@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Bruteflow.Kafka.Producers;
+using Bruteflow.Kafka.Tests.Pipeline.EventsAfter;
 using Newtonsoft.Json.Linq;
 
 namespace Bruteflow.Kafka.Tests.Pipeline
@@ -9,7 +10,7 @@ namespace Bruteflow.Kafka.Tests.Pipeline
     {
         private readonly IKafkaProducer<string, JObject> _producer;
         
-        public TestRoutines(IProducerFactory<string, JObject> producerFactory)
+        public TestRoutines(PipelineProducerFactory producerFactory)
         {
             _producer = producerFactory.CreateProducer();
         }

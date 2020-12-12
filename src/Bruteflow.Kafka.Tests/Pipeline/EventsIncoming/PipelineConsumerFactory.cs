@@ -8,7 +8,7 @@ namespace Bruteflow.Kafka.Tests.Pipeline.EventsIncoming
     public class PipelineConsumerFactory : AbstractConsumerFactory<Ignore, JObject>
     {
         public PipelineConsumerFactory(ILogger<PipelineConsumerFactory> logger, 
-            TestAbstractKafkaConsumerSettings settings, 
+            ConsumerSettingsTestEvents settings, 
             IDeserializer<JObject> valueDeserializer) 
             : base(logger, settings, valueDeserializer)
         {

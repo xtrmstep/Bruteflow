@@ -2,9 +2,9 @@
 
 namespace Bruteflow.Kafka.Tests.Pipeline.EventsAfter
 {
-    public class TestPipelineProducerSettings : AbstractKafkaProducerSettings
+    public class ProducerSettingsProcessedEvents : AbstractKafkaProducerSettings
     {
-        public TestPipelineProducerSettings()
+        public ProducerSettingsProcessedEvents()
         {
             Brokers.Add("localhost:9092");
             Topic = "bruteflow-events-after-pipeline";

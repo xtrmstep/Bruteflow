@@ -3,14 +3,9 @@ using Bruteflow.Kafka.Settings;
 
 namespace Bruteflow.Kafka.Tests.Pipeline.EventsAfter
 {
-    public class AbstractKafkaSettingsDestinationEvents : AbstractKafkaPipelineSettings
+    public class ConsumerSettingsProcessedEvents : AbstractKafkaConsumerSettings
     {
-        public ConsumerSettingsDestinationEvents Kafka { get; set; } = new ConsumerSettingsDestinationEvents();
-    }
-
-    public class ConsumerSettingsDestinationEvents : AbstractKafkaConsumerSettings
-    {
-        public ConsumerSettingsDestinationEvents()
+        public ConsumerSettingsProcessedEvents()
         {
             Brokers.Add("localhost:9092");
             Topic = "bruteflow-events-after-pipeline";
