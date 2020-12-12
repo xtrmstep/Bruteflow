@@ -11,7 +11,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
         protected readonly IMetricsPublisher Stats;
 
         protected AbstractProducerWithMetricsFactory(ILogger<AbstractProducerWithMetricsFactory<TKey, TValue>> logger,
-            KafkaProducerSettings settings, ISerializer<TKey> keySerializer, ISerializer<TValue> valueSerializer,
+            AbstractKafkaProducerSettings settings, ISerializer<TKey> keySerializer, ISerializer<TValue> valueSerializer,
             IMetricsPublisher stats)
             : base(logger, settings, keySerializer, valueSerializer)
         {
@@ -19,7 +19,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
         }
 
         protected AbstractProducerWithMetricsFactory(ILogger<AbstractProducerWithMetricsFactory<TKey, TValue>> logger,
-            KafkaProducerSettings settings, ISerializer<TValue> valueSerializer, IMetricsPublisher stats)
+            AbstractKafkaProducerSettings settings, ISerializer<TValue> valueSerializer, IMetricsPublisher stats)
             : this(logger, settings, null, valueSerializer, stats)
         {
         }

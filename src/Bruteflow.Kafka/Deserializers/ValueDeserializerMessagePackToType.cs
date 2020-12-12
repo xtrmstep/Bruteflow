@@ -2,14 +2,17 @@
 using Confluent.Kafka;
 using MessagePack;
 
-namespace Bruteflow.Kafka.Deserializers
+namespace Bruteflow.Kafka
 {
-    public sealed class ValueDeserializerMessagePackToType<TInput> : IDeserializer<TInput>
+    public sealed partial class Deserializers
     {
-        public TInput Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
+        public sealed class ValueDeserializerMessagePackToType<TInput> : IDeserializer<TInput>
         {
-            var contract = data != null ? MessagePackSerializer.Deserialize<TInput>(data.ToArray()) : default;
-            return contract;
+            public TInput Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
+            {
+                var contract = data != null ? MessagePackSerializer.Deserialize<TInput>(data.ToArray()) : default;
+                return contract;
+            }
         }
     }
 }

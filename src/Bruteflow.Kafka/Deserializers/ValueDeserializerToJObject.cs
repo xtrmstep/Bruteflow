@@ -3,14 +3,17 @@ using System.Text;
 using Confluent.Kafka;
 using Newtonsoft.Json.Linq;
 
-namespace Bruteflow.Kafka.Deserializers
+namespace Bruteflow.Kafka
 {
-    public sealed class ValueDeserializerToJObject : IDeserializer<JObject>
+    public sealed partial class Deserializers
     {
-        public JObject Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
+        public sealed class ValueDeserializerToJObject : IDeserializer<JObject>
         {
-            var json = Encoding.UTF8.GetString(data.ToArray());
-            return JObject.Parse(json);
+            public JObject Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
+            {
+                var json = Encoding.UTF8.GetString(data.ToArray());
+                return JObject.Parse(json);
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ using Confluent.Kafka;
 
 namespace Bruteflow.Kafka.Settings
 {
-    public class KafkaConsumerSettings
+    public abstract class AbstractKafkaConsumerSettings
     {
         public List<string> Brokers { get; } = new List<string>();
         public string Topic { get; set; }

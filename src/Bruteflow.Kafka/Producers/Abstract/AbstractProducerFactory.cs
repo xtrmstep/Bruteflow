@@ -13,11 +13,11 @@ namespace Bruteflow.Kafka.Producers.Abstract
 
         protected readonly ISerializer<TKey> KeySerializer;
         protected readonly ILogger<AbstractProducerFactory<TKey, TValue>> Logger;
-        protected readonly KafkaProducerSettings Settings;
+        protected readonly AbstractKafkaProducerSettings Settings;
         protected readonly ISerializer<TValue> ValueSerializer;
 
         protected AbstractProducerFactory(ILogger<AbstractProducerFactory<TKey, TValue>> logger,
-            KafkaProducerSettings settings, ISerializer<TKey> keySerializer, ISerializer<TValue> valueSerializer)
+            AbstractKafkaProducerSettings settings, ISerializer<TKey> keySerializer, ISerializer<TValue> valueSerializer)
         {
             Logger = logger;
             Settings = settings;
@@ -26,7 +26,7 @@ namespace Bruteflow.Kafka.Producers.Abstract
         }
 
         protected AbstractProducerFactory(ILogger<AbstractProducerFactory<TKey, TValue>> logger,
-            KafkaProducerSettings settings, ISerializer<TValue> valueSerializer)
+            AbstractKafkaProducerSettings settings, ISerializer<TValue> valueSerializer)
             : this(logger, settings, null, valueSerializer)
         {
         }

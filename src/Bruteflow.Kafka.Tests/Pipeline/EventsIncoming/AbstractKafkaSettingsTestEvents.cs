@@ -2,9 +2,9 @@
 
 namespace Bruteflow.Kafka.Tests.Pipeline.EventsIncoming
 {
-    public class KafkaSettingsTestEvents : KafkaProducerSettings
+    public class AbstractKafkaSettingsTestEvents : AbstractKafkaProducerSettings
     {
-        public KafkaSettingsTestEvents()
+        public AbstractKafkaSettingsTestEvents()
         {
             Brokers.Add("localhost:9092");
             Topic = "bruteflow-incoming-events";

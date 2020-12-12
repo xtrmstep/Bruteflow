@@ -1,7 +1,5 @@
 ﻿using System;
 using Bruteflow.Kafka.Consumers;
-using Bruteflow.Kafka.Deserializers;
-using Bruteflow.Kafka.Serializers;
 using Bruteflow.Kafka.Settings;
 using Bruteflow.Kafka.Stats;
 using Confluent.Kafka;
@@ -13,13 +11,19 @@ namespace Bruteflow.Kafka
     public static class Registration
     {
         private static bool _singletonRegistered = false;
+        
+        /// <summary>
+        /// Register pipeline which reads JSON events
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="action"></param>
         public static void AddBruteflowKafkaPipelines(this IServiceCollection services, Action<PipelineRegister> action)
         {
             if (!_singletonRegistered)
             {
                 services.AddSingleton<IMetricsPublisher, SilentStatsDPublisher>();
-                services.AddSingleton<IDeserializer<JObject>, ValueDeserializerToJObject>();
-                services.AddSingleton<ISerializer<JObject>, ValueSerializerJObjectToJsonString>();
+                services.AddSingleton<IDeserializer<JObject>, Deserializers.ValueDeserializerToJObject>();
+                services.AddSingleton<ISerializer<JObject>, Serializers.ValueSerializerJObjectToJsonString>();
 
                 _singletonRegistered = true;
             }
@@ -42,7 +46,7 @@ namespace Bruteflow.Kafka
                 where TPipe : class, IPipe<TInput>
                 where TRoutines : class
                 where TConsumeFactory : class, IConsumerFactory<Ignore, TInput>
-                where TSettings : KafkaPipelineSettings
+                where TSettings : AbstractKafkaPipelineSettings
             {
                 _services.AddScoped<TPipeline>();
                 _services.AddScoped<TPipe>();

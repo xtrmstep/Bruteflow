@@ -29,12 +29,12 @@ namespace Bruteflow.Kafka.Tests
             // classes to generate of test events
             services.AddTransient(svc => Mock.Of<ILogger<ProducerFactoryTestEvents>>());
             services.AddTransient<ProducerFactoryTestEvents>();
-            services.AddTransient<KafkaSettingsTestEvents>();
+            services.AddTransient<AbstractKafkaSettingsTestEvents>();
             
             // classes to read processed events (from destination topic)
             services.AddTransient(svc => Mock.Of<ILogger<ConsumerFactoryDestinationEvents>>());
             services.AddTransient<ConsumerFactoryDestinationEvents>();
-            services.AddTransient<KafkaSettingsDestinationEvents>();
+            services.AddTransient<AbstractKafkaSettingsDestinationEvents>();
 
             // classes of the pipeline
             services.AddTransient(svc => Mock.Of<ILogger<TestPipeline>>());

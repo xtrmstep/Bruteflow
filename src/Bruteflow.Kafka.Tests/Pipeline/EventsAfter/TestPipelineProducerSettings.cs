@@ -2,7 +2,7 @@
 
 namespace Bruteflow.Kafka.Tests.Pipeline.EventsAfter
 {
-    public class TestPipelineProducerSettings : KafkaProducerSettings
+    public class TestPipelineProducerSettings : AbstractKafkaProducerSettings
     {
         public TestPipelineProducerSettings()
         {

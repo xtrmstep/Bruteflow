@@ -8,7 +8,7 @@ namespace Bruteflow.Kafka.Tests.Pipeline.EventsIncoming
     public class ProducerFactoryTestEvents : AbstractProducerFactory<string, JObject>
     {
         public ProducerFactoryTestEvents(ILogger<ProducerFactoryTestEvents> logger,
-            KafkaSettingsTestEvents settings,
+            AbstractKafkaSettingsTestEvents settings,
             ISerializer<JObject> valueSerializer) 
             : base(logger, settings, valueSerializer)
         {

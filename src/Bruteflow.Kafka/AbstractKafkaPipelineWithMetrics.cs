@@ -16,7 +16,7 @@ namespace Bruteflow.Kafka
 
         protected AbstractKafkaPipelineWithMetrics(ILogger<AbstractKafkaPipelineWithMetrics<TConsumerKey, TConsumerValue, TPipe>> logger,
             IConsumerFactory<TConsumerKey, TConsumerValue> consumerFactory,
-            KafkaPipelineSettings settings,
+            AbstractKafkaPipelineSettings settings,
             IMetricsPublisher stats,
             IServiceProvider serviceProvider)
             : base(logger, consumerFactory, settings, serviceProvider)

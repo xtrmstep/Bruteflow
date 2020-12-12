@@ -18,12 +18,10 @@ namespace Bruteflow.Abstract
         where TPipe: IPipe<TInput>
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly PipelineSettings _settings;
 
-        protected AbstractPipeline(IServiceProvider serviceProvider, PipelineSettings settings)
+        protected AbstractPipeline(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _settings = settings;
         }
         
         public async Task StartAsync(CancellationToken cancellationToken)

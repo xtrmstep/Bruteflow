@@ -2,7 +2,7 @@
 
 namespace Bruteflow.Kafka.Settings
 {
-    public class KafkaProducerSettings
+    public abstract class AbstractKafkaProducerSettings
     {
         public List<string> Brokers { get; } = new List<string>();
         public string Topic { get; set; }

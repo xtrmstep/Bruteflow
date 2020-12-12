@@ -16,6 +16,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bruteflow.Kafka", "Bruteflo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bruteflow.Kafka.Stats", "Bruteflow.Kafka.Stats", "{1C4656FE-72EC-4F56-B815-D7645812BF8D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_workflows", "_workflows", "{0A30E495-EEC3-4AD5-A113-BEECD1645610}"
+ProjectSection(SolutionItems) = preProject
+	..\.github\workflows\BruteflowKafka-publish-nuget-package.yml = ..\.github\workflows\BruteflowKafka-publish-nuget-package.yml
+	..\.github\workflows\BruteflowKafkaStats-publish-nuget-package.yml = ..\.github\workflows\BruteflowKafkaStats-publish-nuget-package.yml
+	..\.github\workflows\Bruteflow-publish-nuget-package.yml = ..\.github\workflows\Bruteflow-publish-nuget-package.yml
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

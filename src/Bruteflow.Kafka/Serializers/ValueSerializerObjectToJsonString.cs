@@ -2,15 +2,18 @@
 using Confluent.Kafka;
 using Newtonsoft.Json;
 
-namespace Bruteflow.Kafka.Serializers
+namespace Bruteflow.Kafka
 {
-    public sealed class ValueSerializerObjectToJsonString<T> : ISerializer<T>
+    public partial class Serializers
     {
-        public byte[] Serialize(T data, SerializationContext context)
+        public sealed class ValueSerializerObjectToJsonString<T> : ISerializer<T>
         {
-            var json = JsonConvert.SerializeObject(data);
-            return Encoding.UTF8.GetBytes(json);
+            public byte[] Serialize(T data, SerializationContext context)
+            {
+                var json = JsonConvert.SerializeObject(data);
+                return Encoding.UTF8.GetBytes(json);
 
+            }
         }
     }
 }
