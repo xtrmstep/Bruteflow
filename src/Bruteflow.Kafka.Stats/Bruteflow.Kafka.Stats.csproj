@@ -10,12 +10,12 @@
         <PackageLicenseUrl>https://github.com/xtrmstep/Bruteflow/blob/master/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/xtrmstep/Bruteflow</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageVersion>2.2.0</PackageVersion>
+        <PackageVersion>2.3.0</PackageVersion>
         <LangVersion>8</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bruteflow.Kafka" Version="2.2.0" />
+        <PackageReference Include="Bruteflow.Kafka" Version="2.3.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.10" />
         <PackageReference Include="JustEat.StatsD" Version="4.2.0" />
     </ItemGroup>

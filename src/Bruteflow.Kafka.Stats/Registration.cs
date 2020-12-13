@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Bruteflow.Abstract;
 using JustEat.StatsD;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +31,7 @@ namespace Bruteflow.Kafka.Stats
             }
 
             public void StatD<TPipeline, TSettings>(TSettings settings, string pipeline, bool ignoreErrors = false)
-                where TPipeline : class, IPipeline
+                where TPipeline : AbstractPipeline
                 where TSettings : StatsDSettings
             {
                 _services.AddStatsD(
