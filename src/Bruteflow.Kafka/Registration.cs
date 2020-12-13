@@ -41,7 +41,7 @@ namespace Bruteflow.Kafka
                 _services = services;
             }
 
-            public void Pipeline<TPipeline, TInput, TPipe, TRoutines, TConsumeFactory, TConsumerSettings>()
+            public void Pipeline<TPipeline, TInput, TPipe, TRoutines, TConsumeFactory, TConsumerSettings>(TConsumerSettings settings)
                 where TPipeline : class, IPipeline
                 where TPipe : class, IPipe<TInput>
                 where TRoutines : class
@@ -51,8 +51,9 @@ namespace Bruteflow.Kafka
                 _services.AddScoped<TPipeline>();
                 _services.AddScoped<TPipe>();
                 _services.AddScoped<TRoutines>();
-                _services.AddScoped<TConsumeFactory>();                
-                _services.AddScoped<TConsumerSettings>();
+                _services.AddScoped<TConsumeFactory>();      
+                
+                _services.AddSingleton(settings);
             }
         }
     }
