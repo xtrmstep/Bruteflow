@@ -5,18 +5,27 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Bruteflow.Abstract
 {
-    public class AbstractPipe<TInput> : IPipe<TInput>
+    /// <summary>
+    /// The definition of a chained blocks and its input
+    /// </summary>
+    /// <typeparam name="TInput">Data type which will be pushed to the input</typeparam>
+    public abstract class AbstractPipe<TInput>
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public AbstractPipe(IServiceProvider serviceProvider)
+        protected AbstractPipe(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
         
-        /// <inheritdoc />
+        /// <summary>
+        /// The first block in the pipe which is its input
+        /// </summary>
         public HeadBlock<TInput> Head { get; } = new HeadBlock<TInput>();
         
+        /// <summary>
+        /// Execute routine method in a scoped context
+        /// </summary>
         protected async Task<TOutput> Scope<TRoutine, TOutput>(Func<TRoutine, Task<TOutput>> func)
         {
             using var scope = _serviceProvider.CreateScope();
@@ -25,17 +34,14 @@ namespace Bruteflow.Abstract
             return output;
         }
         
+        /// <summary>
+        /// Execute routine method in a scoped context
+        /// </summary>
         protected async Task Scope<TRoutine>(Func<TRoutine, Task> func)
         {
             using var scope = _serviceProvider.CreateScope();
             var routine = scope.ServiceProvider.GetService<TRoutine>();
             await func(routine).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc />
-        public virtual void Dispose()
-        {
-            // nothing to dispose here
         }
     }
 }

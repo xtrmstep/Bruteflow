@@ -50,7 +50,7 @@ namespace Bruteflow.Kafka
             if (consumerResult == null) return null;
             
             entity.Entity = consumerResult.Message.Value;
-            entity.Metadata = new PipelineMetadata {Metadata = consumerResult.Message, InputTimestamp = DateTime.Now};
+            entity.Metadata = new PipelineMetadata {Metadata = consumerResult.Message, DataFetchedTimestamp = DateTime.Now};
             return entity;
         }
 

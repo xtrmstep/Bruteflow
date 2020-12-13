@@ -6,26 +6,36 @@ using System.Threading.Tasks;
 namespace Bruteflow.Abstract
 {
     /// <summary>
-    /// A base class for building a collection of data flow pipelines
+    /// A collection of pipelines which could be used as a pipeline
     /// </summary>
     /// <remarks>
-    /// You need to define a data glow pipeline in the constructor of your class, attaching blocks to the Head block
+    /// Add pipelines in constructor
     /// </remarks>
-    public abstract class AbstractPipelineCollection : IPipelineCollection
+    public abstract class AbstractPipelineCollection : AbstractPipeline
     {
-        protected AbstractPipelineCollection(IReadOnlyList<IPipeline> pipelines)
+        private readonly List<AbstractPipeline> _pipelines;
+
+        protected AbstractPipelineCollection() : this(null)
+        {            
+        }
+        
+        protected AbstractPipelineCollection(IEnumerable<AbstractPipeline> pipelines)
         {
-            Pipelines = pipelines;
+            _pipelines = pipelines == null 
+                ? new List<AbstractPipeline>() 
+                : new List<AbstractPipeline>(pipelines);
         }
 
         /// <inheritdoc />
-        public Task StartAsync(CancellationToken cancellationToken)
+        public override Task StartAsync(CancellationToken cancellationToken)
         {
-            var pipelineTasks = Pipelines.Select(p => p.StartAsync(cancellationToken)).ToArray();
+            var pipelineTasks = _pipelines.Select(p => p.StartAsync(cancellationToken)).ToArray();
             return Task.WhenAll(pipelineTasks);
         }
-
-        /// <inheritdoc />
-        public IReadOnlyList<IPipeline> Pipelines { get; }
+        
+        protected void Add(AbstractPipeline pipeline)
+        {
+            _pipelines.Add(pipeline);
+        }
     }
 }

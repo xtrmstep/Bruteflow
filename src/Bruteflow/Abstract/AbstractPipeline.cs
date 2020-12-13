@@ -1,21 +1,29 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Bruteflow.Blocks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Bruteflow.Abstract
 {
+    public abstract class AbstractPipeline
+    {
+        /// <summary>
+        ///     Launch the pipeline.
+        /// </summary>
+        public abstract Task StartAsync(CancellationToken cancellationToken);
+    }
+    
     /// <summary>
-    /// A base class for building a complex data flow pipeline
+    /// The definition of the logic to fetch data for the pipeline
     /// </summary>
     /// <remarks>
-    /// You need to define a data glow pipeline in the constructor of your class, attaching blocks to the Head block
+    /// The pipeline is a class to connect data fetching logic and the pipe (chained blocks).
+    /// When a new data item arrives, a new scope is created from which a new pipe is resolved.  
     /// </remarks>
-    /// <typeparam name="TInput"></typeparam>
-    /// <typeparam name="TPipe"></typeparam>
-    public abstract class AbstractPipeline<TInput, TPipe> : IPipeline
-        where TPipe: IPipe<TInput>
+    /// <typeparam name="TInput">The input data type for the pipe</typeparam>
+    /// <typeparam name="TPipe">The pipe definition class</typeparam>
+    public abstract class AbstractPipeline<TInput, TPipe> : AbstractPipeline
+        where TPipe: AbstractPipe<TInput>
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -24,7 +32,7 @@ namespace Bruteflow.Abstract
             _serviceProvider = serviceProvider;
         }
         
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public override async Task StartAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -32,7 +40,7 @@ namespace Bruteflow.Abstract
                 while ((nextData = await FetchNextDataAsync(cancellationToken).ConfigureAwait(false)) != null)
                 {
                     if (cancellationToken.IsCancellationRequested) break;                    
-                    PushToPipe(cancellationToken, nextData.Entity, nextData.Metadata);
+                    PushToPipe(cancellationToken, nextData.Data, nextData.Metadata);
                 }                
             }
             catch (Exception err)
@@ -53,7 +61,7 @@ namespace Bruteflow.Abstract
         }
 
         /// <summary>
-        /// Implement this method to fetch next data item to push it to the pipeline
+        /// Implement this method to fetch next data item to push it to the pipe
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
@@ -70,12 +78,12 @@ namespace Bruteflow.Abstract
             Task.Run(async () =>
             {
                 using var scope = _serviceProvider.CreateScope();
-                using var pipe = scope.ServiceProvider.GetService<TPipe>();
+                var pipe = scope.ServiceProvider.GetService<TPipe>();
                 await PushToPipeAsync(cancellationToken, entity, pipelineMetadata, pipe).ConfigureAwait(false);
             }, cancellationToken);
         }
 
-        protected virtual async Task PushToPipeAsync(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata, IPipe<TInput> pipe)
+        protected virtual async Task PushToPipeAsync(CancellationToken cancellationToken, TInput entity, PipelineMetadata pipelineMetadata, AbstractPipe<TInput> pipe)
         {
             await pipe.Head.PushAsync(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
         }

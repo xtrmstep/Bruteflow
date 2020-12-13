@@ -2,7 +2,7 @@
 {
     public class DataItem<T>
     {
-        public T Entity { get; set; } 
+        public T Data { get; set; } 
         public PipelineMetadata Metadata { get; set; }
     }
 }
