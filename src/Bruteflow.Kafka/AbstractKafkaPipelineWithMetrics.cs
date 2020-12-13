@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Bruteflow.Abstract;
 using Bruteflow.Kafka.Consumers;
 using Bruteflow.Kafka.Settings;
 using Bruteflow.Kafka.Stats;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Bruteflow.Kafka
 {
     public abstract class AbstractKafkaPipelineWithMetrics<TConsumerKey, TConsumerValue, TPipe> : AbstractKafkaPipeline<TConsumerKey, TConsumerValue, TPipe>
-        where TPipe : IPipe<TConsumerValue>
+        where TPipe : AbstractPipe<TConsumerValue>
     {
         private readonly IMetricsPublisher _stats;
 
@@ -23,7 +24,7 @@ namespace Bruteflow.Kafka
             _stats = stats;
         }
 
-        protected override async Task PushToPipeAsync(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata, IPipe<TConsumerValue> pipe)
+        protected override async Task PushToPipeAsync(CancellationToken cancellationToken, TConsumerValue entity, PipelineMetadata pipelineMetadata, AbstractPipe<TConsumerValue> pipe)
         {
             await pipe.Head.PushAsync(cancellationToken, entity, pipelineMetadata).ConfigureAwait(false);
             await _stats.Metric().PipelineLatency(pipelineMetadata).ConfigureAwait(false);

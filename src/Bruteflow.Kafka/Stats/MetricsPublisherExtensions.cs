@@ -127,7 +127,7 @@ namespace Bruteflow.Kafka.Stats
 
             public async Task<Metrics> PipelineLatency(PipelineMetadata metadata)
             {
-                var latency = DateTime.Now.Subtract(metadata.InputTimestamp);
+                var latency = DateTime.Now.Subtract(metadata.Timestamp);
                 await _stats.Timing((long)latency.TotalMilliseconds, nameof(StatMetrics.Time.PipelineLatency)).ConfigureAwait(false);
                 return this;
             }

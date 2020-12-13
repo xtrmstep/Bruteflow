@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace Bruteflow.Kafka
 {
     public abstract class AbstractKafkaPipeline<TConsumerKey, TConsumerValue, TPipe> : AbstractPipeline<TConsumerValue, TPipe>
-        where TPipe : IPipe<TConsumerValue>
+        where TPipe : AbstractPipe<TConsumerValue>
     {
         protected readonly IKafkaConsumer<TConsumerKey, TConsumerValue> Consumer;
         protected readonly ILogger<AbstractKafkaPipeline<TConsumerKey, TConsumerValue, TPipe>> Logger;
@@ -49,8 +49,8 @@ namespace Bruteflow.Kafka
 
             if (consumerResult == null) return null;
             
-            entity.Entity = consumerResult.Message.Value;
-            entity.Metadata = new PipelineMetadata {Metadata = consumerResult.Message, DataFetchedTimestamp = DateTime.Now};
+            entity.Data = consumerResult.Message.Value;
+            entity.Metadata = new PipelineMetadata {Metadata = consumerResult.Message, Timestamp = DateTime.Now};
             return entity;
         }
 

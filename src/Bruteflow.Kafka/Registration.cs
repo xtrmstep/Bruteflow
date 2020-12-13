@@ -1,4 +1,5 @@
 ﻿using System;
+using Bruteflow.Abstract;
 using Bruteflow.Kafka.Consumers;
 using Bruteflow.Kafka.Settings;
 using Bruteflow.Kafka.Stats;
@@ -42,8 +43,8 @@ namespace Bruteflow.Kafka
             }
 
             public void Pipeline<TPipeline, TInput, TPipe, TRoutines, TConsumeFactory, TConsumerSettings>(TConsumerSettings settings)
-                where TPipeline : class, IPipeline
-                where TPipe : class, IPipe<TInput>
+                where TPipeline : AbstractPipeline<TInput, TPipe>
+                where TPipe : AbstractPipe<TInput>
                 where TRoutines : class
                 where TConsumeFactory : class, IConsumerFactory<Ignore, TInput>
                 where TConsumerSettings : AbstractKafkaConsumerSettings

@@ -42,8 +42,8 @@ namespace Bruteflow.Kafka.Tests
             
             services.AddBruteflowKafkaPipelines(o =>
             {
-                var s = new ConsumerSettingsTestEvents();
-                o.Pipeline<TestPipeline, JObject, TestPipe, TestRoutines, PipelineConsumerFactory, ConsumerSettingsTestEvents>();
+                var settings = new ConsumerSettingsTestEvents();
+                o.Pipeline<TestPipeline, JObject, TestPipe, TestRoutines, PipelineConsumerFactory, ConsumerSettingsTestEvents>(settings);
             });            
             var serviceProvider = services.BuildServiceProvider();
 
